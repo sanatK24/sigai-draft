@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+
+type AnyRecord = Record<string, unknown>;
 
 export const CHANNEL = "ORCHIDS_HOVER_v1" as const;
 const VISUAL_EDIT_MODE_KEY = "orchids_visual_edit_mode" as const;
@@ -10,7 +11,7 @@ const FOCUSED_ELEMENT_KEY = "orchids_focused_element" as const;
 // Deduplicate helper for high-frequency traffic (HIT / FOCUS_MOVED / SCROLL)
 // -----------------------------------------------------------------------------
 let _orchidsLastMsg = "";
-const postMessageDedup = (data: any) => {
+const postMessageDedup = (data: unknown) => {
   try {
     const key = JSON.stringify(data);
     if (key === _orchidsLastMsg) return; // identical – drop
