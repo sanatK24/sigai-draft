@@ -1,5 +1,8 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { Event } from '@/types/event';
 
 // Add JSX namespace
 declare global {
@@ -10,110 +13,145 @@ declare global {
   }
 }
 
-interface Speaker {
-  name: string;
-  role: string;
-  imageUrl?: string;
+interface EventCardProps {
+  event: Event;
 }
 
-interface Event {
-  date: string;
-  title: string;
-  description: string;
-  image?: string;
-  speakers?: Speaker[];
-  isNew?: boolean;
-}
-
-const recentFeatures: Event[] = [
-  {
-    date: "Jul 18-19, 2025",
-    title: "KLEOS 3.0: National Level Hackathon",
-    description: "A 36-hour hackathon bringing together talented developers and innovators to build AI-powered solutions.",
-    isNew: true,
-    image: "/img/Sigai Events/Kleos_Banner.svg",
-    speakers: [
-      {
-        name: "Dr. Rajesh Ingle",
-        role: "Hackathon Mentor",
-        imageUrl: "/img/team/placeholder.jpg"
-      }
-    ]
-  },
-  {
-    date: "Jun 12, 2025",
-    title: "STTP on Generative to Agentic AI",
-    description: "Hands-on workshop exploring the latest advancements in generative AI and autonomous agents.",
-    image: "/img/Sigai Events/STTP.webp",
-    speakers: [
-      {
-        name: "Prof. Meera Sharma",
-        role: "AI Researcher",
-        imageUrl: "/img/team/placeholder.jpg"
-      }
-    ]
-  },
-  {
-    date: "May 25, 2025",
-    title: "AI in Healthcare Symposium",
-    description: "Exploring AI applications in healthcare and medical research with industry experts.",
-    image: "/img/Sigai Events/GenAI-WIP.webp",
-    speakers: [
-      {
-        name: "Dr. Anjali Deshpande",
-        role: "Healthcare AI Specialist",
-        imageUrl: "/img/team/placeholder.jpg"
-      }
-    ]
-  },
-  {
-    date: "Apr 15, 2025",
-    title: "Computer Vision Workshop",
-    description: "Hands-on session on computer vision algorithms and real-world applications.",
-    isNew: true,
-    image: "/img/Sigai Events/GeoAI.webp",
-    speakers: [
-      {
-        name: "Prof. Vikram Joshi",
-        role: "Computer Vision Expert",
-        imageUrl: "/img/team/placeholder.jpg"
-      }
-    ]
-  },
-  {
-    date: "Mar 22, 2025",
-    title: "Natural Language Processing Bootcamp",
-    description: "Intensive training on NLP techniques and building language models.",
-    image: "/img/Sigai Events/Harnessing_GenAI.webp",
-    speakers: [
-      {
-        name: "Dr. Sameer Khan",
-        role: "NLP Researcher",
-        imageUrl: "/img/team/placeholder.jpg"
-      }
-    ]
-  },
-  {
-    date: "Feb 10, 2025",
-    title: "AI Ethics Panel Discussion",
-    description: "Exploring the ethical implications and responsible development of AI technologies.",
-    image: "/img/Sigai Events/Quantum.webp",
-    speakers: [
-      {
-        name: "Dr. Neha Kapoor",
-        role: "AI Ethics Researcher",
-        imageUrl: "/img/team/placeholder.jpg"
-      },
-      {
-        name: "Prof. Amit Patel",
-        role: "Technology Policy Expert",
-        imageUrl: "/img/team/placeholder.jpg"
-      }
-    ]
-  }
-];
+const EventCard: React.FC<EventCardProps> = ({ event }) => (
+  <div className="relative flex flex-col h-full bg-card/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-border/50 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300">
+    <div className="relative h-48 w-full overflow-hidden">
+      <Image
+        src={event.image}
+        alt={event.title}
+        fill
+        className="object-cover"
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      />
+      {event.isNew && (
+        <div className="absolute top-3 right-3 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded-full">
+          New
+        </div>
+      )}
+    </div>
+    <div className="p-6 flex-1 flex flex-col">
+      <div className="flex justify-between items-start mb-2">
+        <h3 className="text-lg font-semibold text-text-primary line-clamp-2">
+          {event.title}
+        </h3>
+        <span className="text-sm text-text-secondary whitespace-nowrap ml-4">
+          {new Date(event.date).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+          })}
+        </span>
+      </div>
+      <p className="text-sm text-text-secondary mb-4 line-clamp-3">
+        {event.description}
+      </p>
+      
+      {event.speakers && event.speakers.length > 0 && (
+        <div className="mt-auto pt-4 border-t border-border/20">
+          <div className="flex items-center -space-x-2">
+            {event.speakers.slice(0, 3).map((speaker, index) => (
+              <div key={index} className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-card">
+                <Image
+                  src={speaker.image || '/img/team/placeholder.jpg'}
+                  alt={speaker.name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            ))}
+            {event.speakers.length > 3 && (
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium">
+                +{event.speakers.length - 3}
+              </div>
+            )}
+          </div>
+          <p className="text-xs text-text-tertiary mt-2">
+            {event.speakers[0].name}
+            {event.speakers.length > 1 && ` + ${event.speakers.length - 1} more`}
+          </p>
+        </div>
+      )}
+    </div>
+  </div>
+);
 
 const AgendaSection = () => {
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch('/data/events.json');
+        if (!response.ok) {
+          throw new Error('Failed to fetch events');
+        }
+        const data = await response.json();
+        
+        // Sort events by date (newest first) and take first 4
+        const sortedEvents = data.events.sort((a: Event, b: Event) => 
+          new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+        
+        setUpcomingEvents(sortedEvents.slice(0, 4));
+      } catch (err) {
+        console.error('Error fetching events:', err);
+        setError('Failed to load events. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="agenda" className="relative py-16 sm:py-24 lg:py-32 overflow-hidden">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="animate-pulse">
+            <div className="h-6 w-48 bg-gray-200 rounded"></div>
+            <div className="mt-4 h-12 w-3/4 bg-gray-200 rounded"></div>
+            <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="h-[500px] bg-gray-100 rounded-2xl"></div>
+              <div className="space-y-6">
+                <div className="h-8 w-64 bg-gray-200 rounded"></div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="h-48 bg-gray-100 rounded-xl"></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section id="agenda" className="relative py-16 sm:py-24 lg:py-32 overflow-hidden">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+          <div className="p-8 bg-red-50 rounded-xl">
+            <p className="text-red-600">{error}</p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="agenda" className="relative py-16 sm:py-24 lg:py-32 overflow-hidden">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -155,7 +193,7 @@ const AgendaSection = () => {
               <h2 className="text-2xl font-bold text-foreground mb-2">Synara Magazine</h2>
               
               <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                SYNARA 2025: Where AI meets imagination, unveiling our inaugural Generative-AI edition.
+                Our Inaugural Magazine explores the cutting-edge world of Generative AI, featuring groundbreaking research and insights from leading experts in the field.
               </p>
               
               <div className="space-y-2 mb-4">
@@ -169,7 +207,7 @@ const AgendaSection = () => {
                       <path d="M7 15.1c.8 1 2 1.9 3 1.9s2.3-.9 3-2c.7-1.1 2-1.9 3-1.9s2.3.8 3 1.9"></path>
                     </svg>
                   </div>
-                  <span className="text-xs text-foreground">Quarterly Issues</span>
+                  <span className="text-xs text-foreground">Inaugural Issue</span>
                 </div>
                 
                 <div className="flex items-center gap-2">
@@ -181,7 +219,7 @@ const AgendaSection = () => {
                       <line x1="22" y1="11" x2="16" y2="11"></line>
                     </svg>
                   </div>
-                  <span className="text-xs text-foreground">Research & Interviews</span>
+                  <span className="text-xs text-foreground">Generative AI Special</span>
                 </div>
               </div>
               
@@ -199,27 +237,45 @@ const AgendaSection = () => {
           <div className="space-y-4">
             {/* Top Half - Featured Events */}
             <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-3xl p-4 shadow-xl">
-              <h2 className="text-xl font-bold text-foreground mb-3">Past Events</h2>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-xl font-bold text-foreground">Upcoming Events</h2>
+                <a 
+                  href="/events" 
+                  className="text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
+                >
+                  View all
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m9 18 6-6-6-6"/>
+                  </svg>
+                </a>
+              </div>
               <div className="space-y-3">
-                {recentFeatures.slice(0, 3).map((event) => (
-                  <div key={event.title} className="group relative overflow-hidden rounded-xl border border-border/50 p-3 hover:bg-card/30 transition-colors">
+                {upcomingEvents.slice(0, 3).map((event) => (
+                  <div key={event.id} className="group relative overflow-hidden rounded-xl border border-border/50 p-3 hover:bg-card/30 transition-colors">
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0 w-16 h-12 rounded-md overflow-hidden bg-muted">
-                        {event.image && (
-                          <Image
-                            src={event.image}
-                            alt={event.title}
-                            width={64}
-                            height={48}
-                            className="w-full h-full object-cover"
-                          />
-                        )}
+                        <Image
+                          src={event.image}
+                          alt={event.title}
+                          width={64}
+                          height={48}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-medium text-foreground truncate">{event.title}</h3>
-                        <p className="text-xs text-muted-foreground">{event.date}</p>
+                        <h3 className="text-sm font-medium text-foreground line-clamp-2 leading-tight">{event.title}</h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          </span>
+                          {event.isNew && (
+                            <span className="text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded-full">
+                              New
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <div className="text-primary">
+                      <div className="text-muted-foreground group-hover:text-primary transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <circle cx="12" cy="12" r="10"></circle>
                           <polyline points="12 16 16 12 12 8"></polyline>

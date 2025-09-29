@@ -139,7 +139,7 @@ const SpeakersSection = () => {
     },
     {
       name: 'Dr. Pallavi Chavan',
-      title: 'HOD of Information Technology',
+      title: 'HOD of Information Technology\nMentor',
       image: '/img/faculty_img/pallavimam.jpg',
     }
   ];

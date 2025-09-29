@@ -1,0 +1,107 @@
+{
+  "events": [
+    {
+      "id": 1,
+      "title": "AI & Machine Learning Workshop",
+      "slug": "ai-ml-workshop",
+      "date": "2025-10-15",
+      "time": "10:00 AM - 4:00 PM",
+      "location": "RAIT Main Auditorium",
+      "image": "/img/events/ai-workshop.jpg",
+      "isNew": true,
+      "description": "A hands-on workshop covering the fundamentals of AI and Machine Learning. Learn from industry experts and get practical experience with real-world projects.",
+      "speakers": [
+        {
+          "name": "Dr. Rajesh Sharma",
+          "title": "AI Research Lead, TechCorp",
+          "image": "/img/speakers/rajesh-sharma.jpg"
+        },
+        {
+          "name": "Priya Patel",
+          "title": "ML Engineer, DataLabs",
+          "image": "/img/speakers/priya-patel.jpg"
+        }
+      ],
+      "details": {
+        "overview": "This workshop will introduce participants to the core concepts of AI and Machine Learning, including supervised and unsupervised learning, neural networks, and deep learning.",
+        "topics": [
+          "Introduction to AI & ML",
+          "Supervised vs Unsupervised Learning",
+          "Neural Networks Basics",
+          "Hands-on TensorFlow/Keras",
+          "Real-world Applications"
+        ],
+        "prerequisites": "Basic programming knowledge in Python",
+        "whatToBring": "Laptop with Python and required libraries installed"
+      },
+      "tags": ["workshop", "ai", "machine learning", "beginner"]
+    },
+    {
+      "id": 2,
+      "title": "Blockchain Revolution",
+      "slug": "blockchain-revolution",
+      "date": "2025-10-22",
+      "time": "2:00 PM - 5:00 PM",
+      "location": "CS Department Seminar Hall",
+      "image": "/img/events/blockchain.jpg",
+      "isNew": true,
+      "description": "Explore the world of blockchain technology, cryptocurrencies, and decentralized applications in this interactive session.",
+      "speakers": [
+        {
+          "name": "Amit Verma",
+          "title": "Blockchain Architect, ChainTech",
+          "image": "/img/speakers/amit-verma.jpg"
+        }
+      ],
+      "details": {
+        "overview": "This session will cover the fundamentals of blockchain technology, smart contracts, and their real-world applications beyond cryptocurrencies.",
+        "topics": [
+          "Blockchain Fundamentals",
+          "Smart Contracts",
+          "Decentralized Applications",
+          "Use Cases in Various Industries"
+        ],
+        "prerequisites": "Basic understanding of programming concepts",
+        "whatToBring": "Laptop with internet access"
+      },
+      "tags": ["blockchain", "cryptocurrency", "decentralization"]
+    },
+    {
+      "id": 3,
+      "title": "Hackathon 2025",
+      "slug": "hackathon-2025",
+      "date": "2025-11-05",
+      "time": "9:00 AM - 9:00 PM",
+      "location": "RAIT Innovation Center",
+      "image": "/img/events/hackathon.jpg",
+      "isNew": false,
+      "description": "24-hour hackathon where participants will build innovative solutions to real-world problems using technology.",
+      "speakers": [
+        {
+          "name": "Neha Kapoor",
+          "title": "CTO, CodeForGood",
+          "image": "/img/speakers/neha-kapoor.jpg"
+        },
+        {
+          "name": "Rahul Mehta",
+          "title": "Senior Developer, HackMentors",
+          "image": "/img/speakers/rahul-mehta.jpg"
+        }
+      ],
+      "details": {
+        "overview": "Join us for an exciting 24-hour coding competition where you'll work in teams to build innovative solutions. The theme will be announced at the event.",
+        "topics": [
+          "Team Formation",
+          "Theme Announcement",
+          "Coding & Development",
+          "Mentorship Sessions",
+          "Project Presentations"
+        ],
+        "prerequisites": "Open to all students with programming experience",
+        "whatToBring": "Laptop, chargers, and any development tools you prefer"
+      },
+      "registrationLink": "https://example.com/hackathon-register",
+      "tags": ["hackathon", "coding", "competition"]
+    }
+  ]
+}

@@ -4,16 +4,19 @@ import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { usePathname } from 'next/navigation';
 
 const navItems = [
-  { name: "Home", href: "#home" },
-  { name: "About", href: "#about" },
-  { name: "Domains", href: "#domains" },
-  { name: "Team", href: "#team" },
-  { name: "Contact", href: "#contact" },
+  { name: "Home", href: "/" },
+  { name: "About", href: "/#about" },
+  { name: "Domains", href: "/#domains" },
+  { name: "Team", href: "/#team" },
+  { name: "Contact", href: "/#contact" },
 ];
 
 const Header: React.FC = () => {
+  const pathname = usePathname();
+  const isEventsPage = pathname === '/events';
   const [isScrolledDown, setIsScrolledDown] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
 
@@ -111,27 +114,30 @@ const Header: React.FC = () => {
             }`}
           >
             {navItems.map((item) => (
-              <a
+              <Link
                 key={item.name}
                 href={item.href}
                 className="text-white text-base font-normal rounded-full px-4 py-2 hover:bg-white/20 transition-colors"
                 style={{ backgroundColor: "rgba(255,255,255,0.12)" }}
+                scroll={!item.href.startsWith('/#')}
               >
                 {item.name}
-              </a>
+              </Link>
             ))}
           </nav>
 
-          {/* CTA */}
-          <a
-            href="#tickets"
-            className="flex items-center gap-2.5 bg-white text-black font-medium rounded-full pl-5 pr-1.5 py-1.5 md:pl-6 md:pr-2 md:py-2 text-base transition-all duration-300 flex-shrink-0 hover:bg-gray-100"
-          >
-            Events
-            <span className="bg-gradient-to-br from-blue-600 to-indigo-500 rounded-full p-1 flex items-center justify-center">
-              <ArrowUpRight size={16} strokeWidth={2.5} className="text-white" />
-            </span>
-          </a>
+          {/* CTA - Hidden on events page */}
+          {!isEventsPage && (
+            <Link
+              href="/events"
+              className="flex items-center gap-2.5 bg-white text-black font-medium rounded-full pl-5 pr-1.5 py-1.5 md:pl-6 md:pr-2 md:py-2 text-base transition-all duration-300 flex-shrink-0 hover:bg-gray-100"
+            >
+              Events
+              <span className="bg-gradient-to-br from-blue-600 to-indigo-500 rounded-full p-1 flex items-center justify-center">
+                <ArrowUpRight size={16} strokeWidth={2.5} className="text-white" />
+              </span>
+            </Link>
+          )}
         </div>
       </div>
     </header>
