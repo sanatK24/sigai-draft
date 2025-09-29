@@ -5,8 +5,14 @@
       "destination": "/"
     }
   ],
-  "output": "standalone",
-  "buildCommand": "next build",
-  "devCommand": "next dev",
-  "installCommand": "npm install"
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/.*", "dest": "/" }
+  ]
 }
