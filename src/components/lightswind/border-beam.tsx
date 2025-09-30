@@ -93,9 +93,9 @@ export const BorderBeam = ({
   // Calculate actual duration based on speed multiplier
   const actualDuration = speedMultiplier ? duration / speedMultiplier : duration;
   
-  // Generate box shadow for glow effect
+  // Generate box shadow for glow effect using CSS variables
   const glowEffect = glowIntensity > 0 
-    ? `0 0 ${glowIntensity * 5}px ${glowIntensity * 2}px var(--color-from)` 
+    ? `0 0 calc(var(--glow-intensity, 1) * 5px) calc(var(--glow-intensity, 1) * 2px) var(--color-from)` 
     : undefined;
 
   return (
@@ -117,13 +117,14 @@ export const BorderBeam = ({
         style={{
           width: size,
           offsetPath: `rect(0 auto auto 0 round ${beamBorderRadius ?? size}px)`,
-          "--color-from": colorFrom,
-          "--color-to": colorTo,
+          '--color-from': colorFrom,
+          '--color-to': colorTo,
+          '--glow-intensity': glowIntensity,
           opacity: opacity,
-          boxShadow: glowEffect,
-          borderRadius: beamBorderRadius ? `${beamBorderRadius}px` : undefined,
+          ...(glowIntensity > 0 ? { boxShadow: glowEffect } : {}),
+          ...(beamBorderRadius ? { borderRadius: `${beamBorderRadius}px` } : {}),
           ...style,
-        } as any}
+        } as React.CSSProperties}
         initial={{ offsetDistance: `${initialOffset}%` }}
         animate={{
           offsetDistance: reverse
