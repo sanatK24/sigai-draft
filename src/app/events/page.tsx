@@ -14,10 +14,15 @@ interface Event {
   description: string;
   image: string;
   isNew?: boolean;
+  registerLink: string;
   speakers?: Array<{
     name: string;
     role: string;
     imageUrl?: string;
+  }>;
+  details?: Array<{
+    icon: React.ReactNode;
+    text: string;
   }>;
 }
 
@@ -31,6 +36,7 @@ const events: Event[] = [
     description: 'A 36-hour hackathon bringing together talented developers and innovators to build AI-powered solutions. Join us for a weekend of coding, learning, and networking with industry experts.',
     image: '/img/Sigai Events/Kleos_Banner.svg',
     isNew: true,
+    registerLink: '#',
     speakers: [
       {
         name: 'Dr. Rajesh Ingle',
@@ -42,6 +48,11 @@ const events: Event[] = [
         role: 'AI Researcher',
         imageUrl: '/img/team/placeholder.jpg'
       }
+    ],
+    details: [
+      { icon: <Calendar size={16} />, text: 'Jul 18-19, 2025' },
+      { icon: <Clock size={16} />, text: '9:00 AM - 6:00 PM' },
+      { icon: <MapPin size={16} />, text: 'RAIT, Nerul' }
     ]
   },
   {
@@ -52,12 +63,18 @@ const events: Event[] = [
     location: 'SIGAI Lab, RAIT',
     description: 'Hands-on workshop exploring the latest advancements in generative AI and autonomous agents. Learn from industry experts and get hands-on experience with cutting-edge AI technologies.',
     image: '/img/Sigai Events/STTP.webp',
+    registerLink: '#',
     speakers: [
       {
         name: 'Prof. Meera Sharma',
         role: 'AI Researcher',
         imageUrl: '/img/team/placeholder.jpg'
       }
+    ],
+    details: [
+      { icon: <Calendar size={16} />, text: 'Jun 12, 2025' },
+      { icon: <Clock size={16} />, text: '10:00 AM - 4:00 PM' },
+      { icon: <MapPin size={16} />, text: 'SIGAI Lab, RAIT' }
     ]
   },
   {
@@ -68,12 +85,18 @@ const events: Event[] = [
     location: 'Main Auditorium, RAIT',
     description: 'Exploring AI applications in healthcare and medical research with industry experts. Discover how AI is transforming diagnostics, treatment planning, and patient care.',
     image: '/img/Sigai Events/GenAI-WIP.webp',
+    registerLink: '#',
     speakers: [
       {
         name: 'Dr. Anjali Deshpande',
         role: 'Healthcare AI Specialist',
         imageUrl: '/img/team/placeholder.jpg'
       }
+    ],
+    details: [
+      { icon: <Calendar size={16} />, text: 'May 25, 2025' },
+      { icon: <Clock size={16} />, text: '11:00 AM - 5:00 PM' },
+      { icon: <MapPin size={16} />, text: 'Main Auditorium, RAIT' }
     ]
   }
 ];
