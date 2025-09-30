@@ -163,7 +163,7 @@ const HeroSection = () => {
                   width: 'calc(100% + 8px)',
                   height: 'calc(100% + 8px)',
                   margin: '-4px',
-                  '--glow-intensity': '1.5',
+                  ['--glow-intensity' as any]: '1.5',
                 }}
               />
             </div>
