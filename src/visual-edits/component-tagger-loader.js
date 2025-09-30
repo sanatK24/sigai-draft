@@ -1,11 +1,8 @@
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = componentTagger;
-const parser_1 = require("@babel/parser");
-const magic_string_1 = require("magic-string");
-const estree_walker_1 = require("estree-walker");
-const path = require("path");
+// Using ES modules
+import * as parser_1 from "@babel/parser";
+import { MagicString } from "magic-string";
+import { walk as estreeWalker } from "estree-walker";
+import * as path from "path";
 /* ───────────────────────────────────────────── Blacklists */
 const threeFiberElems = [
     "object3D",

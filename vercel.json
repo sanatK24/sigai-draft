@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/:path*",
+      "destination": "/"
+    }
+  ],
+  "framework": "nextjs",
+  "cleanUrls": true,
+  "trailingSlash": false
+}

@@ -2,19 +2,23 @@
     "name": "app",
     "version": "0.1.0",
     "private": true,
+    "type": "commonjs",
     "scripts": {
         "dev": "next dev --turbopack",
         "build": "next build",
         "start": "next start",
         "lint": "next lint"
     },
+    "build": {
+        "esbuildOptions": {
+            "loose": true
+        }
+    },
     "dependencies": {
         "@babel/parser": "^7.28.4",
         "@developer-hub/liquid-glass": "^1.2.3",
         "@headlessui/react": "^2.2.8",
         "@heroicons/react": "^2.2.0",
-        "@hookform/resolvers": "^5.1.1",
-        "@libsql/client": "^0.15.15",
         "@number-flow/react": "^0.5.10",
         "@radix-ui/react-accordion": "^1.2.11",
         "@radix-ui/react-alert-dialog": "^1.1.14",

@@ -1,10 +1,15 @@
 import type { NextConfig } from "next";
-import path from "node:path";
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
 
-const LOADER = path.resolve(__dirname, 'src/visual-edits/component-tagger-loader.js');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const nextConfig: NextConfig = {
+  output: 'export',
+  distDir: 'out',
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -16,14 +21,21 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  outputFileTracingRoot: path.resolve(__dirname, '../../'),
-  turbopack: {
-    rules: {
-      "*.{jsx,tsx}": {
-        loaders: [LOADER]
-      }
+  trailingSlash: true,
+  skipTrailingSlashRedirect: true,
+  outputFileTracingRoot: resolve(__dirname, '../../'),
+  experimental: {
+    // appDir is now stable in Next.js 13+
+  },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.module.rules.push({
+        test: /\.(jsx|tsx)$/,
+        use: [resolve(__dirname, 'src/visual-edits/component-tagger-loader.js')],
+      });
     }
-  }
+    return config;
+  },
 };
 
 export default nextConfig;
