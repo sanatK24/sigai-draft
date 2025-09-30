@@ -1,6 +1,6 @@
 // Using ES modules
 import * as parser_1 from "@babel/parser";
-import { MagicString } from "magic-string";
+import MagicString from "magic-string";
 import { walk as estreeWalker } from "estree-walker";
 import * as path from "path";
 /* ───────────────────────────────────────────── Blacklists */
