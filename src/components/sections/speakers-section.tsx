@@ -205,6 +205,7 @@ const SpeakerCard = ({
 
         {/* Info Panel - Only for faculty */}
         {isFaculty && isHovered && (
+          
           <div 
             className={`absolute ${
               speaker.name.includes('Sangita') 
