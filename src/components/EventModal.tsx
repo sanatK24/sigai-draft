@@ -1,6 +1,6 @@
 "use client";
 
-import { X } from "lucide-react";
+import { X, ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import { useEffect } from "react";
 
@@ -12,6 +12,11 @@ interface EventModalProps {
     date: string;
     description: string;
     image?: string;
+    registerLink: string;
+    details?: Array<{
+      icon: React.ReactNode;
+      text: string;
+    }>;
     speakers?: Array<{
       name: string;
       role: string;
@@ -80,9 +85,33 @@ export default function EventModal({ isOpen, onClose, event }: EventModalProps) 
 
             {/* Details */}
             <div className="p-6 overflow-y-auto max-h-[70vh]">
-              <div className="prose prose-invert max-w-none">
+              {/* Event Details */}
+              {event.details && event.details.length > 0 && (
+                <div className="space-y-3 mb-6">
+                  {event.details.map((detail, index) => (
+                    <div key={index} className="flex items-center gap-2 text-gray-300">
+                      <span className="text-blue-400">{detail.icon}</span>
+                      <span className="text-sm">{detail.text}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="prose prose-invert max-w-none mb-6">
                 <p className="text-gray-300">{event.description}</p>
               </div>
+
+              {/* Register Button */}
+              <a
+                href={event.registerLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium hover:opacity-90 transition-opacity"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Register Now
+                <ArrowUpRight size={16} className="ml-2" />
+              </a>
 
               {event.speakers && event.speakers.length > 0 && (
                 <div className="mt-8">

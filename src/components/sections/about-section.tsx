@@ -3,8 +3,9 @@
 import Image from 'next/image';
 import { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import CountUp from '../ui/count-up';
 
-const AboutSection: React.FC = () => {
+const AboutSection = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
@@ -75,15 +76,7 @@ const AboutSection: React.FC = () => {
           {/* Text Content */}
           <div className="flex flex-col gap-6">
             <div className="space-y-4">
-              <p className="text-lg leading-relaxed text-text-secondary">
-                <span className="text-blue-400 font-medium">RAIT ACM SIGAI</span> (Special Interest Group in <span className="text-blue-400 font-medium">Artificial Intelligence</span>) is a dynamic committee established in <span className="text-blue-400 font-medium">2024</span>, dedicated to exploring the vast potential of AI. In today's rapidly evolving technological landscape, AI is <span className="text-blue-400 font-medium">revolutionizing industries</span> and <span className="text-blue-400 font-medium">reshaping career opportunities</span> across the globe.
-              </p>
-              <p className="text-lg leading-relaxed text-text-secondary">
-                Mastering <span className="text-blue-400 font-medium">AI</span> has become <span className="text-blue-400 font-medium">essential</span> for maintaining a <span className="text-blue-400 font-medium">competitive edge</span> in the modern workforce. It not only enhances <span className="text-blue-400 font-medium">problem-solving</span> capabilities and <span className="text-blue-400 font-medium">technical expertise</span> but also equips individuals with the tools to drive <span className="text-blue-400 font-medium">meaningful innovation</span> in their respective fields.
-              </p>
-              <p className="text-lg leading-relaxed text-text-secondary">
-                At <span className="text-blue-400 font-medium">RAIT ACM SIGAI</span>, we are committed to <span className="text-blue-400 font-medium">empowering students</span> through comprehensive learning opportunities. Our initiatives include <span className="text-blue-400 font-medium">interactive seminars</span>, <span className="text-blue-400 font-medium">expert-led webinars</span>, <span className="text-blue-400 font-medium">hands-on workshops</span>, and <span className="text-blue-400 font-medium">engaging events</span>—all designed to keep participants at the <span className="text-blue-400 font-medium">forefront of AI advancements</span> and <span className="text-blue-400 font-medium">practical applications</span>.
-              </p>
+              {/* Text content has been removed */}
             </div>
           </div>
         </div>
@@ -92,10 +85,10 @@ const AboutSection: React.FC = () => {
         <div className="w-full max-w-4xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { number: '12', label: 'Months of Experience' },
-              { number: '15', label: 'Events Conducted' },
-              { number: '3', label: 'Flagship Events' },
-              { number: '52', label: 'Active Members' }
+              { number: 12, label: 'Months of Experience' },
+              { number: 15, label: 'Events Conducted' },
+              { number: 3, label: 'Flagship Events' },
+              { number: 52, label: 'Active Members' }
             ].map((stat, index) => (
               <motion.div 
                 key={stat.label}
@@ -109,20 +102,20 @@ const AboutSection: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 
                 {/* Number with gradient text */}
-                <div className="relative
-                  text-4xl md:text-5xl font-bold mb-2 
-                  bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-blue-600
-                  group-hover:from-blue-300 group-hover:to-blue-500 transition-all duration-300">
-                  {stat.number}
+                <div className="relative">
+                  <div className="text-4xl md:text-5xl font-bold mb-2 group-hover:from-blue-300 group-hover:to-blue-500 transition-all duration-300">
+                    <CountUp 
+                      to={stat.number} 
+                      duration={2} 
+                      separator=","
+                      className="count-up text-white"
+                    />
+                  </div>
+                  <p className="text-sm text-zinc-400 mt-2">{stat.label}</p>
+                  
+                  {/* Bottom accent */}
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500/0 via-blue-500/50 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
-                
-                {/* Label */}
-                <div className="text-sm md:text-base text-zinc-400 font-medium">
-                  {stat.label}
-                </div>
-                
-                {/* Bottom accent */}
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500/0 via-blue-500/50 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </motion.div>
             ))}
           </div>

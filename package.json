@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "@babel/parser": "^7.28.4",
+        "@developer-hub/liquid-glass": "^1.2.3",
         "@headlessui/react": "^2.2.8",
         "@heroicons/react": "^2.2.0",
         "@hookform/resolvers": "^5.1.1",
@@ -66,6 +67,7 @@
         "estree-walker": "2.0.2",
         "framer-motion": "^12.23.12",
         "input-otp": "^1.4.2",
+        "lightswind": "^3.1.18",
         "lucide-react": "^0.544.0",
         "mini-svg-data-uri": "^1.4.4",
         "motion": "^12.23.12",

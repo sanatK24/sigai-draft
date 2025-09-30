@@ -23,7 +23,7 @@ const FooterSection = () => {
             <div className="pointer-events-none absolute -inset-6 rounded-full blur-3xl opacity-40" style={{ backgroundImage: 'linear-gradient(90deg, #3b4fde, #8b5cf6)' }} />
             <Image
               src="/img/sigai-logo.png"
-              alt="RAIT ACM SIGAI wordmark"
+              alt="RAIT ACM SIGAI Student Chapter wordmark"
               width={260}
               height={50}
               className="relative w-[200px] sm:w-[240px] h-auto"
@@ -112,7 +112,7 @@ const FooterSection = () => {
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
           <div className="flex flex-col sm:flex-row items-center gap-y-2 gap-x-6 text-sm text-text-secondary">
-            <p>All Rights Reserved @RAIT ACM SIGAI</p>
+            <p>All Rights Reserved @RAIT ACM SIGAI Student Chapter</p>
             <a href="https://framer.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
               {/* Terms and Conditions */}
             </a>

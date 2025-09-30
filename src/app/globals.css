@@ -17,6 +17,33 @@ body {
   padding-top: var(--header-height);
 }
 
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee-reverse {
+  animation: marquee 35s linear infinite reverse;
+}
+
+.group:hover .animate-marquee,
+.group:hover .animate-marquee-reverse {
+  animation-play-state: paused;
+}
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @custom-variant dark (&:is(.dark *));
@@ -146,6 +173,17 @@ body {
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-body);
+  }
+
+  /* Accordion Toggle States */
+  [data-state="open"] [data-state="open"],
+  [data-state="closed"] [data-state="closed"] {
+    display: none;
+  }
+  
+  [data-state="open"],
+  [data-state="closed"] {
+    transition: opacity 200ms ease, transform 200ms ease;
   }
 
   h1, h2, h3, h4, h5, h6 {

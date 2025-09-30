@@ -2,11 +2,25 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { ArrowUpRight } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { ArrowUpRight, Calendar, MapPin, Clock } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { BorderBeam } from '../lightswind/border-beam';
+import { useState } from 'react';
+import EventModal from '../EventModal';
 import Header from '../header';
 
 const HeroSection = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const eventDetails = {
+    title: "IGNASIA WORKSHOP 2025",
+    date: "October 15, 2025",
+    time: "10:00 AM - 5:00 PM",
+    location: "RAIT Campus, Navi Mumbai",
+    description: "Join us for an immersive workshop on the latest advancements in AI and Machine Learning. Learn from industry experts and get hands-on experience with cutting-edge technologies.",
+    image: "/img/events/ignasia-workshop.jpg",
+    registerLink: "https://example.com/register/ignasia-2025"
+  };
   return (
     <section className="relative isolate flex flex-col items-center justify-center min-h-screen bg-black text-white overflow-hidden">
       {/* Animated gradient background */}
@@ -32,7 +46,7 @@ const HeroSection = () => {
       
       {/* Top-right Logos with Label */}
       <div className="absolute top-6 right-6 z-30 flex flex-col items-end gap-2">
-        <div className="bg-white/10 backdrop-blur-sm text-white text-xs font-medium px-3 py-1 rounded-full border border-white/20">
+        <div className="bg-white/5 backdrop-blur-xl text-white/90 text-xs font-medium px-4 py-1.5 rounded-full border border-white/20 shadow-lg shadow-black/20 hover:bg-white/10 transition-all duration-300">
           Our Sister Chapters
         </div>
         <div className="flex items-center gap-3">
@@ -117,17 +131,68 @@ const HeroSection = () => {
       <div className="container relative z-10 flex flex-col items-center text-center pt-24 pb-32 px-6">
         {/* Eyebrow with event title */}
         <motion.div 
-          className="mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
         >
-          <span className="inline-block bg-white/10 backdrop-blur-sm text-white/80 text-sm font-medium px-4 py-1.5 rounded-full mb-3">
-            Upcoming Event
-          </span>
+          <div className="relative group inline-block mb-3">
+            <button 
+              className="relative z-10 inline-flex items-center bg-white/10 backdrop-blur-sm text-white/80 hover:text-white text-sm font-medium px-4 py-1.5 rounded-full border border-white/10 group-hover:border-transparent transition-all duration-300 overflow-hidden cursor-pointer"
+              onClick={() => setIsModalOpen(true)}
+            >
+              <span className="inline-block group-hover:transform group-hover:-translate-y-full group-hover:opacity-0 transition-all duration-300">
+                Upcoming Event
+              </span>
+              <span className="absolute inset-0 flex items-center justify-center transform translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                Register Now →
+              </span>
+            </button>
+            <div className="absolute inset-0 rounded-full overflow-visible">
+              <BorderBeam
+                size={400}
+                duration={2.5}
+                delay={0}
+                colorTo="#7c3aed"
+                opacity={1}
+                glowIntensity={1.5}
+                beamBorderRadius={9999}
+                borderThickness={3}
+                speedMultiplier={1.2}
+                className="transition-all duration-300"
+                style={{
+                  width: 'calc(100% + 8px)',
+                  height: 'calc(100% + 8px)',
+                  margin: '-4px',
+                  '--glow-intensity': '1.5',
+                }}
+              />
+            </div>
+          </div>
           <h2 className="text-2xl md:text-3xl font-semibold text-white">
             IGNASIA WORKSHOP 2025
           </h2>
+          
+          {/* Event Details Modal */}
+          <AnimatePresence>
+            {isModalOpen && (
+              <EventModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                event={{
+                  title: eventDetails.title,
+                  date: eventDetails.date,
+                  description: eventDetails.description,
+                  image: eventDetails.image,
+                  registerLink: eventDetails.registerLink,
+                  details: [
+                    { icon: <Calendar size={16} />, text: eventDetails.date },
+                    { icon: <Clock size={16} />, text: eventDetails.time },
+                    { icon: <MapPin size={16} />, text: eventDetails.location },
+                  ]
+                }}
+              />
+            )}
+          </AnimatePresence>
         </motion.div>
         
         <div className="w-full max-w-[1000px] mb-6 flex justify-center">
@@ -139,6 +204,7 @@ const HeroSection = () => {
               lineHeight: '1',
               height: '319px',
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
               textTransform: 'uppercase',
@@ -146,7 +212,7 @@ const HeroSection = () => {
               textShadow: '0 0 10px rgba(255, 255, 255, 0.3)'
             }}
           >
-            RAIT ACM SIGAI
+            <span>RAIT ACM SIGAI</span> <span style={{ fontSize: '0.6em', color: 'white' }}>STUDENT CHAPTER</span>
           </h1>
         </div>
         <div className="flex flex-col items-center">

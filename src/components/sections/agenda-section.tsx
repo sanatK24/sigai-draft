@@ -161,7 +161,7 @@ const AgendaSection = () => {
             <h4 className="text-base font-medium text-text-secondary">Events</h4>
           </div>
           <h2 className="mt-6 text-[40px] sm:text-[56px] lg:text-[64px] leading-tight font-bold tracking-tighter text-text-primary">
-            Discover the <span className="text-zinc-400">RAIT ACM SIGAI</span> 
+            Discover the <span className="text-zinc-400">RAIT ACM SIGAI Student Chapter</span> 
           </h2>
         </div>
 
