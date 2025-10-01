@@ -49,6 +49,31 @@ body {
   animation: marquee 12s linear infinite;
 }
 
+/* Horizontal Scrollbar Styles */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* Smooth scrolling for the carousel */
+.scroll-smooth {
+  scroll-behavior: smooth;
+}
+
+/* Card hover effects */
+.card-hover-scale {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover-scale:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
 .animate-marquee-reverse {
   animation: marquee 14s linear infinite reverse;
 }

@@ -11,10 +11,13 @@ import Header from '../header';
 interface Event {
   id: string;
   title: string;
-  start_date: string;
-  end_date: string;
+  date: string;
+  time: string;
+  end_date?: string | null;
   location: string;
-  slug: string;
+  image?: string | null;
+  registration_link?: string | null;
+  slug?: string;
 }
 
 const HeroSection = () => {
@@ -28,12 +31,16 @@ const HeroSection = () => {
         const supabase = createClient();
         const today = new Date().toISOString().split('T')[0];
         
-        const { data: events, error } = await supabase
+        // First, try to find events with end_date in the future
+        // If end_date is not available, use the event date
+        let query = supabase
           .from('events')
           .select('*')
-          .gte('end_date', today)
-          .order('start_date', { ascending: true })
+          .or(`end_date.gte.${today},and(end_date.is.null,date.gte.${today})`)
+          .order('date', { ascending: true })
           .limit(1);
+
+        const { data: events, error } = await query;
 
         if (error) throw error;
         

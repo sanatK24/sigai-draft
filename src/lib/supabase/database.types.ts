@@ -15,39 +15,45 @@ export interface Database {
           created_at: string
           title: string
           description: string | null
-          start_date: string
-          end_date: string
-          location: string | null
-          image_url: string | null
-          slug: string
-          registration_url: string | null
+          date: string  // Changed from start_date to date
+          time: string
+          location: string
+          image: string | null  // Changed from image_url to image
+          end_date?: string | null
+          registration_link?: string | null  // Changed from registration_url
           is_featured: boolean
+          category?: string | null
+          updated_at: string
         }
         Insert: {
           id?: string
           created_at?: string
           title: string
           description?: string | null
-          start_date: string
-          end_date: string
-          location?: string | null
-          image_url?: string | null
-          slug: string
-          registration_url?: string | null
+          date: string  // Changed from start_date to date
+          time: string
+          location: string
+          image?: string | null  // Changed from image_url
+          end_date?: string | null
+          registration_link?: string | null  // Changed from registration_url
           is_featured?: boolean
+          category?: string | null
+          updated_at?: string
         }
         Update: {
           id?: string
           created_at?: string
           title?: string
           description?: string | null
-          start_date?: string
-          end_date?: string
-          location?: string | null
-          image_url?: string | null
-          slug?: string
-          registration_url?: string | null
+          date?: string  // Changed from start_date to date
+          time?: string
+          location?: string
+          image?: string | null  // Changed from image_url
+          end_date?: string | null
+          registration_link?: string | null  // Changed from registration_url
           is_featured?: boolean
+          category?: string | null
+          updated_at?: string
         }
       }
     }

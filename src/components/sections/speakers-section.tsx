@@ -365,7 +365,7 @@ const SpeakersSection = () => {
               <h4 className="text-sm font-medium uppercase tracking-[0.1em] text-text-secondary">OUR TEAM</h4>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight leading-tight text-white mb-3">
-              Meet the <span className="text-purple-400">Core Team</span>
+              Meet the <span className="text-purple-400 font-['PP_Editorial_New']">Core</span> <span className="text-white">Team</span>
             </h2>
             <p className="text-zinc-400 max-w-2xl">
               The passionate students driving the RAIT ACM SIGAI Student Chapter forward.

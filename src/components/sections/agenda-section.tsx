@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Event } from '@/types/event';
@@ -80,26 +80,180 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => (
   </div>
 );
 
+interface HorizontalEventCarouselProps {
+  events: Event[];
+}
+
+const HorizontalEventCarousel: React.FC<HorizontalEventCarouselProps> = ({ events }) => {
+  const [activeIndex, setActiveIndex] = useState(1);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to center the active card
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    const activeCard = scrollContainer.querySelector('.card-active');
+    if (activeCard) {
+      const containerWidth = scrollContainer.offsetWidth;
+      const cardRect = activeCard.getBoundingClientRect();
+      const containerRect = scrollContainer.getBoundingClientRect();
+      const scrollLeft = cardRect.left - containerRect.left + (scrollContainer.scrollLeft - (containerWidth / 2) + (cardRect.width / 2));
+      
+      scrollContainer.scrollTo({
+        left: scrollLeft,
+        behavior: 'smooth'
+      });
+    }
+  }, [activeIndex]);
+
+  // Handle scroll events to update active index
+  const handleScroll = () => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    const containerWidth = scrollContainer.offsetWidth;
+    const scrollPosition = scrollContainer.scrollLeft + (containerWidth / 2);
+    const cards = Array.from(scrollContainer.querySelectorAll('.event-card'));
+    
+    let closestCard = cards[0];
+    let closestDistance = Infinity;
+
+    cards.forEach((card) => {
+      const rect = card.getBoundingClientRect();
+      const cardCenter = rect.left + (rect.width / 2);
+      const distance = Math.abs(scrollPosition - cardCenter);
+      
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestCard = card;
+      }
+    });
+
+    const newIndex = cards.indexOf(closestCard);
+    if (newIndex !== -1 && newIndex !== activeIndex) {
+      setActiveIndex(newIndex);
+    }
+  };
+
+  return (
+    <div className="relative mt-12">
+      <div 
+        ref={scrollContainerRef}
+        onScroll={handleScroll}
+        className="flex overflow-x-auto hide-scrollbar snap-x snap-mandatory py-8 px-4 gap-6 scroll-smooth"
+        style={{
+          scrollPadding: '0 30%',
+          msOverflowStyle: 'none',
+          scrollbarWidth: 'none'
+        }}
+      >
+        {/* Left padding for first card centering */}
+        <div className="flex-shrink-0 w-[calc(50%-200px)] md:w-[calc(50%-300px)]" />
+        
+        {events.map((event, index) => {
+          const isActive = index === activeIndex;
+          return (
+            <div 
+              key={event.id}
+              className={`event-card flex-shrink-0 w-[280px] md:w-[400px] transition-all duration-300 ease-in-out ${
+                isActive ? 'card-active scale-110 z-10' : 'scale-90 opacity-80 hover:opacity-100 hover:scale-95'
+              }`}
+              onClick={() => setActiveIndex(index)}
+            >
+              <Link href={`/events/${event.slug || '#'}`} className="block h-full">
+                <div className={`bg-card/50 backdrop-blur-sm border ${
+                  isActive ? 'border-primary/50' : 'border-border/50'
+                } rounded-2xl overflow-hidden shadow-lg h-full flex flex-col transition-all duration-300`}>
+                  <div className="relative h-48 w-full overflow-hidden">
+                    <Image
+                      src={event.image}
+                      alt={event.title}
+                      fill
+                      className="object-cover transition-transform duration-500 hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                    {event.isNew && (
+                      <div className="absolute top-3 right-3 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                        New
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="text-lg font-semibold text-foreground line-clamp-2">
+                        {event.title}
+                      </h3>
+                      <span className="text-sm text-muted-foreground whitespace-nowrap ml-4">
+                        {new Date(event.date).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                        })}
+                      </span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                      {event.description}
+                    </p>
+                    <div className="mt-auto pt-3 border-t border-border/20">
+                      <button className="w-full py-2 text-sm font-medium text-primary hover:bg-primary/10 rounded-md transition-colors">
+                        Learn More →
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          );
+        })}
+        
+        {/* Right padding for last card centering */}
+        <div className="flex-shrink-0 w-[calc(50%-200px)] md:w-[calc(50%-300px)]" />
+      </div>
+
+      {/* Navigation Dots */}
+      {events.length > 1 && (
+        <div className="flex justify-center mt-6 space-x-2">
+          {events.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setActiveIndex(index)}
+              className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                index === activeIndex ? 'bg-primary w-6' : 'bg-border/50'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+import { createClient } from '@/lib/supabase/client';
+
 const AgendaSection = () => {
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isShowingPastEvents, setIsShowingPastEvents] = useState(false);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch('/data/events.json');
-        if (!response.ok) {
-          throw new Error('Failed to fetch events');
+        const supabase = createClient();
+        const { data: events, error: supabaseError } = await supabase
+          .from('events')
+          .select('*')
+          .order('date', { ascending: false })
+          .limit(5);
+
+        if (supabaseError) throw supabaseError;
+        
+        if (events) {
+          setUpcomingEvents(events);
         }
-        const data = await response.json();
-        
-        // Sort events by date (newest first) and take first 4
-        const sortedEvents = data.events.sort((a: Event, b: Event) => 
-          new Date(b.date).getTime() - new Date(a.date).getTime()
-        );
-        
-        setUpcomingEvents(sortedEvents.slice(0, 4));
       } catch (err) {
         console.error('Error fetching events:', err);
         setError('Failed to load events. Please try again later.');
@@ -110,6 +264,114 @@ const AgendaSection = () => {
 
     fetchEvents();
   }, []);
+
+  // Auto-scroll carousel (disabled for now as per user feedback)
+  // useEffect(() => {
+  //   if (upcomingEvents.length <= 1) return;
+    
+  //   const interval = setInterval(() => {
+  //     setActiveIndex((prev) => (prev + 1) % upcomingEvents.length);
+  //   }, 5000);
+
+  //   return () => clearInterval(interval);
+  // }, [upcomingEvents.length]);
+
+  // Handle scroll to active index (only when activeIndex changes, not on scroll)
+  useEffect(() => {
+    if (!carouselRef.current) return;
+    
+    const container = carouselRef.current;
+    const activeCard = container.querySelector(`[data-index="${activeIndex}"]`) as HTMLElement;
+    
+    if (activeCard) {
+      // Temporarily disable scroll event listener
+      const handleScroll = container.onscroll;
+      container.onscroll = null;
+      
+      // Calculate the scroll position to center the active card
+      const containerRect = container.getBoundingClientRect();
+      const cardRect = activeCard.getBoundingClientRect();
+      const scrollLeft = cardRect.left - containerRect.left + container.scrollLeft - ((containerRect.width - cardRect.width) / 2);
+      
+      container.scrollTo({
+        left: scrollLeft,
+        behavior: 'smooth'
+      });
+      
+      // Re-enable scroll event listener after scroll is complete
+      setTimeout(() => {
+        container.onscroll = handleScroll;
+      }, 500);
+      
+      // Update past/upcoming status
+      const activeEvent = upcomingEvents[activeIndex];
+      if (activeEvent) {
+        const eventDate = new Date(activeEvent.date);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        setIsShowingPastEvents(eventDate < today);
+      }
+    }
+  }, [activeIndex, upcomingEvents]);
+  
+  // Handle manual scroll to update active index
+  useEffect(() => {
+    const container = carouselRef.current;
+    if (!container) return;
+    
+    let scrollTimeout: NodeJS.Timeout;
+    let isScrolling = false;
+    
+    const handleScroll = () => {
+      if (isScrolling) return;
+      
+      // Clear any pending scroll timeout
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+      
+      // Debounce the scroll event
+      scrollTimeout = setTimeout(() => {
+        if (!container || isScrolling) return;
+        
+        const containerRect = container.getBoundingClientRect();
+        const containerCenter = containerRect.left + containerRect.width / 2;
+        
+        // Find the card closest to the center
+        const cards = Array.from(container.querySelectorAll<HTMLElement>('[data-index]'));
+        let closestCard = null;
+        let minDistance = Infinity;
+        let closestIndex = activeIndex;
+        
+        cards.forEach((card) => {
+          const cardRect = card.getBoundingClientRect();
+          const cardCenter = cardRect.left + cardRect.width / 2;
+          const distance = Math.abs(cardCenter - containerCenter);
+          
+          if (distance < minDistance) {
+            minDistance = distance;
+            closestCard = card;
+            closestIndex = parseInt(card.getAttribute('data-index') || '0', 10);
+          }
+        });
+        
+        if (closestCard && closestIndex !== activeIndex) {
+          isScrolling = true;
+          setActiveIndex(closestIndex);
+          
+          // Re-enable scrolling after animation completes
+          setTimeout(() => {
+            isScrolling = false;
+          }, 300);
+        }
+      }, 100);
+    };
+    
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+    };
+  }, [activeIndex]);
 
   if (loading) {
     return (
@@ -159,160 +421,239 @@ const AgendaSection = () => {
         <div className="px-6">
           <div className="flex items-center gap-2">
             <span className="h-px w-6 bg-zinc-500" />
-            <h4 className="text-base font-medium text-text-secondary">Events</h4>
+            <h4 className="text-base font-medium text-text-secondary">Events & Media</h4>
           </div>
           <h2 className="mt-6 text-[40px] sm:text-[56px] lg:text-[64px] leading-tight font-bold tracking-tighter text-text-primary">
-            Discover the <span className="text-zinc-400">RAIT ACM SIGAI Student Chapter</span> 
+            Discover Our <span className="text-primary">Latest</span> 
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full mt-8">
-          {/* Left Panel - Synara Magazine Feature */}
-          <div className="group relative flex flex-col h-auto overflow-hidden rounded-3xl bg-card/50 backdrop-blur-sm border border-border/50 shadow-xl transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-1">
-            {/* Magazine Cover Image - Full height */}
-            <div className="relative h-full w-full overflow-hidden">
-              <div className="absolute inset-0">
-                <Image
-                  src="/img/SYNARA_COVER.png"
-                  alt="Synara Magazine - RAIT ACM SIGAI"
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  priority
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+        <div className="mt-12 px-4 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Panel - Magazine Card (Full Height) */}
+            <div className="lg:col-span-1">
+              <div className="group relative h-full flex flex-col overflow-hidden rounded-3xl bg-card/50 backdrop-blur-sm border border-border/50 shadow-xl transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-1">
+                <div className="relative h-64 lg:h-1/2">
+                  <Image
+                    src="/img/SYNARA_COVER.png"
+                    alt="Synara Magazine - RAIT ACM SIGAI"
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 1024px) 100vw, 33vw"
+                    priority
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  <div className="absolute top-4 right-4 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full z-10">
+                    New Issue
+                  </div>
+                </div>
                 
-                {/* New Badge */}
-                <div className="absolute top-4 right-4 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full">
-                  New Issue
+                <div className="p-6 flex-1 flex flex-col">
+                  <h2 className="text-2xl font-bold text-foreground mb-2">Synara Magazine</h2>
+                  <p className="text-muted-foreground mb-4">
+                    Our Inaugural Magazine explores the cutting-edge world of Generative AI, featuring groundbreaking research and insights from leading experts in the field.
+                  </p>
+                  
+                  <div className="mt-auto pt-4">
+                    <button className="w-full py-2.5 px-5 bg-primary hover:bg-primary/90 text-white rounded-full text-sm font-medium transition-colors flex items-center justify-center gap-1.5">
+                      Read Latest Issue
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-            
-            {/* Magazine Content */}
-            <div className="flex-1 p-6 flex flex-col">
-              <h2 className="text-2xl font-bold text-foreground mb-2">Synara Magazine</h2>
-              
-              <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                Our Inaugural Magazine explores the cutting-edge world of Generative AI, featuring groundbreaking research and insights from leading experts in the field.
-              </p>
-              
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center gap-2">
-                  <div className="bg-primary/10 p-1 rounded">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-                      <path d="M4 22h16a2 2 0 0 0 2-2V7.5L17.5 2H6a2 2 0 0 0-2 2v4"></path>
-                      <polyline points="14 2 14 8 20 8"></polyline>
-                      <path d="M10 12l-3-3-3 3"></path>
-                      <path d="M13 11v8"></path>
-                      <path d="M7 15.1c.8 1 2 1.9 3 1.9s2.3-.9 3-2c.7-1.1 2-1.9 3-1.9s2.3.8 3 1.9"></path>
-                    </svg>
-                  </div>
-                  <span className="text-xs text-foreground">Inaugural Issue</span>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <div className="bg-primary/10 p-1 rounded">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                      <circle cx="9" cy="7" r="4"></circle>
-                      <line x1="19" y1="8" x2="19" y2="14"></line>
-                      <line x1="22" y1="11" x2="16" y2="11"></line>
-                    </svg>
-                  </div>
-                  <span className="text-xs text-foreground">Generative AI Special</span>
-                </div>
-              </div>
-              
-              <button className="mt-2 w-full py-2 px-4 bg-primary hover:bg-primary/90 text-white rounded-full text-sm font-medium transition-colors flex items-center justify-center gap-1.5">
-                Read Latest Issue
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </button>
-            </div>
-          </div>
 
-          {/* Right Panel - Top and Bottom */}
-          <div className="space-y-4">
-            {/* Top Half - Featured Events */}
-            <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-3xl p-4 shadow-xl">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-xl font-bold text-foreground">Upcoming Events</h2>
-                <Link 
-                  href="/events" 
-                  className="text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
-                >
-                  View all
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="m9 18 6-6-6-6"/>
-                  </svg>
-                </Link>
-              </div>
-              <div className="space-y-3">
-                {upcomingEvents.slice(0, 3).map((event) => (
-                  <div key={event.id} className="group relative overflow-hidden rounded-xl border border-border/50 p-3 hover:bg-card/30 transition-colors">
-                    <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0 w-16 h-12 rounded-md overflow-hidden bg-muted">
-                        <Image
-                          src={event.image}
-                          alt={event.title}
-                          width={64}
-                          height={48}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-medium text-foreground line-clamp-2 leading-tight">{event.title}</h3>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs text-muted-foreground">
-                            {new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                          </span>
-                          {event.isNew && (
-                            <span className="text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded-full">
-                              New
-                            </span>
-                          )}
+            {/* Right Panel - Events Carousel and YouTube */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Events Carousel */}
+              <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-3xl p-6 shadow-xl">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center">
+                    <h2 className="text-2xl font-bold text-foreground">
+                      {isShowingPastEvents ? 'Past Events' : 'Upcoming Events'}
+                    </h2>
+                    <span className="ml-3 px-2 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary">
+                      {upcomingEvents.length} {upcomingEvents.length === 1 ? 'Event' : 'Events'}
+                    </span>
+                  </div>
+                  {/* <Link 
+                    href="/events" 
+                    className="text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
+                  >
+                    View all
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                  </Link> */}
+                </div>
+
+                {loading ? (
+                  <div className="flex items-center justify-center h-64">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                  </div>
+                ) : error ? (
+                  <div className="text-center p-8 text-red-500">{error}</div>
+                ) : (
+                  <div className="relative">
+                    <div 
+                      ref={carouselRef}
+                      className="flex overflow-x-auto hide-scrollbar snap-x snap-mandatory gap-6 pb-4 px-4"
+                      style={{
+                        scrollBehavior: 'smooth',
+                        scrollSnapType: 'x mandatory',
+                        WebkitOverflowScrolling: 'touch',
+                        msOverflowStyle: 'none',
+                        scrollbarWidth: 'none',
+                        scrollPadding: '0 24px'
+                      }}
+                    >
+                      {/* Left padding for first card centering */}
+                      <div className="flex-shrink-0 w-[calc(50%-144px)]" aria-hidden="true" />
+                      
+                      {upcomingEvents.map((event, index) => (
+                        <div 
+                          key={event.id}
+                          data-index={index}
+                          className="flex-shrink-0 w-72 transition-all duration-300 snap-center"
+                          style={{
+                            opacity: index === activeIndex ? 1 : 0.7,
+                            transform: `scale(${index === activeIndex ? 1 : 0.95})`,
+                            transition: 'all 0.3s ease',
+                            cursor: 'pointer',
+                            scrollSnapAlign: 'center',
+                            scrollMargin: '0 24px',
+                            flex: '0 0 auto'
+                          }}
+                          onClick={() => setActiveIndex(index)}
+                        >
+                          <div className="bg-card border border-border/50 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow h-full flex flex-col">
+                            <div className="relative h-40">
+                              <Image
+                                src={event.image || '/img/event-placeholder.jpg'}
+                                alt={event.title}
+                                fill
+                                className="object-cover"
+                              />
+                              {event.isNew && (
+                                <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                                  New
+                                </div>
+                              )}
+                            </div>
+                            <div className="p-4 flex-1 flex flex-col">
+                              <h3 className="font-semibold text-foreground line-clamp-2 mb-2">
+                                {event.title}
+                              </h3>
+                              <div className="flex items-center text-sm text-muted-foreground mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5">
+                                  <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+                                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                {new Date(event.date).toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric'
+                                })}
+                              </div>
+                              <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                                {event.description}
+                              </p>
+                              <Link 
+                                href={`/events/${event.slug || '#'}`}
+                                className="mt-auto text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center"
+                              >
+                                Learn more
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
+                                  <path d="m9 18 6-6-6-6"/>
+                                </svg>
+                              </Link>
+                            </div>
+                          </div>
                         </div>
+                      ))}
+                    </div>
+
+                    {/* Navigation Dots */}
+                    {upcomingEvents.length > 1 && (
+                      <div className="flex justify-center mt-6 space-x-2">
+                        {upcomingEvents.map((_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setActiveIndex(index)}
+                            className={`w-2.5 h-2.5 rounded-full transition-all ${
+                              index === activeIndex ? 'bg-primary w-6' : 'bg-border/50'
+                            }`}
+                            aria-label={`Go to slide ${index + 1}`}
+                          />
+                        ))}
                       </div>
-                      <div className="text-muted-foreground group-hover:text-primary transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <polyline points="12 16 16 12 12 8"></polyline>
-                          <line x1="8" y1="12" x2="16" y2="12"></line>
-                        </svg>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* YouTube Section */}
+              <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-3xl p-6 shadow-xl">
+                <h2 className="text-2xl font-bold text-foreground mb-6">YouTube Series</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {[
+                    {
+                      id: 'VlgLfiI7Jig',
+                      title: 'Neural Nexus',
+                      description: 'Highlights from our latest'
+                    },
+                    // {
+                    //   id: 'dQw4w9WgXcQ',
+                    //   title: 'Tech Talks',
+                    //   description: 'Insights from industry experts'
+                    // }
+                  ].map((video) => (
+                    <div key={video.id} className="group">
+                      <a
+                        href={`https://www.youtube.com/watch?v=${video.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block aspect-video w-full bg-muted rounded-xl overflow-hidden relative group-hover:shadow-lg transition-shadow"
+                      >
+                        <Image
+                          src={`https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`}
+                          alt={video.title}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center transform transition-transform group-hover:scale-110">
+                            <svg className="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
+                          </div>
+                        </div>
+                      </a>
+                      <div className="mt-3">
+                        <h3 className="font-medium text-foreground">{video.title}</h3>
+                        <p className="text-sm text-muted-foreground">{video.description}</p>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Bottom Half - YouTube Video */}
-            <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-3xl p-4 shadow-xl">
-              <h2 className="text-xl font-bold text-foreground mb-3">Latest Video</h2>
-              <a 
-                href="https://www.youtube.com/watch?v=VlgLfiI7Jig" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="block aspect-video w-full bg-muted rounded-lg overflow-hidden relative group"
-              >
-                <img 
-                  src={`https://img.youtube.com/vi/VlgLfiI7Jig/maxresdefault.jpg`} 
-                  alt="Watch Event Video"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center transform transition-transform group-hover:scale-110">
-                    <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </div>
+                  ))}
                 </div>
-              </a>
-              <h3 className="mt-3 text-sm font-medium text-foreground">RAIT ACM SIGAI - Event Highlights</h3>
-              <p className="text-xs text-muted-foreground mt-0.5">Watch highlights from our latest event</p>
+                <a 
+                  href="https://www.youtube.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center mt-6 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                >
+                  View all videos
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
+                    <path d="m9 18 6-6-6-6"/>
+                  </svg>
+                </a>
+              </div>
             </div>
           </div>
         </div>
