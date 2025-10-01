@@ -16,7 +16,7 @@ const MobileFooter = () => {
           href="/" 
           className="flex flex-col items-center p-2 rounded-lg transition-colors text-gray-400 hover:text-white"
         >
-          <Home className="h-6 w-6" />
+          <Home className="h-6 w-6" aria-hidden="true" />
           <span className="text-xs mt-1">Home</span>
         </Link>
       </div>

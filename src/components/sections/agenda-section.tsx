@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Event } from '@/types/event';
 
 // Add JSX namespace
@@ -239,7 +240,7 @@ const AgendaSection = () => {
             <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-3xl p-4 shadow-xl">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-xl font-bold text-foreground">Upcoming Events</h2>
-                <a 
+                <Link 
                   href="/events" 
                   className="text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
                 >
@@ -247,7 +248,7 @@ const AgendaSection = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="m9 18 6-6-6-6"/>
                   </svg>
-                </a>
+                </Link>
               </div>
               <div className="space-y-3">
                 {upcomingEvents.slice(0, 3).map((event) => (

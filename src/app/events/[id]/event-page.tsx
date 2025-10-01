@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { notFound, useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { ArrowRight, Calendar, Clock, MapPin } from 'lucide-react';
 import Image from 'next/image';
 import supabase from '@/lib/supabase';
@@ -24,8 +24,7 @@ interface EventType {
   }>;
 }
 
-export default function EventPage() {
-  const { id } = useParams();
+export default function EventPageClient({ id }: { id: string }) {
   const [event, setEvent] = useState<EventType | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -53,7 +52,7 @@ export default function EventPage() {
   }
 
   if (!event) {
-    return null;
+    notFound();
   }
 
   const eventDate = new Date(event.date);

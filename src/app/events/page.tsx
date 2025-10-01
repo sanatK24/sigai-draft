@@ -180,7 +180,7 @@ export default function EventsPage() {
                 </div>
                 <div className="p-6">
                   <div className="flex items-center text-sm text-gray-400 mb-2">
-                    <Calendar className="mr-1.5 h-4 w-4 flex-shrink-0 text-white" />
+                    <Calendar className="mr-1.5 h-4 w-4 flex-shrink-0 text-white" aria-hidden="true" />
                     <span className="text-white">{event.formattedDate}</span>
                   </div>
                   <h3 className="text-xl font-semibold text-white mb-2">
@@ -190,7 +190,7 @@ export default function EventsPage() {
                     {event.description}
                   </p>
                   <div className="flex items-center text-sm text-gray-400">
-                    <MapPin className="mr-1.5 h-4 w-4 flex-shrink-0 text-white" />
+                    <MapPin className="mr-1.5 h-4 w-4 flex-shrink-0 text-white" aria-hidden="true" />
                     <span className="truncate text-white">{event.location}</span>
                   </div>
                 </div>
@@ -238,7 +238,7 @@ export default function EventsPage() {
                         </div>
                         <div className="p-6">
                           <div className="flex items-center text-sm text-gray-400 mb-2">
-                            <Calendar className="mr-1.5 h-4 w-4 flex-shrink-0 text-white" />
+                            <Calendar className="mr-1.5 h-4 w-4 flex-shrink-0 text-white" aria-hidden="true" />
                             <span className="text-white">{event.formattedDate}</span>
                           </div>
                           <h3 className="text-xl font-semibold text-white mb-2">
@@ -248,7 +248,7 @@ export default function EventsPage() {
                             {event.description}
                           </p>
                           <div className="flex items-center text-sm text-gray-400">
-                            <MapPin className="mr-1.5 h-4 w-4 flex-shrink-0 text-white" />
+                            <MapPin className="mr-1.5 h-4 w-4 flex-shrink-0 text-white" aria-hidden="true" />
                             <span className="truncate text-white">{event.location}</span>
                           </div>
                         </div>
