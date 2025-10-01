@@ -411,7 +411,7 @@ body {
   gap: 20px;
   white-space: nowrap;
   align-items: center;
-  animation: marquee-right-left 12s linear infinite;
+  animation: marquee-right-left 8s linear infinite;
 }
 .GlassMarqueeContainer:hover {
   animation-play-state: paused;
@@ -750,7 +750,7 @@ body {
 }
 .GlassMarqueeContainer {
   /* This class is also used for layout, but also for animation */
-  animation: marquee-right-left 12s linear infinite;
+  animation: marquee-right-left 8s linear infinite;
 }
 .animated-gradient-border-button {
   --border-angle: 0turn;

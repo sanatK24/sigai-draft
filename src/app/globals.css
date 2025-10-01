@@ -31,8 +31,14 @@ body {
 }
 
 @keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* For continuous flow, we'll use a different approach */
+@keyframes marquee-continuous {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
 }
 
 @keyframes fade-in {
@@ -44,12 +50,50 @@ body {
   animation: fade-in 0.5s ease-out forwards;
 }
 
+/* Marquee container - uses flex to create continuous effect */
+.marquee-container {
+  display: flex;
+  width: fit-content;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+/* Marquee speeds are set based on text length - longer text moves faster */
 .animate-marquee {
-  animation: marquee 30s linear infinite;
+  display: inline-block;
+  animation: marquee-continuous 40s linear infinite;
+  padding-right: 2rem; /* Add space between repetitions */
+}
+
+.animate-marquee span {
+  display: inline-block;
+  padding-right: 2rem; /* Space between text repetitions */
 }
 
 .animate-marquee-reverse {
-  animation: marquee 35s linear infinite reverse;
+  display: inline-block;
+  animation: marquee-continuous 48s linear infinite reverse;
+  padding-right: 2rem;
+}
+
+.animate-marquee-reverse span {
+  display: inline-block;
+  padding-right: 2rem;
+}
+
+/* Specific speed for the first row (longest text) */
+.animate-marquee:nth-child(1) {
+  animation-duration: 32s;
+}
+
+/* Specific speed for the second row */
+.animate-marquee-reverse:nth-child(2) {
+  animation-duration: 40s;
+}
+
+/* Specific speed for the third row */
+.animate-marquee:nth-child(3) {
+  animation-duration: 48s;
 }
 
 .group:hover .animate-marquee,
@@ -297,7 +341,7 @@ body {
 
   /* Utility: marquee animation */
   .animate-marquee {
-    animation: marquee 40s linear infinite;
+    animation: marquee 20s linear infinite;
   }
 }
 

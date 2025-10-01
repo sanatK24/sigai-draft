@@ -113,6 +113,7 @@ const SpeakerCard = ({
   style
 }: SpeakerCardProps) => {
   const [isHovered, setIsHovered] = React.useState(false);
+  const [isMobileInfoOpen, setIsMobileInfoOpen] = React.useState(false);
   const socialLinks: SocialLinks = isFaculty 
     ? {
         linkedin: {
@@ -145,16 +146,24 @@ const SpeakerCard = ({
     return `Placeholder text.`;
   };
 
+  const toggleMobileInfo = () => {
+    if (window.innerWidth < 768) { // Only toggle on mobile
+      setIsMobileInfoOpen(!isMobileInfoOpen);
+    } else {
+      setIsHovered(!isHovered);
+    }
+  };
+
   return (
     <div 
-      className={`flex flex-col w-full shrink-0 relative max-w-[294px] mx-auto h-[480px] ${className}`}
+      className={`flex flex-col w-full shrink-0 relative max-w-[294px] mx-auto ${!isFaculty ? 'h-[480px]' : ''} ${className}`}
     >
       <div 
         className="relative group overflow-visible h-full"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onMouseEnter={() => window.innerWidth >= 768 && setIsHovered(true)}
+        onMouseLeave={() => window.innerWidth >= 768 && setIsHovered(false)}
       >
-        <div className="overflow-hidden rounded-3xl w-full h-full bg-gray-800">
+        <div className={`overflow-hidden rounded-3xl w-full ${isFaculty ? 'h-[360px]' : 'h-full'} bg-gray-800`}>
           <div className="relative w-full h-full">
             <div className="absolute inset-0">
               <Image
@@ -205,9 +214,8 @@ const SpeakerCard = ({
 
         {/* Info Panel - Only for faculty */}
         {isFaculty && isHovered && (
-          
           <div 
-            className={`absolute ${
+            className={`hidden md:block absolute ${
               speaker.name.includes('Sangita') 
                 ? 'left-full ml-4 top-0' 
                 : 'right-full mr-4 top-0'
@@ -230,6 +238,8 @@ const SpeakerCard = ({
           </div>
         )}
       </div>
+      
+      {/* Name and title - always visible */}
       <div className="mt-4 px-2 w-full">
         <h4 className="text-xl font-semibold text-white text-center">{speaker.name}</h4>
         <div className="mt-1 text-sm text-center">
@@ -243,6 +253,31 @@ const SpeakerCard = ({
           )}
         </div>
       </div>
+      
+      {/* Info Panel - Only for faculty */}
+      {isFaculty && (
+        <div 
+          className={`w-full bg-gradient-to-br from-card to-card/90 rounded-xl p-6 shadow-xl mt 4 transition-all duration-300 overflow-hidden ${
+            isMobileInfoOpen ? 'max-h-96' : 'max-h-0 p-0 opacity-0'
+          } md:max-h-0 md:p-0 md:opacity-0 md:group-hover:max-h-96 md:group-hover:p-6 md:group-hover:opacity-100 md:absolute md:top-full md:left-0 md:mt-2 md:z-10`}
+        >
+          <div className="text-sm text-gray-300 leading-relaxed font-mono">
+            <TypewriterText text={getBio(speaker.name, speaker.title)} />
+          </div>
+        </div>
+      )}
+      
+      {/* Toggle button for mobile */}
+      {isFaculty && (
+        <button 
+          onClick={toggleMobileInfo}
+          className="md:hidden mt-4 mx-auto px-4 py-2 text-sm text-purple-400 hover:text-white transition-colors"
+          aria-expanded={isMobileInfoOpen}
+          aria-controls="faculty-bio"
+        >
+          {isMobileInfoOpen ? 'Show Less' : 'Read Bio'}
+        </button>
+      )}
     </div>
   );
 };
@@ -281,21 +316,21 @@ const SpeakersSection = () => {
             </p>
           </div>
           
-          {/* Faculty Grid with Matrix Alignment */}
-          <div className="relative max-w-5xl mx-auto min-h-[600px] md:min-h-[700px] flex items-center justify-center">
-            <div className="relative w-full h-full">
-              {/* Matrix Grid Lines (for visual reference) */}
-              <div className="absolute inset-0 flex items-center justify-center">
+          {/* Faculty Grid */}
+          <div className="relative max-w-5xl mx-auto">
+            <div className="relative w-full">
+              {/* Matrix Grid Lines (for visual reference) - Hidden on mobile */}
+              <div className="hidden md:block absolute inset-0 flex items-center justify-center">
                 <div className="h-px w-full bg-gradient-to-r from-transparent via-purple-500/20 to-transparent"></div>
               </div>
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className="hidden md:block absolute inset-0 flex items-center justify-center">
                 <div className="w-px h-full bg-gradient-to-b from-transparent via-purple-500/20 to-transparent"></div>
               </div>
               
-              {/* Faculty Cards */}
-              <div className="relative grid grid-cols-2 gap-8 h-full w-full px-4">
-                {/* Position 1,1 (Top-Left) */}
-                <div className="flex items-start justify-end pr-8">
+              {/* Faculty Cards - Stacked on mobile, side by side on desktop */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full px-4 py-8 md:py-0">
+                {/* First Faculty Member */}
+                <div className="flex justify-center md:justify-end md:pr-8">
                   <SpeakerCard 
                     speaker={facultySponsors[0]} 
                     active={true}
@@ -305,18 +340,8 @@ const SpeakersSection = () => {
                   />
                 </div>
                 
-                {/* Empty Space */}
-                <div className="opacity-0">
-                  <div className="w-full max-w-sm"></div>
-                </div>
-                
-                {/* Empty Space */}
-                <div className="opacity-0">
-                  <div className="w-full max-w-sm"></div>
-                </div>
-                
-                {/* Position 2,2 (Bottom-Right) */}
-                <div className="flex items-end justify-start pl-8">
+                {/* Second Faculty Member */}
+                <div className="flex justify-center md:justify-start md:pl-8">
                   <SpeakerCard 
                     speaker={facultySponsors[1]} 
                     active={true}

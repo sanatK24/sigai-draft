@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { ArrowRight, Calendar, Clock, MapPin } from 'lucide-react';
-import EventModal from '@/components/EventModal';
-import { supabase } from '@/lib/supabase';
+import Link from 'next/link';
+import { Calendar, Clock, MapPin } from 'lucide-react';
+import supabase from '@/lib/supabase';
 
 interface Event {
   id: string;
@@ -16,7 +16,7 @@ interface Event {
   image: string;
   is_featured?: boolean;
   registration_link: string;
-  registerLink: string; // Add this line to match the expected interface
+  registerLink: string;
   category: string;
   speakers?: Array<{
     name: string;
@@ -29,7 +29,7 @@ interface Event {
   }>;
   created_at: string;
   updated_at: string;
-  formattedDate?: string; // Add this line for the formatted date
+  formattedDate?: string;
 }
 
 // Helper function to format date
@@ -44,13 +44,10 @@ const formatEventDate = (dateString: string) => {
 
 export default function EventsPage() {
   const [events, setEvents] = useState<{ upcoming: Event[]; past: Event[] }>({ upcoming: [], past: [] });
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [showUpcoming, setShowUpcoming] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch events from Supabase
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -58,7 +55,7 @@ export default function EventsPage() {
         const { data, error } = await supabase
           .from('events')
           .select('*')
-          .order('date', { ascending: true });
+          .order('date', { ascending: true }); // Initial sort for easier processing
 
         if (error) throw error;
 
@@ -66,24 +63,47 @@ export default function EventsPage() {
         const upcoming: Event[] = [];
         const past: Event[] = [];
 
-        data.forEach(event => {
-          // Format the date for display
-          event.formattedDate = formatEventDate(event.date);
-          
-          // Add default image if not provided
-          if (!event.image) {
-            event.image = '/img/events/placeholder.jpg';
-          }
+        data.forEach((event: any) => {
+          const formattedEvent: Event = {
+            ...event,
+            registerLink: event.registration_link || '#',
+            formattedDate: formatEventDate(event.date),
+            image: event.image || '/img/events/placeholder.jpg',
+            details: [
+              { icon: <Calendar size={16} />, text: formatEventDate(event.date) },
+              { icon: <Clock size={16} />, text: event.time },
+              { icon: <MapPin size={16} />, text: event.location }
+            ]
+          };
 
           // Categorize as upcoming or past
           if (event.date >= today) {
-            upcoming.push(event);
+            upcoming.push(formattedEvent);
           } else {
-            past.push(event);
+            past.push(formattedEvent);
           }
         });
 
-        setEvents({ upcoming, past });
+        // Sort upcoming events by date (ascending - soonest first)
+        const sortedUpcoming = [...upcoming].sort((a, b) => 
+          new Date(a.date).getTime() - new Date(b.date).getTime()
+        );
+        
+        // Sort past events by year (descending) and then by date (descending within each year)
+        const sortedPast = [...past].sort((a, b) => {
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+          const yearDiff = dateB.getFullYear() - dateA.getFullYear();
+          
+          // If same year, sort by most recent date first
+          if (yearDiff === 0) {
+            return dateB.getTime() - dateA.getTime();
+          }
+          
+          return yearDiff;
+        });
+        
+        setEvents({ upcoming: sortedUpcoming, past: sortedPast });
       } catch (err) {
         console.error('Error fetching events:', err);
         setError('Failed to load events. Please try again later.');
@@ -95,86 +115,44 @@ export default function EventsPage() {
     fetchEvents();
   }, []);
 
-  const openModal = (event: Event) => {
-    setSelectedEvent({
-      ...event,
-      details: [
-        { icon: <Calendar size={16} />, text: formatEventDate(event.date) },
-        { icon: <Clock size={16} />, text: event.time },
-        { icon: <MapPin size={16} />, text: event.location }
-      ]
-    });
-    setIsModalOpen(true);
-    document.body.style.overflow = 'hidden';
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    document.body.style.overflow = 'auto';
-  };
-
-  const currentEvents = showUpcoming ? events.upcoming : events.past;
-
   if (loading) {
     return (
-      <div className="min-h-screen pt-32 px-4 sm:px-6 lg:px-8 pb-20">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="animate-pulse space-y-4">
-            <div className="h-12 bg-gray-800 rounded w-1/3 mx-auto"></div>
-            <div className="h-4 bg-gray-800 rounded w-1/2 mx-auto"></div>
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="bg-gray-900 rounded-xl p-6 h-96"></div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen pt-32 px-4 sm:px-6 lg:px-8 pb-20">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="text-red-500 mb-4">{error}</div>
-          <button 
-            onClick={() => window.location.reload()}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Retry
-          </button>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pt-32 px-4 sm:px-6 lg:px-8 pb-20">
+    <div className="min-h-screen bg-black py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Our Events</h1>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto mb-8">
-            Discover {showUpcoming ? 'upcoming' : 'past'} events organized by RAIT ACM SIGAI.
+          <h1 className="text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
+            Our Events
+          </h1>
+          <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-300 sm:mt-4">
+            Join us for exciting events, workshops, and more.
           </p>
-          
-          <div className="inline-flex bg-gray-800 rounded-full p-1">
+        </div>
+
+        <div className="flex justify-center mb-8">
+          <div className="inline-flex rounded-md shadow-sm border border-gray-800">
             <button
               onClick={() => setShowUpcoming(true)}
-              className={`px-6 py-2 rounded-full transition-colors ${
-                showUpcoming 
-                  ? 'bg-blue-600 text-white' 
-                  : 'text-gray-300 hover:text-white'
+              className={`px-4 py-2 text-sm font-medium rounded-l-lg transition-colors ${
+                showUpcoming
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-900 text-gray-300 hover:bg-gray-800'
               }`}
             >
               Upcoming Events
             </button>
             <button
               onClick={() => setShowUpcoming(false)}
-              className={`px-6 py-2 rounded-full transition-colors ${
-                !showUpcoming 
-                  ? 'bg-blue-600 text-white' 
-                  : 'text-gray-300 hover:text-white'
+              className={`px-4 py-2 text-sm font-medium rounded-r-lg transition-colors ${
+                !showUpcoming
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-900 text-gray-300 hover:bg-gray-800'
               }`}
             >
               Past Events
@@ -182,88 +160,117 @@ export default function EventsPage() {
           </div>
         </div>
 
-        {currentEvents.length === 0 ? (
-          <div className="text-center py-12">
-            <h3 className="text-xl text-gray-400">
-              {showUpcoming 
-                ? 'No upcoming events scheduled. Check back soon!'
-                : 'No past events to display.'}
-            </h3>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentEvents.map((event) => (
-              <div 
+        {error ? (
+          <div className="text-center text-red-500">{error}</div>
+        ) : showUpcoming ? (
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {events.upcoming.map((event) => (
+              <Link 
                 key={event.id} 
-                className="group bg-white/5 backdrop-blur-sm rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 cursor-pointer border border-white/10"
-                onClick={() => openModal(event)}
+                href={`/events/${event.id}`}
+                className="block bg-gray-900 overflow-hidden shadow rounded-lg hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
               >
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative h-48 w-full">
                   <Image
                     src={event.image}
                     alt={event.title}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover hover:opacity-90 transition-opacity duration-300"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                  {event.is_featured && (
-                    <div className="absolute top-4 right-4 bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
-                      Featured
-                    </div>
-                  )}
-                  <div className="absolute bottom-0 left-0 p-6">
-                    <h3 className="text-xl font-bold text-white">{event.title}</h3>
-                  </div>
                 </div>
-                
                 <div className="p-6">
-                  <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
-                    <span className="px-2 py-1 bg-blue-900/30 text-blue-400 rounded-full text-xs">
-                      {event.category || 'Event'}
-                    </span>
+                  <div className="flex items-center text-sm text-gray-400 mb-2">
+                    <Calendar className="mr-1.5 h-4 w-4 flex-shrink-0 text-white" />
+                    <span className="text-white">{event.formattedDate}</span>
                   </div>
-                  
-                  <div className="flex items-center gap-3 text-sm text-gray-300 mb-4">
-                    <div className="flex items-center gap-1">
-                      <Calendar size={16} />
-                      <span>{formatEventDate(event.date)}</span>
-                    </div>
-                    <div className="w-1 h-1 bg-gray-600 rounded-full"></div>
-                    <div className="flex items-center gap-1">
-                      <Clock size={16} />
-                      <span>{event.time}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
-                    <MapPin size={16} className="flex-shrink-0 mt-0.5" />
-                    <span className="line-clamp-1">{event.location}</span>
-                  </div>
-                  
-                  <p className="text-gray-400 text-sm mb-4 line-clamp-3">
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    {event.title}
+                  </h3>
+                  <p className="text-gray-300 mb-4 line-clamp-2">
                     {event.description}
                   </p>
-                  
-                  <div className="flex items-center text-blue-400 text-sm font-medium group-hover:text-blue-300 transition-colors">
-                    View details
-                    <ArrowRight size={16} className="ml-1.5" />
+                  <div className="flex items-center text-sm text-gray-400">
+                    <MapPin className="mr-1.5 h-4 w-4 flex-shrink-0 text-white" />
+                    <span className="truncate text-white">{event.location}</span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
+          </div>
+        ) : (
+          <div className="space-y-12">
+            {(() => {
+              const years = new Set<number>();
+              const eventsByYear: Record<number, Event[]> = {};
+              
+              // Group events by year
+              events.past.forEach(event => {
+                const year = new Date(event.date).getFullYear();
+                if (!years.has(year)) {
+                  years.add(year);
+                  eventsByYear[year] = [];
+                }
+                eventsByYear[year].push(event);
+              });
+              
+              // Sort years in descending order
+              const sortedYears = Array.from(years).sort((a, b) => b - a);
+              
+              return sortedYears.map((year) => (
+                <div key={year} className="space-y-6">
+                  <h2 className="text-2xl font-bold text-white border-b border-gray-800 pb-2 mb-4">
+                    {year}
+                  </h2>
+                  <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    {eventsByYear[year].map((event) => (
+                      <Link 
+                        key={event.id} 
+                        href={`/events/${event.id}`}
+                        className="block bg-gray-900 overflow-hidden shadow rounded-lg hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
+                      >
+                        <div className="relative h-48 w-full">
+                          <Image
+                            src={event.image}
+                            alt={event.title}
+                            fill
+                            className="object-cover hover:opacity-90 transition-opacity duration-300"
+                          />
+                        </div>
+                        <div className="p-6">
+                          <div className="flex items-center text-sm text-gray-400 mb-2">
+                            <Calendar className="mr-1.5 h-4 w-4 flex-shrink-0 text-white" />
+                            <span className="text-white">{event.formattedDate}</span>
+                          </div>
+                          <h3 className="text-xl font-semibold text-white mb-2">
+                            {event.title}
+                          </h3>
+                          <p className="text-gray-300 mb-4 line-clamp-2">
+                            {event.description}
+                          </p>
+                          <div className="flex items-center text-sm text-gray-400">
+                            <MapPin className="mr-1.5 h-4 w-4 flex-shrink-0 text-white" />
+                            <span className="truncate text-white">{event.location}</span>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ));
+            })()}
+          </div>
+        )}
+
+        {!loading && (showUpcoming ? events.upcoming : events.past).length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-400">
+              {showUpcoming
+                ? 'No upcoming events scheduled. Check back soon!'
+                : 'No past events to show.'}
+            </p>
           </div>
         )}
       </div>
-
-      {/* Event Modal */}
-      {selectedEvent && (
-        <EventModal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          event={selectedEvent}
-        />
-      )}
     </div>
   );
 }

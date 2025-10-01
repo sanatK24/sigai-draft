@@ -50,12 +50,11 @@ const domains = [
 const TargetAudienceSection = () => {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const marqueeTexts = [
-    "Innovation . Network . Marketing . Learning . Technical . Design",
-    "Publicity . Media Graphics . Management . Sponsorship . Content . Creative",
-    "Workshops . Hackathons . Research . Community . Development . Growth"
+    ". Innovation . Network . Marketing . Learning . Technical . Design",
+    ". Publicity . Media Graphics . Management . Sponsorship . Content . Creative",
+    ". Workshops . Hackathons . Research . Community . Development . Growth"
   ];
   const animationDirections = ["animate-marquee", "animate-marquee-reverse", "animate-marquee"];
-  
 
   return (
     <section className="bg-black text-white py-24 overflow-x-hidden">
@@ -72,9 +71,8 @@ const TargetAudienceSection = () => {
           </h2>
         </div>
 
-        <div className="mt-16 w-full relative">
-          
-          {/* Domain Cards */}
+        {/* Domain Cards */}
+        <div className="mt-16 w-full">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 justify-items-center w-full">
             {domains.map((domain) => (
               <div
@@ -86,38 +84,28 @@ const TargetAudienceSection = () => {
                   onMouseEnter={() => setHoveredCard(domain.id)}
                   onMouseLeave={() => setHoveredCard(null)}
                 >
-                  {/* White overlay with black text */}
                   <div className={`absolute inset-0 bg-white flex flex-col items-center justify-center p-6 text-center transition-opacity duration-300 ${hoveredCard === domain.id ? 'opacity-100' : 'opacity-0'}`}>
                     <h4 className="text-2xl font-bold text-black mb-4">{domain.title}</h4>
                     <p className="text-base text-gray-700 line-clamp-2">{domain.description}</p>
                   </div>
-                  
-                  {/* Default state - centered title */}
-                  <h4 className={`text-xl font-bold text-white transition-all duration-300 ${hoveredCard === domain.id ? 'opacity-0' : 'opacity-100'}`}>
-                    {domain.title}
-                  </h4>
-
-                  {/* Blue border on hover */}
-                  <div className={`absolute inset-0 rounded-[20px] border-2 border-primary transition-opacity duration-300 ${hoveredCard === domain.id ? 'opacity-100' : 'opacity-0'}`} />
+                  <h3 className="text-2xl font-bold text-center">{domain.title}</h3>
                 </div>
               </div>
             ))}
           </div>
+        </div>
 
-          <div className="mt-32 w-full overflow-hidden space-y-4">
-            {marqueeTexts.map((text, index) => (
-              <div key={index} className="relative group bg-white py-2">
-                <div className={`flex ${animationDirections[index]} whitespace-nowrap group-hover:animation-pause`}>
-                  <h2 className="text-[40px] md:text-[60px] font-bold whitespace-nowrap px-4 text-black">
-                    {text}
-                  </h2>
-                  <h2 className="text-[40px] md:text-[60px] font-bold whitespace-nowrap px-4 text-black">
-                    {text}
-                  </h2>
-                </div>
+        {/* Continuous Marquee Section */}
+        <div className="mt-32 w-full overflow-hidden space-y-4">
+          {marqueeTexts.map((text, index) => (
+            <div key={index} className="relative group bg-white py-2">
+              <div className={`marquee-container ${animationDirections[index]}`}>
+                <h2 className="text-[40px] md:text-[60px] font-bold whitespace-nowrap text-black">
+                  {text} <span className="opacity-0 select-none">•</span> {text}
+                </h2>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

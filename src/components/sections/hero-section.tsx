@@ -1,25 +1,61 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { ArrowUpRight, Calendar, MapPin, Clock } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { BorderBeam } from '../lightswind/border-beam';
-import { useState } from 'react';
-import EventModal from '../EventModal';
+import { ArrowUpRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { createClient } from '../../lib/supabase/client';
+import { useRouter } from 'next/navigation';
 import Header from '../header';
 
-const HeroSection = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+interface Event {
+  id: string;
+  title: string;
+  start_date: string;
+  end_date: string;
+  location: string;
+  slug: string;
+}
 
-  const eventDetails = {
-    title: "IGNASIA WORKSHOP 2025",
-    date: "October 15, 2025",
-    time: "10:00 AM - 5:00 PM",
-    location: "RAIT Campus, Navi Mumbai",
-    description: "Join us for an immersive workshop on the latest advancements in AI and Machine Learning. Learn from industry experts and get hands-on experience with cutting-edge technologies.",
-    image: "/img/events/ignasia-workshop.jpg",
-    registerLink: "https://example.com/register/ignasia-2025"
+const HeroSection = () => {
+  const router = useRouter();
+  const [upcomingEvent, setUpcomingEvent] = useState<Event | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUpcomingEvent = async () => {
+      try {
+        const supabase = createClient();
+        const today = new Date().toISOString().split('T')[0];
+        
+        const { data: events, error } = await supabase
+          .from('events')
+          .select('*')
+          .gte('end_date', today)
+          .order('start_date', { ascending: true })
+          .limit(1);
+
+        if (error) throw error;
+        
+        if (events && events.length > 0) {
+          setUpcomingEvent(events[0]);
+        }
+      } catch (error) {
+        console.error('Error fetching upcoming event:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUpcomingEvent();
+  }, []);
+
+  const handleEventClick = () => {
+    if (upcomingEvent) {
+      router.push(`/events/${upcomingEvent.slug}`);
+    } else {
+      router.push('/events');
+    }
   };
   return (
     <section className="relative isolate flex flex-col items-center justify-center min-h-screen bg-black text-white overflow-hidden">
@@ -43,6 +79,26 @@ const HeroSection = () => {
             'radial-gradient(circle at 10% 20%, rgba(59, 79, 222, 0.2), transparent 50%), radial-gradient(circle at 80% 90%, rgba(139, 92, 246, 0.15), transparent 50%)',
         }}
       />
+      
+      {/* Top-left Content */}
+      <div className="absolute top-6 left-6 z-30 flex flex-col items-start gap-2">
+        <button 
+          onClick={handleEventClick}
+          className="bg-white/5 backdrop-blur-xl text-white/90 text-xs font-medium px-4 py-1.5 rounded-full border border-white/20 shadow-lg shadow-black/20 hover:bg-white/10 transition-all duration-300 flex items-center gap-1.5"
+          disabled={isLoading}
+        >
+          <span>{isLoading ? 'Loading...' : 'Upcoming Event'}</span>
+          <ArrowUpRight size={14} />
+        </button>
+        {!isLoading && upcomingEvent && (
+          <h2 
+            className="text-white/90 text-sm font-medium px-1 max-w-[180px] leading-tight cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={handleEventClick}
+          >
+            {upcomingEvent.title}
+          </h2>
+        )}
+      </div>
       
       {/* Top-right Logos with Label */}
       <div className="absolute top-6 right-6 z-30 flex flex-col items-end gap-2">
@@ -129,70 +185,13 @@ const HeroSection = () => {
 
       {/* Hero content */}
       <div className="container relative z-10 flex flex-col items-center text-center pt-24 pb-32 px-6">
-        {/* Eyebrow with event title */}
+        {/* Main content */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
         >
-          <div className="relative group inline-block mb-3">
-            <button 
-              className="relative z-10 inline-flex items-center bg-white/10 backdrop-blur-sm text-white/80 hover:text-white text-sm font-medium px-4 py-1.5 rounded-full border border-white/10 group-hover:border-transparent transition-all duration-300 overflow-hidden cursor-pointer"
-              onClick={() => setIsModalOpen(true)}
-            >
-              <span className="inline-block group-hover:transform group-hover:-translate-y-full group-hover:opacity-0 transition-all duration-300">
-                Upcoming Event
-              </span>
-              <span className="absolute inset-0 flex items-center justify-center transform translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                Register Now →
-              </span>
-            </button>
-            <div className="absolute inset-0 rounded-full overflow-visible">
-              <BorderBeam
-                size={400}
-                duration={2.5}
-                delay={0}
-                colorTo="#7c3aed"
-                opacity={1}
-                glowIntensity={1.5}
-                beamBorderRadius={9999}
-                borderThickness={3}
-                speedMultiplier={1.2}
-                className="transition-all duration-300"
-                style={{
-                  width: 'calc(100% + 8px)',
-                  height: 'calc(100% + 8px)',
-                  margin: '-4px',
-                  ['--glow-intensity' as any]: '1.5',
-                }}
-              />
-            </div>
-          </div>
-          <h2 className="text-2xl md:text-3xl font-semibold text-white">
-            IGNASIA WORKSHOP 2025
-          </h2>
           
-          {/* Event Details Modal */}
-          <AnimatePresence>
-            {isModalOpen && (
-              <EventModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                event={{
-                  title: eventDetails.title,
-                  date: eventDetails.date,
-                  description: eventDetails.description,
-                  image: eventDetails.image,
-                  registerLink: eventDetails.registerLink,
-                  details: [
-                    { icon: <Calendar size={16} />, text: eventDetails.date },
-                    { icon: <Clock size={16} />, text: eventDetails.time },
-                    { icon: <MapPin size={16} />, text: eventDetails.location },
-                  ]
-                }}
-              />
-            )}
-          </AnimatePresence>
         </motion.div>
         
         <div className="w-full max-w-[1000px] mb-6 flex justify-center">
