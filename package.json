@@ -2,7 +2,7 @@
     "name": "app",
     "version": "0.1.0",
     "private": true,
-    "type": "commonjs",
+    "type": "module",
     "scripts": {
         "dev": "next dev --turbopack",
         "build": "next build",
@@ -48,6 +48,7 @@
         "@radix-ui/react-tooltip": "^1.2.7",
         "@react-three/drei": "^10.4.4",
         "@react-three/fiber": "^9.0.0-alpha.8",
+        "@supabase/supabase-js": "^2.58.0",
         "@tabler/icons-react": "^3.35.0",
         "@tailwindcss/typography": "^0.5.16",
         "@tsparticles/engine": "^3.8.1",

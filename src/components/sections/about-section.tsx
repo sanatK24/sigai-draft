@@ -48,6 +48,11 @@ const AboutSection = () => {
 
         {/* Content Section */}
         <div className="grid w-full grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-20">
+          <div className="flex flex-col gap-6">
+            <p className="text-lg text-text-secondary">
+              The RAIT ACM SIGAI Student Chapter, established in 2024, focuses on preparing students for the future of Artificial Intelligence. We provide access to workshops, seminars, and events on cutting-edge AI technologies to enhance technical skills, support project development, and drive innovation.
+            </p>
+          </div>
           {/* Images */}
           <div className="flex items-center justify-center gap-2 md:gap-6">
             <Image

@@ -9,6 +9,19 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'PP Editorial New';
+  src: url('/public/pp-editorial-new-regular_freefontdownload_org.woff2') format('woff2'),
+       url('/public/pp-editorial-new-regular_freefontdownload_org.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-editorial {
+  font-family: 'PP Editorial New', serif;
+}
+
 :root {
   --header-height: 80px; /* fallback */
 }

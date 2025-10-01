@@ -154,8 +154,8 @@ const AgendaSection = () => {
 
   return (
     <section id="agenda" className="relative py-16 sm:py-24 lg:py-32 overflow-hidden">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl">
+      <div className="w-full">
+        <div className="px-6">
           <div className="flex items-center gap-2">
             <span className="h-px w-6 bg-zinc-500" />
             <h4 className="text-base font-medium text-text-secondary">Events</h4>

@@ -270,11 +270,11 @@ const SpeakersSection = () => {
         <div className="container px-4 mx-auto">
           <div className="flex flex-col items-start text-left mb-12">
             <div className="flex items-center gap-2 mb-4">
-              <span className="h-px w-6 bg-purple-500" />
-              <h4 className="text-base font-medium text-purple-400">Faculty</h4>
+              <span className="h-px w-6 bg-text-secondary" />
+              <h4 className="text-sm font-medium uppercase tracking-[0.1em] text-text-secondary">Faculty</h4>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight leading-tight text-white mb-8">
-              Our <span className="text-purple-400">Distinguished Faculty</span>
+              Our <span className="text-purple-400 font-editorial">Distinguished</span> <span className="text-white">Faculty</span>
             </h2>
             <p className="text-zinc-400 max-w-2xl mb-8">
               Meet the esteemed faculty members who guide and support us.
@@ -334,15 +334,15 @@ const SpeakersSection = () => {
       {/* Core Team Section - Optimized */}
       <section id="core-team" className="relative bg-gradient-to-b from-zinc-900/50 to-transparent py-12 md:py-20 overflow-hidden">
         <div className="container px-4 mx-auto">
-          <div className="flex flex-col items-center text-center mb-12 md:mb-16">
+          <div className="flex flex-col items-start text-left mb-12 md:mb-16">
             <div className="flex items-center gap-2 mb-3">
-              <span className="h-px w-6 bg-purple-500" />
-              <h4 className="text-base font-medium text-purple-400">Our Team</h4>
+              <span className="h-px w-6 bg-text-secondary" />
+              <h4 className="text-sm font-medium uppercase tracking-[0.1em] text-text-secondary">OUR TEAM</h4>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight leading-tight text-white mb-3">
               Meet the <span className="text-purple-400">Core Team</span>
             </h2>
-            <p className="text-zinc-400 max-w-2xl px-4">
+            <p className="text-zinc-400 max-w-2xl">
               The passionate students driving the RAIT ACM SIGAI Student Chapter forward.
             </p>
           </div>
