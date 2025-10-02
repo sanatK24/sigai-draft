@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import useEmblaCarousel from 'embla-carousel-react';
 import { GlassIcon } from '../ui/glass-icon';
+import { motion, useInView } from 'framer-motion';
 
 interface Speaker {
   name: string;
@@ -246,9 +247,11 @@ const FacultySpeakerCard = ({
 
 interface CoreTeamCardProps {
   speaker: Speaker;
+  index?: number;
+  isCarouselInView?: boolean;
 }
 
-const CoreTeamCard = ({ speaker }: CoreTeamCardProps) => {
+const CoreTeamCard = ({ speaker, index = 0, isCarouselInView = true }: CoreTeamCardProps) => {
   const socialLinks: SocialLinks = {
     instagram: {
       icon: '/img/instagram.png',
@@ -267,13 +270,22 @@ const CoreTeamCard = ({ speaker }: CoreTeamCardProps) => {
   const cardColor = speaker.color || '#d4ff00';
 
   return (
-    <div className="relative min-w-[320px] h-[560px] flex-shrink-0 group">
+    <motion.div 
+      className="relative min-w-[350px] h-[650px] flex-shrink-0 group mt-10"
+      initial={{ opacity: 0, y: 50 }}
+      animate={isCarouselInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+      transition={{ 
+        duration: 0.6,
+        delay: index * 0.15,
+        ease: [0.25, 0.4, 0.25, 1]
+      }}
+    >
       {/* Base colored card */}
       <div 
-        className="absolute inset-0 rounded-[32px] p-7 flex flex-col transition-transform duration-300 group-hover:-translate-y-2"
+        className="absolute inset-0 rounded-[32px] p-7 flex flex-col transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-2xl"
         style={{ 
           backgroundColor: cardColor,
-          height: '360px'
+          height: '600px'
         }}
       >
         {/* Top badges and arrow */}
@@ -289,7 +301,7 @@ const CoreTeamCard = ({ speaker }: CoreTeamCardProps) => {
           <button className="w-11 h-11 bg-black rounded-full flex items-center justify-center transition-transform duration-300 hover:rotate-45 flex-shrink-0">
             <svg 
               viewBox="0 0 24 24" 
-              className="w-5 h-5"
+              className="w-7 h-7"
               stroke="white"
               strokeWidth="2"
               fill="none"
@@ -300,9 +312,9 @@ const CoreTeamCard = ({ speaker }: CoreTeamCardProps) => {
         </div>
 
         {/* Position (small) */}
-        <p className="text-[14px] text-black/70 font-medium mb-2">
+        {/* <p className="text-[14px] text-black/70 font-medium mb-2">
           {speaker.title}
-        </p>
+        </p> */}
 
         {/* Name (large, 2 lines) */}
         <h2 className="text-[38px] font-bold leading-[1.1] text-black mb-3 break-words">
@@ -317,24 +329,25 @@ const CoreTeamCard = ({ speaker }: CoreTeamCardProps) => {
 
       {/* Overlaid image card - NOW WITH NO GAP */}
       <div 
-        className="absolute bottom-0 left-4 right-4 h-[300px] rounded-3xl overflow-hidden shadow-2xl transition-transform duration-300 group-hover:-translate-y-3"
+        className="absolute mb-0 bottom-0 w-[350px] h-[350px] rounded-2xl overflow-hidden shadow-2xl transition-transform duration-75 group-hover:-translate-y-3"
         style={{
           boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
           top: '280px'
         }}
       >
-        <div className="relative w-full h-full">
+        <div className="relative w-full h-full overflow-hidden">
+          {/* Image with zoom effect on hover */}
           <Image
             src={speaker.image}
             alt={speaker.name}
             fill
-            className="object-cover"
+            className="object-cover transition-transform duration-500 group-hover:scale-110"
             sizes="(max-width: 768px) 100vw, 320px"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
           
-          {/* Social icons */}
-          <div className="absolute bottom-5 right-5 flex gap-3">
+          {/* Social icons - Vertical on right side, appear on hover */}
+          <div className="absolute top-1/2 -translate-y-1/2 right-5 flex flex-col gap-3 opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
             <GlassIcon 
               href={socialLinks.instagram!.url} 
               iconSrc={socialLinks.instagram!.icon} 
@@ -355,8 +368,15 @@ const CoreTeamCard = ({ speaker }: CoreTeamCardProps) => {
             />
           </div>
 
-          {/* Read More button */}
-          <button className="absolute bottom-5 left-5 bg-white/95 backdrop-blur-sm text-black px-7 py-3.5 rounded-full text-[15px] font-semibold flex items-center gap-2.5 transition-all duration-300 hover:bg-white hover:translate-x-1">
+          {/* Read More button with clean glassmorphism */}
+          <a 
+            href="/team" 
+            className="absolute bottom-5 left-5 bg-white/25 backdrop-blur-md text-white px-7 py-3.5 rounded-full text-[15px] font-semibold flex items-center gap-2.5 transition-all duration-300 hover:bg-white/35 hover:backdrop-blur-lg hover:translate-x-1 shadow-lg border border-white/40"
+            style={{
+              backdropFilter: 'blur(10px) saturate(150%)',
+              WebkitBackdropFilter: 'blur(10px) saturate(150%)'
+            }}
+          >
             Read More
             <svg 
               viewBox="0 0 24 24" 
@@ -367,14 +387,17 @@ const CoreTeamCard = ({ speaker }: CoreTeamCardProps) => {
             >
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
-          </button>
+          </a>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
 const SpeakersSection = () => {
+  const carouselRef = useRef(null);
+  const isCarouselInView = useInView(carouselRef, { once: true, amount: 0.2 });
+  
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: false, 
     align: 'start',
@@ -489,7 +512,7 @@ const SpeakersSection = () => {
             <div className="flex items-center gap-2 mb-4">
               <span className="h-px w-6 bg-gray-600" />
               <h4 className="text-sm font-medium uppercase tracking-[0.2em] text-gray-400">
-                ELEVATE YOUR GAME
+                BRAINS BEHIND SIGAI
               </h4>
             </div>
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight text-white mb-4">
@@ -500,84 +523,89 @@ const SpeakersSection = () => {
             </p>
           </div>
 
-          {/* Navigation - Dots and Arrows */}
-          <div className="flex justify-between items-center mb-10 px-5">
-            {/* Arrow buttons */}
-            <div className="flex gap-3">
-              <button
-                onClick={scrollPrev}
-                disabled={!canScrollPrev}
-                className={`w-12 h-12 rounded-full border flex items-center justify-center transition-all duration-300 ${
-                  canScrollPrev
-                    ? 'bg-white border-white text-black hover:scale-110'
-                    : 'bg-transparent border-gray-700 text-gray-600 cursor-not-allowed opacity-50'
-                }`}
-                aria-label="Previous slide"
-              >
-                <svg 
-                  viewBox="0 0 24 24" 
-                  className="w-5 h-5"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  fill="none"
-                >
-                  <path d="M19 12H5M12 19l-7-7 7-7"/>
-                </svg>
-              </button>
-              <button
-                onClick={scrollNext}
-                disabled={!canScrollNext}
-                className={`w-12 h-12 rounded-full border flex items-center justify-center transition-all duration-300 ${
-                  canScrollNext
-                    ? 'bg-white border-white text-black hover:scale-110'
-                    : 'bg-transparent border-gray-700 text-gray-600 cursor-not-allowed opacity-50'
-                }`}
-                aria-label="Next slide"
-              >
-                <svg 
-                  viewBox="0 0 24 24" 
-                  className="w-5 h-5"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  fill="none"
-                >
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-              </button>
-            </div>
-
-            {/* Dots */}
-            <div className="flex gap-3">
-              {[0, 1].map((index) => (
+          {/* Navigation - Dots and Arrows on RIGHT side only */}
+          <div className="flex justify-end items-center mb-10 px-5">
+            {/* Navigation group */}
+            <div className="flex items-center gap-4">
+              {/* Dots - smaller, more like inspiration */}
+              {/* <div className="flex items-center gap-2">
+                {[0, 1].map((index) => (
+                  <button
+                    key={index}
+                    onClick={() => scrollTo(index)}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                      Math.floor(selectedIndex / 2) === index
+                        ? 'bg-white scale-125'
+                        : 'bg-gray-600 hover:bg-gray-500'
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div> */}
+              
+              {/* Arrow buttons */}
+              <div className="flex items-center gap-2">
                 <button
-                  key={index}
-                  onClick={() => scrollTo(index)}
-                  className={`w-10 h-10 rounded-full border transition-all duration-300 ${
-                    Math.floor(selectedIndex / 2) === index
-                      ? 'bg-white border-white'
-                      : 'bg-transparent border-gray-700 hover:bg-gray-800'
+                  onClick={scrollPrev}
+                  disabled={!canScrollPrev}
+                  className={`w-12 h-12 rounded-full border flex items-center justify-center transition-all duration-300 ${
+                    canScrollPrev
+                      ? 'bg-white border-white text-black hover:scale-110'
+                      : 'bg-transparent border-gray-700 text-gray-600 cursor-not-allowed opacity-50'
                   }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
+                  aria-label="Previous slide"
+                >
+                  <svg 
+                    viewBox="0 0 24 24" 
+                    className="w-5 h-5"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    fill="none"
+                  >
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                  </svg>
+                </button>
+                <button
+                  onClick={scrollNext}
+                  disabled={!canScrollNext}
+                  className={`w-12 h-12 rounded-full border flex items-center justify-center transition-all duration-300 ${
+                    canScrollNext
+                      ? 'bg-white border-white text-black hover:scale-110'
+                      : 'bg-transparent border-gray-700 text-gray-600 cursor-not-allowed opacity-50'
+                  }`}
+                  aria-label="Next slide"
+                >
+                  <svg 
+                    viewBox="0 0 24 24" 
+                    className="w-5 h-5"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    fill="none"
+                  >
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
 
           {/* Core Team Carousel */}
-          <div className="relative px-5">
+          <div className="relative px-5" ref={carouselRef}>
             <div className="overflow-hidden" ref={emblaRef}>
               <div className="flex gap-6">
-                {speakers.map((speaker) => (
+                {speakers.map((speaker, idx) => (
                   <CoreTeamCard 
                     key={speaker.name}
                     speaker={speaker}
+                    index={idx}
+                    isCarouselInView={isCarouselInView}
                   />
                 ))}
               </div>
             </div>
             
             {/* Scroll indicator */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-gray-600 text-xs flex items-center gap-2 mt-8">
+            {/* <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-gray-600 text-xs flex items-center gap-2 mt-8">
               Scroll for more
               <svg 
                 viewBox="0 0 24 24" 
@@ -588,7 +616,7 @@ const SpeakersSection = () => {
               >
                 <path d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
