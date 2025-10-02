@@ -13,25 +13,12 @@ const nextConfig = {
     return config;
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'framerusercontent.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.supabase.co',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'img.youtube.com',
-        port: '',
-        pathname: '/**',
-      },
+    domains: [
+      'framerusercontent.com',
+      'img.youtube.com',
+      'slelguoygbfzlpylpxfs.supabase.co',
+      'slelguoygbfzlpylpxfs.supabase.in',
+      'slelguoygbfzlpylpxfs.supabase.co.in'
     ],
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',

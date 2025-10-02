@@ -14,7 +14,11 @@ const navItems = [
   { name: "Contact", href: "/#contact" },
 ];
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  disableCompact?: boolean;
+}
+
+const Header: React.FC<HeaderProps> = ({ disableCompact = false }) => {
   const pathname = usePathname();
   const isEventPage = pathname.startsWith('/event');
   const [isScrolledDown, setIsScrolledDown] = useState(false);
@@ -45,6 +49,12 @@ const Header: React.FC = () => {
 
   // Simple scroll threshold handler
   useEffect(() => {
+    // If compact mode is disabled, don't set up scroll listener
+    if (disableCompact) {
+      setIsScrolledDown(false);
+      return;
+    }
+
     let ticking = false;
     
     const updateScrollState = () => {
@@ -67,15 +77,20 @@ const Header: React.FC = () => {
     
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [disableCompact]);
 
   // Set CSS variable for header height
   useEffect(() => {
     if (headerRef.current) {
       const updateHeight = () => {
+        // Always use the expanded height when compact is disabled
+        const height = disableCompact 
+          ? headerRef.current?.scrollHeight || 80 
+          : headerRef.current?.offsetHeight || 80;
+          
         document.documentElement.style.setProperty(
           "--header-height",
-          `${headerRef.current?.offsetHeight || 80}px`
+          `${height}px`
         );
       };
       
@@ -86,7 +101,7 @@ const Header: React.FC = () => {
       window.addEventListener('resize', updateHeight);
       return () => window.removeEventListener('resize', updateHeight);
     }
-  }, [isScrolledDown]);
+  }, [isScrolledDown, disableCompact]);
 
   return (
     <div className="relative">
@@ -94,10 +109,12 @@ const Header: React.FC = () => {
         ref={headerRef}
         id="site-header"
         className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ease-in-out ${
-          isScrolledDown ? "py-2" : "py-3"
-        } px-4 sm:px-6 md:px-8 ${isScrolledDown ? 'bg-transparent' : 'bg-black/20'}`}
+          !disableCompact && isScrolledDown ? "py-2" : "py-3"
+        } px-4 sm:px-6 md:px-8 ${
+          !disableCompact && isScrolledDown ? 'bg-transparent' : 'bg-black/20'
+        }`}
         style={{
-          transform: isScrolledDown ? 'translateY(0)' : 'none',
+          transform: !disableCompact && isScrolledDown ? 'translateY(0)' : 'none',
           transitionProperty: 'transform, padding, background-color',
         }}
       >
@@ -133,8 +150,8 @@ const Header: React.FC = () => {
           <div className="hidden md:flex items-center gap-4">
             {/* Desktop Navigation */}
             <nav
-              className={`items-center gap-4 transition-opacity duration-200 ${
-                isScrolledDown ? "opacity-0 pointer-events-none" : "opacity-100"
+              className={`items-center gap-8 transition-opacity duration-200 ${
+                !disableCompact && isScrolledDown ? "opacity-0 pointer-events-none" : "opacity-100"
               }`}
             >
               {navItems.map((item) => {
@@ -147,7 +164,7 @@ const Header: React.FC = () => {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`text-white/90 text-base font-medium rounded-full px-5 py-2 transition-all duration-300 backdrop-blur-xl border shadow-lg ${
+                    className={`text-white/90 text-base font-medium rounded-full px-5 py-2 mx-1 transition-all duration-300 backdrop-blur-xl border shadow-lg ${
                       isActive 
                         ? 'bg-white/20 border-white/30 shadow-black/20' 
                         : 'hover:bg-white/10 border-white/20 shadow-black/10'
@@ -237,7 +254,7 @@ const Header: React.FC = () => {
                 </div>
                 
                 {/* Menu items */}
-                <nav className="w-full max-w-xs space-y-3">
+                <nav className="w-full max-w-xs space-y-4">
                   {navItems.map((item) => {
                     const isActive = pathname === item.href || 
                                    (pathname === '/' && item.href === '/') ||
@@ -248,10 +265,10 @@ const Header: React.FC = () => {
                       <Link
                         key={item.name}
                         href={item.href}
-                        className={`block text-2xl font-medium w-full text-center py-4 px-4 rounded-xl transition-all duration-200 ${
+                        className={`block text-2xl font-medium w-full text-center py-5 px-6 my-1 rounded-xl transition-all duration-200 ${
                           isActive 
-                            ? 'text-white bg-white/20' 
-                            : 'text-white/90 hover:text-white hover:bg-white/10'
+                            ? 'text-white bg-white/20 border border-white/20' 
+                            : 'text-white/90 hover:text-white hover:bg-white/10 hover:border-white/10 border border-transparent'
                         }`}
                         onClick={() => setIsMobileMenuOpen(false)}
                         scroll={!item.href.startsWith('/#')}

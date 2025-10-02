@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { ArrowUpRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { createClient } from '../../lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import Header from '../header';
 
@@ -24,31 +23,39 @@ const HeroSection = () => {
   const router = useRouter();
   const [upcomingEvent, setUpcomingEvent] = useState<Event | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUpcomingEvent = async () => {
       try {
-        const supabase = createClient();
-        const today = new Date().toISOString().split('T')[0];
-        
-        // First, try to find events with end_date in the future
-        // If end_date is not available, use the event date
-        let query = supabase
-          .from('events')
-          .select('*')
-          .or(`end_date.gte.${today},and(end_date.is.null,date.gte.${today})`)
-          .order('date', { ascending: true })
-          .limit(1);
-
-        const { data: events, error } = await query;
-
-        if (error) throw error;
+        const response = await fetch('/data/events_local.json');
+        if (!response.ok) {
+          throw new Error('Failed to fetch events');
+        }
+        const events = await response.json();
         
         if (events && events.length > 0) {
-          setUpcomingEvent(events[0]);
+          const now = new Date();
+          // Find upcoming events (including today's events)
+          const upcoming = events
+            .filter((event: Event) => new Date(event.date) >= new Date(now.setHours(0, 0, 0, 0)))
+            .sort((a: Event, b: Event) => new Date(a.date).getTime() - new Date(b.date).getTime());
+          
+          if (upcoming.length > 0) {
+            // Get the nearest upcoming event
+            setUpcomingEvent(upcoming[0]);
+          } else {
+            // If no upcoming events, show the most recent past event
+            const past = [...events]
+              .sort((a: Event, b: Event) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            if (past.length > 0) {
+              setUpcomingEvent(past[0]);
+            }
+          }
         }
-      } catch (error) {
-        console.error('Error fetching upcoming event:', error);
+      } catch (err) {
+        console.error('Error fetching upcoming event:', err);
+        setError('Failed to load event information. Please try refreshing the page.');
       } finally {
         setIsLoading(false);
       }
@@ -89,14 +96,20 @@ const HeroSection = () => {
       
       {/* Top-left Content */}
       <div className="absolute top-6 left-6 z-30 flex flex-col items-start gap-2">
-        <button 
-          onClick={handleEventClick}
-          className="bg-white/5 backdrop-blur-xl text-white/90 text-xs font-medium px-4 py-1.5 rounded-full border border-white/20 shadow-lg shadow-black/20 hover:bg-white/10 transition-all duration-300 flex items-center gap-1.5"
-          disabled={isLoading}
-        >
-          <span>{isLoading ? 'Loading...' : 'Upcoming Event'}</span>
-          <ArrowUpRight size={14} />
-        </button>
+        {error ? (
+          <div className="text-red-400 text-xs max-w-[180px] bg-red-900/30 px-3 py-1.5 rounded-lg">
+            {error}
+          </div>
+        ) : (
+          <button 
+            onClick={handleEventClick}
+            className="bg-white/5 backdrop-blur-xl text-white/90 text-xs font-medium px-4 py-1.5 rounded-full border border-white/20 shadow-lg shadow-black/20 hover:bg-white/10 transition-all duration-300 flex items-center gap-1.5"
+            disabled={isLoading}
+          >
+            <span>{isLoading ? 'Loading...' : 'Upcoming Event'}</span>
+            <ArrowUpRight size={14} />
+          </button>
+        )}
         {!isLoading && upcomingEvent && (
           <h2 
             className="text-white/90 text-sm font-medium px-1 max-w-[180px] leading-tight cursor-pointer hover:opacity-80 transition-opacity"

@@ -1,27 +1,41 @@
 import { NextResponse } from 'next/server';
-import supabase from '@/lib/supabase';
+import path from 'path';
+import { promises as fs } from 'fs';
+
+interface Event {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  description: string;
+  image: string;
+  is_featured?: boolean;
+  registration_link?: string;
+  category: string;
+  created_at: string;
+  updated_at: string;
+  end_date: string;
+  registration_fee: number;
+}
 
 export async function GET() {
   try {
+    const filePath = path.join(process.cwd(), 'public', 'data', 'events_rows.json');
+    const fileContents = await fs.readFile(filePath, 'utf8');
+    const events: Event[] = JSON.parse(fileContents);
+    
     const today = new Date().toISOString().split('T')[0];
     
-    // Fetch upcoming events
-    const { data: upcomingEvents, error: upcomingError } = await supabase
-      .from('events')
-      .select('*')
-      .gte('date', today)
-      .order('date', { ascending: true });
+    // Get upcoming events
+    const upcomingEvents = events
+      .filter(event => event.date >= today)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-    // Fetch past events
-    const { data: pastEvents, error: pastError } = await supabase
-      .from('events')
-      .select('*')
-      .lt('date', today)
-      .order('date', { ascending: false });
-
-    if (upcomingError || pastError) {
-      throw upcomingError || pastError;
-    }
+    // Get past events
+    const pastEvents = events
+      .filter(event => event.date < today)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     return NextResponse.json({
       upcoming: upcomingEvents || [],
@@ -36,37 +50,10 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
-  try {
-    const formData = await request.json();
-    
-    // Handle file upload if present
-    if (formData.payment_proof) {
-      const { data: fileData, error: uploadError } = await supabase.storage
-        .from('event-registrations')
-        .upload(
-          `payments/${Date.now()}_${formData.name.replace(/\s+/g, '_')}`,
-          formData.payment_proof
-        );
-      
-      if (uploadError) throw uploadError;
-      formData.payment_proof_url = fileData.path;
-      delete formData.payment_proof; // Remove the file data from form data
-    }
-
-    const { data, error } = await supabase
-      .from('event_registrations')
-      .insert([formData])
-      .select();
-
-    if (error) throw error;
-
-    return NextResponse.json({ success: true, data });
-  } catch (error) {
-    console.error('Error submitting registration:', error);
-    return NextResponse.json(
-      { error: 'Failed to submit registration' },
-      { status: 500 }
-    );
-  }
+export async function POST() {
+  // Since we're moving away from Supabase, we'll disable registration for now
+  return NextResponse.json(
+    { error: 'Online registration is currently not available. Please check back later.' },
+    { status: 501 } // Not Implemented
+  );
 }

@@ -236,8 +236,6 @@ const HorizontalEventCarousel: React.FC<HorizontalEventCarouselProps> = ({ event
   );
 };
 
-import { createClient } from '@/lib/supabase/client';
-
 const AgendaSection = () => {
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
@@ -249,17 +247,21 @@ const AgendaSection = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const supabase = createClient();
-        const { data: events, error: supabaseError } = await supabase
-          .from('events')
-          .select('*')
-          .order('date', { ascending: false })
-          .limit(5);
-
-        if (supabaseError) throw supabaseError;
+        // Fetch events from local JSON file
+        const response = await fetch('/data/events_local.json');
+        if (!response.ok) {
+          throw new Error('Failed to load events');
+        }
         
-        if (events) {
-          setUpcomingEvents(events);
+        const events = await response.json();
+        
+        if (events && Array.isArray(events)) {
+          // Sort events by date in descending order and limit to 5
+          const sortedEvents = [...events]
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            .slice(0, 5);
+          
+          setUpcomingEvents(sortedEvents);
         }
       } catch (err) {
         console.error('Error fetching events:', err);

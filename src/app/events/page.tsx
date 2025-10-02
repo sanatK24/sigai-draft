@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Calendar, Clock, MapPin } from 'lucide-react';
-import supabase from '@/lib/supabase';
 
 interface Event {
   id: string;
@@ -15,21 +14,17 @@ interface Event {
   description: string;
   image: string;
   is_featured?: boolean;
-  registration_link: string;
-  registerLink: string;
+  registration_link: string | null;
   category: string;
+  end_date: string;
+  registration_fee: number;
+  created_at: string;
+  updated_at: string;
   speakers?: Array<{
     name: string;
     role: string;
     image_url?: string;
   }>;
-  details?: Array<{
-    icon: React.ReactNode;
-    text: string;
-  }>;
-  created_at: string;
-  updated_at: string;
-  formattedDate?: string;
 }
 
 // Helper function to format date
@@ -43,7 +38,10 @@ const formatEventDate = (dateString: string) => {
 };
 
 export default function EventsPage() {
-  const [events, setEvents] = useState<{ upcoming: Event[]; past: Event[] }>({ upcoming: [], past: [] });
+  const [events, setEvents] = useState<{ upcoming: Event[]; past: Event[] }>({ 
+    upcoming: [], 
+    past: [] 
+  });
   const [showUpcoming, setShowUpcoming] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -51,62 +49,37 @@ export default function EventsPage() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        setLoading(true);
-        const { data, error } = await supabase
-          .from('events')
-          .select('*')
-          .order('date', { ascending: true }); // Initial sort for easier processing
-
-        if (error) throw error;
-
-        const today = new Date().toISOString().split('T')[0];
+        const response = await fetch('/data/events_local.json');
+        if (!response.ok) {
+          throw new Error('Failed to fetch events');
+        }
+        const allEvents = await response.json();
+        
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
         const upcoming: Event[] = [];
         const past: Event[] = [];
-
-        data.forEach((event: any) => {
-          const formattedEvent: Event = {
-            ...event,
-            registerLink: event.registration_link || '#',
-            formattedDate: formatEventDate(event.date),
-            image: event.image || '/img/events/placeholder.jpg',
-            details: [
-              { icon: <Calendar size={16} />, text: formatEventDate(event.date) },
-              { icon: <Clock size={16} />, text: event.time },
-              { icon: <MapPin size={16} />, text: event.location }
-            ]
-          };
-
-          // Categorize as upcoming or past
-          if (event.date >= today) {
-            upcoming.push(formattedEvent);
+        
+        allEvents.forEach((event: Event) => {
+          const eventDate = new Date(event.date);
+          if (eventDate >= today) {
+            upcoming.push(event);
           } else {
-            past.push(formattedEvent);
+            past.push(event);
           }
         });
-
-        // Sort upcoming events by date (ascending - soonest first)
-        const sortedUpcoming = [...upcoming].sort((a, b) => 
-          new Date(a.date).getTime() - new Date(b.date).getTime()
-        );
         
-        // Sort past events by year (descending) and then by date (descending within each year)
-        const sortedPast = [...past].sort((a, b) => {
-          const dateA = new Date(a.date);
-          const dateB = new Date(b.date);
-          const yearDiff = dateB.getFullYear() - dateA.getFullYear();
-          
-          // If same year, sort by most recent date first
-          if (yearDiff === 0) {
-            return dateB.getTime() - dateA.getTime();
-          }
-          
-          return yearDiff;
-        });
+        // Sort upcoming events by date (ascending)
+        upcoming.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
         
-        setEvents({ upcoming: sortedUpcoming, past: sortedPast });
+        // Sort past events by date (descending)
+        past.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        
+        setEvents({ upcoming, past });
       } catch (err) {
-        console.error('Error fetching events:', err);
         setError('Failed to load events. Please try again later.');
+        console.error('Error fetching events:', err);
       } finally {
         setLoading(false);
       }
@@ -117,156 +90,132 @@ export default function EventsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="animate-pulse">Loading events...</div>
       </div>
     );
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-red-500">{error}</div>
+      </div>
+    );
+  }
+
+  const displayEvents = showUpcoming ? events.upcoming : events.past;
+
+  // Group events by year
+  const groupEventsByYear = (events: Event[], isUpcoming: boolean) => {
+    const grouped = events.reduce((acc, event) => {
+      const year = new Date(event.date).getFullYear();
+      if (!acc[year]) {
+        acc[year] = [];
+      }
+      acc[year].push(event);
+      return acc;
+    }, {} as Record<number, Event[]>);
+
+    // Sort events within each year
+    Object.keys(grouped).forEach(year => {
+      const yearNum = parseInt(year);
+      grouped[yearNum].sort((a, b) => {
+        return isUpcoming 
+          ? new Date(a.date).getTime() - new Date(b.date).getTime() // Ascending for upcoming
+          : new Date(b.date).getTime() - new Date(a.date).getTime(); // Descending for past
+      });
+    });
+
+    return grouped;
+  };
+
+  const eventsByYear = groupEventsByYear(displayEvents, showUpcoming);
+  const sortedYears = Object.keys(eventsByYear)
+    .map(Number)
+    .sort((a, b) => showUpcoming ? a - b : b - a); // Sort years based on view
+
   return (
-    <div className="min-h-screen bg-black py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
-            Our Events
-          </h1>
-          <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-300 sm:mt-4">
-            Join us for exciting events, workshops, and more.
-          </p>
+    <div className="min-h-screen bg-black text-white p-6">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-4xl font-bold mb-8">Events</h1>
+        
+        <div className="flex space-x-4 mb-8">
+          <button
+            onClick={() => setShowUpcoming(true)}
+            className={`px-4 py-2 rounded-lg ${
+              showUpcoming ? 'bg-white text-black' : 'bg-gray-800 text-white'
+            }`}
+          >
+            Upcoming Events
+          </button>
+          <button
+            onClick={() => setShowUpcoming(false)}
+            className={`px-4 py-2 rounded-lg ${
+              !showUpcoming ? 'bg-white text-black' : 'bg-gray-800 text-white'
+            }`}
+          >
+            Past Events
+          </button>
         </div>
 
-        <div className="flex justify-center mb-8">
-          <div className="inline-flex rounded-md shadow-sm border border-gray-800">
-            <button
-              onClick={() => setShowUpcoming(true)}
-              className={`px-4 py-2 text-sm font-medium rounded-l-lg transition-colors ${
-                showUpcoming
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-900 text-gray-300 hover:bg-gray-800'
-              }`}
-            >
-              Upcoming Events
-            </button>
-            <button
-              onClick={() => setShowUpcoming(false)}
-              className={`px-4 py-2 text-sm font-medium rounded-r-lg transition-colors ${
-                !showUpcoming
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-900 text-gray-300 hover:bg-gray-800'
-              }`}
-            >
-              Past Events
-            </button>
-          </div>
-        </div>
+        <div className="space-y-8">
+          {sortedYears.map((year) => (
+            <div key={year} className="space-y-6">
+              <h2 className={`text-2xl font-bold border-b border-gray-700 pb-2 ${showUpcoming ? 'mt-8' : ''}`}>
+                {year}
+                <span className="text-gray-400 text-base font-normal ml-2">
+                  {showUpcoming ? 'Upcoming Events' : 'Past Events'}
+                </span>
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {eventsByYear[year].map((event) => (
+                  <div key={event.id} className="bg-gray-900 rounded-lg overflow-hidden shadow-lg">
+                    <div className="relative h-48">
+                      <Image
+                        src={event.image}
+                        alt={event.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="p-6">
+                      <h2 className="text-xl font-bold mb-2">{event.title}</h2>
+                      <p className="text-gray-400 mb-4 line-clamp-2">{event.description}</p>
+                      
+                      <div className="space-y-2 text-sm text-gray-400 mb-4">
+                        <div className="flex items-center">
+                          <Calendar className="w-4 h-4 mr-2" />
+                          <span>{formatEventDate(event.date)}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Clock className="w-4 h-4 mr-2" />
+                          <span>{event.time}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <MapPin className="w-4 h-4 mr-2" />
+                          <span>{event.location}</span>
+                        </div>
+                      </div>
 
-        {error ? (
-          <div className="text-center text-red-500">{error}</div>
-        ) : showUpcoming ? (
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {events.upcoming.map((event) => (
-              <Link 
-                key={event.id} 
-                href={`/events/${event.id}`}
-                className="block bg-gray-900 overflow-hidden shadow rounded-lg hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
-              >
-                <div className="relative h-48 w-full">
-                  <Image
-                    src={event.image}
-                    alt={event.title}
-                    fill
-                    className="object-cover hover:opacity-90 transition-opacity duration-300"
-                  />
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center text-sm text-gray-400 mb-2">
-                    <Calendar className="mr-1.5 h-4 w-4 flex-shrink-0 text-white" aria-hidden="true" />
-                    <span className="text-white">{event.formattedDate}</span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-white mb-2">
-                    {event.title}
-                  </h3>
-                  <p className="text-gray-300 mb-4 line-clamp-2">
-                    {event.description}
-                  </p>
-                  <div className="flex items-center text-sm text-gray-400">
-                    <MapPin className="mr-1.5 h-4 w-4 flex-shrink-0 text-white" aria-hidden="true" />
-                    <span className="truncate text-white">{event.location}</span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="space-y-12">
-            {(() => {
-              const years = new Set<number>();
-              const eventsByYear: Record<number, Event[]> = {};
-              
-              // Group events by year
-              events.past.forEach(event => {
-                const year = new Date(event.date).getFullYear();
-                if (!years.has(year)) {
-                  years.add(year);
-                  eventsByYear[year] = [];
-                }
-                eventsByYear[year].push(event);
-              });
-              
-              // Sort years in descending order
-              const sortedYears = Array.from(years).sort((a, b) => b - a);
-              
-              return sortedYears.map((year) => (
-                <div key={year} className="space-y-6">
-                  <h2 className="text-2xl font-bold text-white border-b border-gray-800 pb-2 mb-4">
-                    {year}
-                  </h2>
-                  <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                    {eventsByYear[year].map((event) => (
-                      <Link 
-                        key={event.id} 
+                      <Link
                         href={`/events/${event.id}`}
-                        className="block bg-gray-900 overflow-hidden shadow rounded-lg hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
+                        className="inline-block bg-white text-black px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors"
                       >
-                        <div className="relative h-48 w-full">
-                          <Image
-                            src={event.image}
-                            alt={event.title}
-                            fill
-                            className="object-cover hover:opacity-90 transition-opacity duration-300"
-                          />
-                        </div>
-                        <div className="p-6">
-                          <div className="flex items-center text-sm text-gray-400 mb-2">
-                            <Calendar className="mr-1.5 h-4 w-4 flex-shrink-0 text-white" aria-hidden="true" />
-                            <span className="text-white">{event.formattedDate}</span>
-                          </div>
-                          <h3 className="text-xl font-semibold text-white mb-2">
-                            {event.title}
-                          </h3>
-                          <p className="text-gray-300 mb-4 line-clamp-2">
-                            {event.description}
-                          </p>
-                          <div className="flex items-center text-sm text-gray-400">
-                            <MapPin className="mr-1.5 h-4 w-4 flex-shrink-0 text-white" aria-hidden="true" />
-                            <span className="truncate text-white">{event.location}</span>
-                          </div>
-                        </div>
+                        View Details
                       </Link>
-                    ))}
+                    </div>
                   </div>
-                </div>
-              ));
-            })()}
-          </div>
-        )}
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
 
-        {!loading && (showUpcoming ? events.upcoming : events.past).length === 0 && (
+        {displayEvents.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-400">
-              {showUpcoming
-                ? 'No upcoming events scheduled. Check back soon!'
-                : 'No past events to show.'}
+            <p className="text-xl text-gray-400">
+              {showUpcoming ? 'No upcoming events.' : 'No past events.'}
             </p>
           </div>
         )}
