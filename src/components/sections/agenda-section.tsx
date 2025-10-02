@@ -4,6 +4,13 @@ import React, { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Event } from '@/types/event';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 
 // Add JSX namespace
 declare global {
@@ -417,18 +424,19 @@ const AgendaSection = () => {
 
   return (
     <section id="agenda" className="relative py-16 sm:py-24 lg:py-32 overflow-hidden">
-      <div className="w-full">
-        <div className="px-6">
+      <div className="container mx-auto px-6">
+        <div>
           <div className="flex items-center gap-2">
             <span className="h-px w-6 bg-zinc-500" />
             <h4 className="text-base font-medium text-text-secondary">Events & Media</h4>
           </div>
-          <h2 className="mt-6 text-[40px] sm:text-[56px] lg:text-[64px] leading-tight font-bold tracking-tighter text-text-primary">
-            Discover Our <span className="text-primary">Latest</span> 
+          <h2 className="mt-6 text-[40px] sm:text-[56px] lg:text-[64px] max-w-2xl leading-tight font-bold tracking-tighter text-text-primary">
+            Discover Our <span className="text-primary">Latest </span> 
+            <span className="text-primary">Flagship Events</span>
           </h2>
         </div>
 
-        <div className="mt-12 px-4 lg:px-8">
+        <div className="mt-12">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left Panel - Magazine Card (Full Height) */}
             <div className="lg:col-span-1">
@@ -480,7 +488,7 @@ const AgendaSection = () => {
                       {upcomingEvents.length} {upcomingEvents.length === 1 ? 'Event' : 'Events'}
                     </span>
                   </div>
-                  {/* <Link 
+                  <Link 
                     href="/events" 
                     className="text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
                   >
@@ -488,7 +496,7 @@ const AgendaSection = () => {
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="m9 18 6-6-6-6"/>
                     </svg>
-                  </Link> */}
+                  </Link>
                 </div>
 
                 {loading ? (
@@ -499,101 +507,103 @@ const AgendaSection = () => {
                   <div className="text-center p-8 text-red-500">{error}</div>
                 ) : (
                   <div className="relative">
-                    <div 
-                      ref={carouselRef}
-                      className="flex overflow-x-auto hide-scrollbar snap-x snap-mandatory gap-6 pb-4 px-4"
-                      style={{
-                        scrollBehavior: 'smooth',
-                        scrollSnapType: 'x mandatory',
-                        WebkitOverflowScrolling: 'touch',
-                        msOverflowStyle: 'none',
-                        scrollbarWidth: 'none',
-                        scrollPadding: '0 24px'
+                    <Carousel
+                      opts={{
+                        align: 'center',
+                        loop: true,
+                        skipSnaps: false,
+                        containScroll: 'trimSnaps'
+                      }}
+                      className="w-full"
+                      setApi={(api) => {
+                        // Update active index when carousel changes
+                        api?.on('select', () => {
+                          setActiveIndex(api.selectedScrollSnap());
+                          
+                          // Update past/upcoming status
+                          const activeEvent = upcomingEvents[api.selectedScrollSnap()];
+                          if (activeEvent) {
+                            const eventDate = new Date(activeEvent.date);
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            setIsShowingPastEvents(eventDate < today);
+                          }
+                        });
                       }}
                     >
-                      {/* Left padding for first card centering */}
-                      <div className="flex-shrink-0 w-[calc(50%-144px)]" aria-hidden="true" />
-                      
-                      {upcomingEvents.map((event, index) => (
-                        <div 
-                          key={event.id}
-                          data-index={index}
-                          className="flex-shrink-0 w-72 transition-all duration-300 snap-center"
-                          style={{
-                            opacity: index === activeIndex ? 1 : 0.7,
-                            transform: `scale(${index === activeIndex ? 1 : 0.95})`,
-                            transition: 'all 0.3s ease',
-                            cursor: 'pointer',
-                            scrollSnapAlign: 'center',
-                            scrollMargin: '0 24px',
-                            flex: '0 0 auto'
-                          }}
-                          onClick={() => setActiveIndex(index)}
-                        >
-                          <div className="bg-card border border-border/50 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow h-full flex flex-col">
-                            <div className="relative h-40">
-                              <Image
-                                src={event.image || '/img/event-placeholder.jpg'}
-                                alt={event.title}
-                                fill
-                                className="object-cover"
-                              />
-                              {event.isNew && (
-                                <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded-full">
-                                  New
+                      <CarouselContent className="-ml-2 md:-ml-4">
+                        {upcomingEvents.map((event, index) => (
+                          <CarouselItem key={event.id} className="pl-2 md:pl-4 basis-full md:basis-2/3 lg:basis-1/2 xl:basis-2/5">
+                            <div 
+                              className={`transition-all duration-300 h-full ${index === activeIndex ? 'scale-100 opacity-100' : 'scale-90 opacity-70'}`}
+                              onClick={() => setActiveIndex(index)}
+                            >
+                              <div className={`bg-card border ${index === activeIndex ? 'border-primary/50' : 'border-border/50'} rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow h-full flex flex-col`}>
+                                <div className="relative h-40">
+                                  <Image
+                                    src={event.image || '/img/event-placeholder.jpg'}
+                                    alt={event.title}
+                                    fill
+                                    className="object-cover"
+                                  />
+                                  {event.isNew && (
+                                    <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                                      New
+                                    </div>
+                                  )}
                                 </div>
-                              )}
-                            </div>
-                            <div className="p-4 flex-1 flex flex-col">
-                              <h3 className="font-semibold text-foreground line-clamp-2 mb-2">
-                                {event.title}
-                              </h3>
-                              <div className="flex items-center text-sm text-muted-foreground mb-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5">
-                                  <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
-                                  <line x1="16" y1="2" x2="16" y2="6"></line>
-                                  <line x1="8" y1="2" x2="8" y2="6"></line>
-                                  <line x1="3" y1="10" x2="21" y2="10"></line>
-                                </svg>
-                                {new Date(event.date).toLocaleDateString('en-US', {
-                                  month: 'short',
-                                  day: 'numeric',
-                                  year: 'numeric'
-                                })}
+                                <div className="p-4 flex-1 flex flex-col">
+                                  <h3 className="font-semibold text-foreground line-clamp-2 mb-2">
+                                    {event.title}
+                                  </h3>
+                                  <div className="flex items-center text-sm text-muted-foreground mb-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5">
+                                      <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+                                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                    {new Date(event.date).toLocaleDateString('en-US', {
+                                      month: 'short',
+                                      day: 'numeric',
+                                      year: 'numeric'
+                                    })}
+                                  </div>
+                                  <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                                    {event.description}
+                                  </p>
+                                  <Link 
+                                    href={`/events/${event.slug || '#'}`}
+                                    className="mt-auto text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center"
+                                  >
+                                    Learn more
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
+                                      <path d="m9 18 6-6-6-6"/>
+                                    </svg>
+                                  </Link>
+                                </div>
                               </div>
-                              <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                                {event.description}
-                              </p>
-                              <Link 
-                                href={`/events/${event.slug || '#'}`}
-                                className="mt-auto text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center"
-                              >
-                                Learn more
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
-                                  <path d="m9 18 6-6-6-6"/>
-                                </svg>
-                              </Link>
                             </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Navigation Dots */}
-                    {upcomingEvents.length > 1 && (
-                      <div className="flex justify-center mt-6 space-x-2">
-                        {upcomingEvents.map((_, index) => (
-                          <button
-                            key={index}
-                            onClick={() => setActiveIndex(index)}
-                            className={`w-2.5 h-2.5 rounded-full transition-all ${
-                              index === activeIndex ? 'bg-primary w-6' : 'bg-border/50'
-                            }`}
-                            aria-label={`Go to slide ${index + 1}`}
-                          />
+                          </CarouselItem>
                         ))}
+                      </CarouselContent>
+                      <div className="flex items-center justify-center gap-4 mt-6">
+                        <CarouselPrevious className="static transform-none translate-y-0 translate-x-0" />
+                        <div className="flex justify-center space-x-2">
+                          {upcomingEvents.map((_, index) => (
+                            <button
+                              key={index}
+                              onClick={() => setActiveIndex(index)}
+                              className={`w-2.5 h-2.5 rounded-full transition-all ${
+                                index === activeIndex ? 'bg-primary w-6' : 'bg-border/50'
+                              }`}
+                              aria-label={`Go to slide ${index + 1}`}
+                            />
+                          ))}
+                        </div>
+                        <CarouselNext className="static transform-none translate-y-0 translate-x-0" />
                       </div>
-                    )}
+                    </Carousel>
                   </div>
                 )}
               </div>

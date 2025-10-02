@@ -103,22 +103,30 @@ const TargetAudienceSection = () => {
               </div>
             ))}
           </div>
-
-          <div className="mt-32 w-full overflow-hidden space-y-4">
-            {marqueeTexts.map((text, index) => (
-              <div key={index} className="relative group bg-white py-2">
-                <div className={`flex ${animationDirections[index]} whitespace-nowrap group-hover:animation-pause`}>
-                  <h2 className="text-[40px] md:text-[60px] font-bold whitespace-nowrap px-4 text-black">
-                    {text}
-                  </h2>
-                  <h2 className="text-[40px] md:text-[60px] font-bold whitespace-nowrap px-4 text-black">
-                    {text}
-                  </h2>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
+      </div>
+      
+      {/* Marquee section - Full width outside container */}
+      <div className="mt-32 w-screen overflow-hidden space-y-4 left-0 right-0">
+        {marqueeTexts.map((text, index) => (
+          <div key={index} className="relative group bg-white py-2 w-full">
+            <div className={`flex ${animationDirections[index]} whitespace-nowrap`}>
+              {/* Duplicate the text multiple times to ensure it fills the screen */}
+              <h2 className="text-[40px] md:text-[60px] font-bold whitespace-nowrap px-4 text-black">
+                {text}
+              </h2>
+              <h2 className="text-[40px] md:text-[60px] font-bold whitespace-nowrap px-4 text-black">
+                {text}
+              </h2>
+              <h2 className="text-[40px] md:text-[60px] font-bold whitespace-nowrap px-4 text-black">
+                {text}
+              </h2>
+              <h2 className="text-[40px] md:text-[60px] font-bold whitespace-nowrap px-4 text-black">
+                {text}
+              </h2>
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );
