@@ -3,7 +3,6 @@ import AboutSection from '@/components/sections/about-section';
 import TargetAudienceSection from '@/components/sections/target-audience-section';
 import SpeakersSection from '@/components/sections/speakers-section';
 import AgendaSection from '@/components/sections/agenda-section';
-import SponsorsSection from '@/components/sections/sponsors-section';
 import FaqSection from '@/components/sections/faq-section';
 import HostsSection from '@/components/sections/hosts-section';
 // import RegistrationSection from '@/components/sections/registration-section';
@@ -17,9 +16,6 @@ export default function HomePage() {
       <TargetAudienceSection />
       <SpeakersSection />
       <AgendaSection />
-      {/* Sponsors section temporarily disabled
-      <SponsorsSection />
-      */}
       <FaqSection />
       {/* Hosts section temporarily disabled
       <HostsSection />
