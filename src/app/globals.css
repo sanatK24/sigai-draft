@@ -95,7 +95,11 @@ body {
 
 .group:hover .animate-marquee,
 .group:hover .animate-marquee-reverse {
-  animation-play-state: paused;
+  /* animation-play-state: running; */
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+
 }
 
 @import "tailwindcss";

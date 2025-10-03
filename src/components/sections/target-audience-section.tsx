@@ -111,19 +111,15 @@ const TargetAudienceSection = () => {
         {marqueeTexts.map((text, index) => (
           <div key={index} className="relative group bg-white py-2 w-full">
             <div className={`flex ${animationDirections[index]} whitespace-nowrap`}>
-              {/* Duplicate the text multiple times to ensure it fills the screen */}
-              <h2 className="text-[40px] md:text-[60px] font-bold whitespace-nowrap px-4 text-black">
-                {text}
-              </h2>
-              <h2 className="text-[40px] md:text-[60px] font-bold whitespace-nowrap px-4 text-black">
-                {text}
-              </h2>
-              <h2 className="text-[40px] md:text-[60px] font-bold whitespace-nowrap px-4 text-black">
-                {text}
-              </h2>
-              <h2 className="text-[40px] md:text-[60px] font-bold whitespace-nowrap px-4 text-black">
-                {text}
-              </h2>
+              {/* Render 6 copies for seamless infinite loop */}
+              {Array.from({ length: 6 }).map((_, i) => (
+                <h2 
+                  key={i}
+                  className="text-[40px] md:text-[60px] font-bold whitespace-nowrap px-4 text-black"
+                >
+                  {text}
+                </h2>
+              ))}
             </div>
           </div>
         ))}
