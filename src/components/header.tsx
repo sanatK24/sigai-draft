@@ -9,7 +9,7 @@ import { usePathname } from 'next/navigation';
 const navItems = [
   { name: "Home", href: "/" },
   { name: "About", href: "/#about" },
-  { name: "Gallery", href: "/#gallery" },
+  { name: "Gallery", href: "/gallery" },
   { name: "Team", href: "/#team" },
   { name: "Contact", href: "/#contact" },
 ];
@@ -23,6 +23,7 @@ const Header: React.FC<HeaderProps> = ({ disableCompact = false }) => {
   const isEventPage = pathname.startsWith('/event');
   const [isScrolledDown, setIsScrolledDown] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCapsuleHovered, setIsCapsuleHovered] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
@@ -111,7 +112,7 @@ const Header: React.FC<HeaderProps> = ({ disableCompact = false }) => {
         className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ease-in-out ${
           !disableCompact && isScrolledDown ? "py-2" : "py-3"
         } px-4 sm:px-6 md:px-8 ${
-          !disableCompact && isScrolledDown ? 'bg-transparent' : 'bg-black/20'
+          !disableCompact && isScrolledDown ? 'bg-transparent' : 'bg-black/20 backdrop-blur-md'
         }`}
         style={{
           transform: !disableCompact && isScrolledDown ? 'translateY(0)' : 'none',
@@ -119,11 +120,17 @@ const Header: React.FC<HeaderProps> = ({ disableCompact = false }) => {
         }}
       >
         <div
-          className={`flex items-center justify-between w-full transition-all duration-300 ${
+          className={`flex items-center transition-all duration-[750ms] ease-in-out ${
             isScrolledDown 
-              ? "w-full px-4 sm:px-6 md:max-w-[1200px] md:mx-auto md:rounded-full bg-black/40 py-2"
-              : "w-full px-4 sm:px-6 md:max-w-[1200px] md:mx-auto"
+              ? `mx-auto rounded-full bg-black border border-white/10 shadow-lg ${
+                  isCapsuleHovered 
+                    ? "max-w-5xl justify-between py-2 px-6" 
+                    : "max-w-fit gap-4 py-2 px-4"
+                }`
+              : "w-full px-4 sm:px-6 md:max-w-[1200px] md:mx-auto justify-between"
           }`}
+          onMouseEnter={() => isScrolledDown && setIsCapsuleHovered(true)}
+          onMouseLeave={() => isScrolledDown && setIsCapsuleHovered(false)}
         >
           {/* Logo - Always on the left */}
           <Link
@@ -142,16 +149,22 @@ const Header: React.FC<HeaderProps> = ({ disableCompact = false }) => {
                 }`}
                 priority
               />
-              <span className="hidden sm:block text-white font-semibold text-base md:text-lg lg:text-xl">RAIT ACM SIGAI Student Chapter</span>
+              <span className="text-white font-semibold text-base md:text-lg lg:text-xl transition-all duration-[450ms] block">RAIT ACM SIGAI Student Chapter</span>
             </div>
           </Link>
 
           {/* Desktop Navigation and CTA - Hidden on mobile */}
-          <div className="hidden md:flex items-center gap-4">
-            {/* Desktop Navigation */}
+          <div className={`hidden md:flex items-center flex-shrink-0 transition-all duration-[750ms] ${
+            !disableCompact && isScrolledDown && !isCapsuleHovered ? 'gap-0' : 'gap-3'
+          }`}>
+            {/* Desktop Navigation - Hidden in capsule mode unless hovered */}
             <nav
-              className={`items-center gap-8 transition-opacity duration-200 ${
-                !disableCompact && isScrolledDown ? "opacity-0 pointer-events-none" : "opacity-100"
+              className={`flex items-center transition-all duration-[750ms] ${
+                !disableCompact && isScrolledDown
+                  ? isCapsuleHovered
+                    ? "opacity-100 max-w-2xl gap-3"
+                    : "opacity-0 max-w-0 w-0 pointer-events-none overflow-hidden"
+                  : "opacity-100 gap-8"
               }`}
             >
               {navItems.map((item) => {
@@ -164,10 +177,14 @@ const Header: React.FC<HeaderProps> = ({ disableCompact = false }) => {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`text-white/90 text-base font-medium rounded-full px-5 py-2 mx-1 transition-all duration-300 backdrop-blur-xl border shadow-lg ${
-                      isActive 
-                        ? 'bg-white/20 border-white/30 shadow-black/20' 
-                        : 'hover:bg-white/10 border-white/20 shadow-black/10'
+                    className={`text-white/90 font-medium rounded-full transition-all duration-500 whitespace-nowrap ${
+                      isScrolledDown
+                        ? 'text-sm px-3 py-1.5 hover:bg-white/10'
+                        : `text-base px-5 py-2 mx-1 backdrop-blur-xl border shadow-lg ${
+                            isActive 
+                              ? 'bg-white/20 border-white/30 shadow-black/20' 
+                              : 'hover:bg-white/10 border-white/20 shadow-black/10'
+                          }`
                     }`}
                     scroll={!item.href.startsWith('/#')}
                   >

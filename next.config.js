@@ -18,7 +18,8 @@ const nextConfig = {
       'img.youtube.com',
       'slelguoygbfzlpylpxfs.supabase.co',
       'slelguoygbfzlpylpxfs.supabase.in',
-      'slelguoygbfzlpylpxfs.supabase.co.in'
+      'slelguoygbfzlpylpxfs.supabase.co.in',
+      'images.unsplash.com'
     ],
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',

@@ -6,12 +6,20 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { GlassIcon } from '../ui/glass-icon';
 import { motion, useInView } from 'framer-motion';
 
+interface SocialLinks {
+  instagram?: string;
+  linkedin?: string;
+  github?: string;
+}
+
 interface Speaker {
   name: string;
   title: string;
   image: string;
   color?: string;
   testimony?: string;
+  spotifyUrl?: string;
+  socials?: SocialLinks;
 }
 
 const speakers: Speaker[] = [
@@ -19,49 +27,68 @@ const speakers: Speaker[] = [
     name: 'Hiresh Nandodkar',
     title: 'Chairperson',
     image: '/img/faculty_img/Unknown_person.jpg',
-    color: '#d4ff00',
-    testimony: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.'
+    color: '#d4ff00', // Keep the punchy green/lime
+    testimony: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.',
+    spotifyUrl: 'https://open.spotify.com/playlist/YOUR_PLAYLIST_ID_1',
+    socials: {
+      instagram: 'https://www.instagram.com/hiresh_username/',
+      linkedin: 'https://www.linkedin.com/in/hiresh-username/',
+      github: 'https://github.com/hiresh-username'
+    }
   },
   {
     name: 'Aastha Shetty',
     title: 'Vice Chairperson',
     image: '/img/faculty_img/Unknown_person.jpg',
-    color: '#ff6b9d',
-    testimony: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.'
+    color: '#ff4d94', // Vibrant hot pink
+    testimony: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.',
+    spotifyUrl: 'https://open.spotify.com/playlist/YOUR_PLAYLIST_ID_2',
+    socials: {
+      instagram: 'https://www.instagram.com/aastha_username/',
+      linkedin: 'https://www.linkedin.com/in/aastha-username/',
+      github: 'https://github.com/aastha-username'
+    }
   },
   {
     name: 'Rian Pardal',
     title: 'General Secretary',
     image: '/img/faculty_img/Unknown_person.jpg',
-    color: '#a18cd1',
-    testimony: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla.'
+    color: '#a78bfa', // Vibrant purple
+    testimony: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla.',
+    spotifyUrl: 'https://open.spotify.com/playlist/YOUR_PLAYLIST_ID_3',
+    socials: {
+      instagram: 'https://www.instagram.com/rian_username/',
+      linkedin: 'https://www.linkedin.com/in/rian-username/',
+      github: 'https://github.com/rian-username'
+    }
   },
   {
     name: 'Riddhi Patil',
     title: 'Treasurer',
     image: '/img/faculty_img/Unknown_person.jpg',
-    color: '#4fc3f7',
-    testimony: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim.'
+    color: '#22d3ee', // Vibrant cyan/turquoise
+    testimony: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim.',
+    spotifyUrl: 'https://open.spotify.com/playlist/YOUR_PLAYLIST_ID_4',
+    socials: {
+      instagram: 'https://www.instagram.com/riddhi_username/',
+      linkedin: 'https://www.linkedin.com/in/riddhi-username/',
+      github: 'https://github.com/riddhi-username'
+    }
   },
   {
     name: 'Sanat Karkhanis',
     title: 'Webmaster',
     image: '/img/faculty_img/Unknown_person.jpg',
-    color: '#f093fb',
-    testimony: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.'
+    color: '#fb7185', // Vibrant coral/rose
+    testimony: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.',
+    spotifyUrl: 'https://open.spotify.com/playlist/YOUR_PLAYLIST_ID_5',
+    socials: {
+      instagram: 'https://www.instagram.com/sanat_username/',
+      linkedin: 'https://www.linkedin.com/in/sanat-username/',
+      github: 'https://github.com/sanat-username'
+    }
   }
 ];
-
-interface SocialLink {
-  icon: string;
-  url: string;
-}
-
-interface SocialLinks {
-  linkedin: SocialLink;
-  instagram?: SocialLink;
-  github?: SocialLink;
-}
 
 const TypewriterText = ({ text }: { text: string }) => {
   const [displayedText, setDisplayedText] = useState('');
@@ -122,11 +149,8 @@ const FacultySpeakerCard = ({
   const [isHovered, setIsHovered] = React.useState(false);
   const [isMobileInfoOpen, setIsMobileInfoOpen] = React.useState(false);
   
-  const socialLinks: SocialLinks = {
-    linkedin: {
-      icon: '/img/linkedin (1).png',
-      url: 'https://www.linkedin.com/company/rait-sigai/'
-    }
+  const socialLinks = {
+    linkedin: 'https://www.linkedin.com/company/rait-sigai/'
   };
 
   const getBio = (name: string, title: string) => {
@@ -173,8 +197,8 @@ const FacultySpeakerCard = ({
           </div>
           <div className="absolute bottom-6 right-6 flex gap-3">
             <GlassIcon 
-              href={socialLinks.linkedin.url} 
-              iconSrc={socialLinks.linkedin.icon} 
+              href={socialLinks.linkedin} 
+              iconSrc="/img/linkedin (1).png" 
               alt="LinkedIn" 
               className="hover:scale-110 transition-transform duration-200"
             />
@@ -249,25 +273,13 @@ interface CoreTeamCardProps {
   speaker: Speaker;
   index?: number;
   isCarouselInView?: boolean;
+  isActive?: boolean;
 }
 
-const CoreTeamCard = ({ speaker, index = 0, isCarouselInView = true }: CoreTeamCardProps) => {
-  const socialLinks: SocialLinks = {
-    instagram: {
-      icon: '/img/instagram.png',
-      url: 'https://www.instagram.com/rait_sigai/'
-    },
-    linkedin: {
-      icon: '/img/linkedin (1).png',
-      url: 'https://www.linkedin.com/company/rait-sigai/'
-    },
-    github: {
-      icon: '/img/github.png',
-      url: 'https://github.com/RAIT-SIGAI'
-    }
-  };
-
+const CoreTeamCard = ({ speaker, index = 0, isCarouselInView = true, isActive = false }: CoreTeamCardProps) => {
+  const [isHovered, setIsHovered] = useState(false);
   const cardColor = speaker.color || '#d4ff00';
+  const beigeColor = '#d4c5b9'; // Beige/muted color for inactive cards
 
   return (
     <motion.div 
@@ -279,12 +291,14 @@ const CoreTeamCard = ({ speaker, index = 0, isCarouselInView = true }: CoreTeamC
         delay: index * 0.15,
         ease: [0.25, 0.4, 0.25, 1]
       }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       {/* Base colored card */}
       <div 
-        className="absolute inset-0 rounded-[32px] p-7 flex flex-col transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-2xl"
+        className="absolute inset-0 rounded-[32px] p-7 flex flex-col transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-2xl"
         style={{ 
-          backgroundColor: cardColor,
+          backgroundColor: isActive || isHovered ? cardColor : beigeColor,
           height: '600px'
         }}
       >
@@ -298,7 +312,15 @@ const CoreTeamCard = ({ speaker, index = 0, isCarouselInView = true }: CoreTeamC
               2024-25
             </div>
           </div>
-          <button className="w-11 h-11 bg-black rounded-full flex items-center justify-center transition-transform duration-300 hover:rotate-45 flex-shrink-0">
+
+          <a 
+            href={speaker.spotifyUrl || '#'} 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-11 h-11 bg-black rounded-full flex items-center justify-center transition-transform duration-300 hover:rotate-45 flex-shrink-0"
+            aria-label={`Listen to ${speaker.name}'s Spotify playlist`}
+            title={`Listen to ${speaker.name}'s Spotify playlist`}
+          >
             <svg 
               viewBox="0 0 24 24" 
               className="w-7 h-7"
@@ -308,7 +330,7 @@ const CoreTeamCard = ({ speaker, index = 0, isCarouselInView = true }: CoreTeamC
             >
               <path d="M7 17L17 7M17 7H7M17 7V17"/>
             </svg>
-          </button>
+          </a>
         </div>
 
         {/* Position (small) */}
@@ -348,24 +370,30 @@ const CoreTeamCard = ({ speaker, index = 0, isCarouselInView = true }: CoreTeamC
           
           {/* Social icons - Vertical on right side, appear on hover */}
           <div className="absolute top-1/2 -translate-y-1/2 right-5 flex flex-col gap-3 opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-            <GlassIcon 
-              href={socialLinks.instagram!.url} 
-              iconSrc={socialLinks.instagram!.icon} 
-              alt="Instagram" 
-              className="hover:scale-110 transition-transform duration-200"
-            />
-            <GlassIcon 
-              href={socialLinks.linkedin.url} 
-              iconSrc={socialLinks.linkedin.icon} 
-              alt="LinkedIn" 
-              className="hover:scale-110 transition-transform duration-200"
-            />
-            <GlassIcon 
-              href={socialLinks.github!.url} 
-              iconSrc={socialLinks.github!.icon} 
-              alt="GitHub" 
-              className="hover:scale-110 transition-transform duration-200"
-            />
+            {speaker.socials?.instagram && (
+              <GlassIcon 
+                href={speaker.socials.instagram} 
+                iconSrc="/img/instagram.png" 
+                alt="Instagram" 
+                className="hover:scale-110 transition-transform duration-200"
+              />
+            )}
+            {speaker.socials?.linkedin && (
+              <GlassIcon 
+                href={speaker.socials.linkedin} 
+                iconSrc="/img/linkedin (1).png" 
+                alt="LinkedIn" 
+                className="hover:scale-110 transition-transform duration-200"
+              />
+            )}
+            {speaker.socials?.github && (
+              <GlassIcon 
+                href={speaker.socials.github} 
+                iconSrc="/img/github.png" 
+                alt="GitHub" 
+                className="hover:scale-110 transition-transform duration-200"
+              />
+            )}
           </div>
 
           {/* Read More button with clean glassmorphism */}
@@ -399,29 +427,34 @@ const SpeakersSection = () => {
   const isCarouselInView = useInView(carouselRef, { once: true, amount: 0.2 });
   
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
-    loop: false, 
+    loop: true,
     align: 'start',
     skipSnaps: false,
-    dragFree: true
+    dragFree: false,
+    containScroll: false
   });
 
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [canScrollPrev, setCanScrollPrev] = useState(false);
-  const [canScrollNext, setCanScrollNext] = useState(false);
 
   const scrollPrev = useCallback(() => {
-    if (emblaApi) emblaApi.scrollPrev();
+    if (emblaApi) {
+      emblaApi.scrollPrev();
+    }
   }, [emblaApi]);
 
   const scrollNext = useCallback(() => {
-    if (emblaApi) emblaApi.scrollNext();
+    if (emblaApi) {
+      emblaApi.scrollNext();
+    }
   }, [emblaApi]);
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
-    setSelectedIndex(emblaApi.selectedScrollSnap());
-    setCanScrollPrev(emblaApi.canScrollPrev());
-    setCanScrollNext(emblaApi.canScrollNext());
+    // Get the actual selected snap index
+    const snap = emblaApi.selectedScrollSnap();
+    // Calculate which speaker card this corresponds to (0-4)
+    const actualIndex = snap % speakers.length;
+    setSelectedIndex(actualIndex);
   }, [emblaApi]);
 
   useEffect(() => {
@@ -436,7 +469,7 @@ const SpeakersSection = () => {
   }, [emblaApi, onSelect]);
 
   const scrollTo = useCallback((index: number) => {
-    emblaApi?.scrollTo(index * 2);
+    emblaApi?.scrollTo(index);
   }, [emblaApi]);
 
   const facultySponsors = [
@@ -547,17 +580,12 @@ const SpeakersSection = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={scrollPrev}
-                  disabled={!canScrollPrev}
-                  className={`w-12 h-12 rounded-full border flex items-center justify-center transition-all duration-300 ${
-                    canScrollPrev
-                      ? 'bg-white border-white text-black hover:scale-110'
-                      : 'bg-transparent border-gray-700 text-gray-600 cursor-not-allowed opacity-50'
-                  }`}
+                  className="w-12 h-12 rounded-full border bg-white border-white text-black hover:scale-110 transition-all duration-300"
                   aria-label="Previous slide"
                 >
                   <svg 
                     viewBox="0 0 24 24" 
-                    className="w-5 h-5"
+                    className="w-5 h-5 mx-auto"
                     stroke="currentColor"
                     strokeWidth="2"
                     fill="none"
@@ -567,17 +595,12 @@ const SpeakersSection = () => {
                 </button>
                 <button
                   onClick={scrollNext}
-                  disabled={!canScrollNext}
-                  className={`w-12 h-12 rounded-full border flex items-center justify-center transition-all duration-300 ${
-                    canScrollNext
-                      ? 'bg-white border-white text-black hover:scale-110'
-                      : 'bg-transparent border-gray-700 text-gray-600 cursor-not-allowed opacity-50'
-                  }`}
+                  className="w-12 h-12 rounded-full border bg-white border-white text-black hover:scale-110 transition-all duration-300"
                   aria-label="Next slide"
                 >
                   <svg 
                     viewBox="0 0 24 24" 
-                    className="w-5 h-5"
+                    className="w-5 h-5 mx-auto"
                     stroke="currentColor"
                     strokeWidth="2"
                     fill="none"
@@ -599,6 +622,7 @@ const SpeakersSection = () => {
                     speaker={speaker}
                     index={idx}
                     isCarouselInView={isCarouselInView}
+                    isActive={idx === selectedIndex}
                   />
                 ))}
               </div>

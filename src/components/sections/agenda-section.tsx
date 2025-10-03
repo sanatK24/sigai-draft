@@ -494,7 +494,7 @@ const AgendaSection = () => {
                     <svg 
                       viewBox="0 0 24 24" 
                       className="w-6 h-6 md:w-7 md:h-7"
-                      stroke="white"
+                      stroke="currentColor"
                       strokeWidth="2"
                       fill="none"
                     >
