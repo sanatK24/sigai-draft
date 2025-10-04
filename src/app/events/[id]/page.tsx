@@ -266,6 +266,39 @@ export default function EventPage() {
 
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-6">
+              {/* Event Details Summary - Always visible at top */}
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-5 space-y-3 text-sm shadow-xl">
+                <h3 className="text-base font-semibold text-white mb-3">Event Details</h3>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400 flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-blue-400" />
+                    Date
+                  </span>
+                  <span className="font-medium text-white">{formattedDate}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400 flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-blue-400" />
+                    Time
+                  </span>
+                  <span className="font-medium text-white">{event.time}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400 flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-blue-400" />
+                    Location
+                  </span>
+                  <span className="font-medium text-white text-right">{event.location}</span>
+                </div>
+                {event.registration_fee > 0 && (
+                  <div className="flex justify-between items-center pt-3 border-t border-white/10">
+                    <span className="text-gray-400 font-medium">Registration Fee</span>
+                    <span className="font-bold text-green-400 text-lg">₹{event.registration_fee}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Registration Form */}
               {!isPastEvent ? (
                 <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl">
                   {currentStep === 'details' && (
@@ -400,32 +433,46 @@ export default function EventPage() {
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                          <label className="block text-sm font-medium text-gray-300 mb-3">
                             ACM Member? <span className="text-red-400">*</span>
                           </label>
-                          <div className="flex gap-4">
-                            <label className="flex items-center cursor-pointer">
+                          <div className="grid grid-cols-2 gap-3">
+                            <label className="relative flex items-center justify-center cursor-pointer group">
                               <input
                                 type="radio"
                                 name="isAcmMember"
                                 value="yes"
                                 checked={formData.isAcmMember === 'yes'}
                                 onChange={handleInputChange}
-                                className="mr-2 accent-blue-500"
+                                className="sr-only peer"
                                 required
                               />
-                              <span className="text-sm text-gray-300">Yes</span>
+                              <div className="w-full px-4 py-3 rounded-lg border-2 border-white/20 bg-white/5 backdrop-blur-sm transition-all peer-checked:border-blue-500 peer-checked:bg-blue-500/20 group-hover:border-white/30">
+                                <div className="flex items-center justify-center gap-2">
+                                  <div className="w-4 h-4 rounded-full border-2 border-current flex items-center justify-center peer-checked:border-blue-400">
+                                    <div className="w-2 h-2 rounded-full bg-current opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+                                  </div>
+                                  <span className="text-sm font-medium text-gray-300 peer-checked:text-blue-300">Yes</span>
+                                </div>
+                              </div>
                             </label>
-                            <label className="flex items-center cursor-pointer">
+                            <label className="relative flex items-center justify-center cursor-pointer group">
                               <input
                                 type="radio"
                                 name="isAcmMember"
                                 value="no"
                                 checked={formData.isAcmMember === 'no'}
                                 onChange={handleInputChange}
-                                className="mr-2 accent-blue-500"
+                                className="sr-only peer"
                               />
-                              <span className="text-sm text-gray-300">No</span>
+                              <div className="w-full px-4 py-3 rounded-lg border-2 border-white/20 bg-white/5 backdrop-blur-sm transition-all peer-checked:border-blue-500 peer-checked:bg-blue-500/20 group-hover:border-white/30">
+                                <div className="flex items-center justify-center gap-2">
+                                  <div className="w-4 h-4 rounded-full border-2 border-current flex items-center justify-center peer-checked:border-blue-400">
+                                    <div className="w-2 h-2 rounded-full bg-current opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+                                  </div>
+                                  <span className="text-sm font-medium text-gray-300 peer-checked:text-blue-300">No</span>
+                                </div>
+                              </div>
                             </label>
                           </div>
                         </div>
@@ -572,27 +619,6 @@ export default function EventPage() {
                   <p className="text-sm text-gray-400">Registration for this event has ended.</p>
                 </div>
               )}
-
-              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-4 space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Date</span>
-                  <span className="font-medium text-white">{formattedDate}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Time</span>
-                  <span className="font-medium text-white">{event.time}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Location</span>
-                  <span className="font-medium text-white">{event.location}</span>
-                </div>
-                {event.registration_fee > 0 && (
-                  <div className="flex justify-between pt-2 border-t border-white/10">
-                    <span className="text-gray-400">Fee</span>
-                    <span className="font-semibold text-white">₹{event.registration_fee}</span>
-                  </div>
-                )}
-              </div>
             </div>
           </div>
         </div>
