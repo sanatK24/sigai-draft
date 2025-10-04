@@ -106,12 +106,11 @@ const TargetAudienceSection = () => {
         </div>
       </div>
       
-      {/* Marquee section - Full width outside container */}
+      {/* Marquee section - Commented out
       <div className="mt-32 w-screen overflow-hidden space-y-4 left-0 right-0">
         {marqueeTexts.map((text, index) => (
           <div key={index} className="relative group bg-white py-2 w-full">
             <div className={`flex ${animationDirections[index]} whitespace-nowrap`}>
-              {/* Render 6 copies for seamless infinite loop */}
               {Array.from({ length: 6 }).map((_, i) => (
                 <h2 
                   key={i}
@@ -124,6 +123,7 @@ const TargetAudienceSection = () => {
           </div>
         ))}
       </div>
+      */}
     </section>
   );
 };

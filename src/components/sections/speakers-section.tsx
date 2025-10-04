@@ -146,40 +146,17 @@ const FacultySpeakerCard = ({
   className = '',
   style
 }: FacultySpeakerCardProps) => {
-  const [isHovered, setIsHovered] = React.useState(false);
-  const [isMobileInfoOpen, setIsMobileInfoOpen] = React.useState(false);
-  
   const socialLinks = {
     linkedin: 'https://www.linkedin.com/company/rait-sigai/'
   };
 
-  const getBio = (name: string, title: string) => {
-    if (name.includes('Sangita')) {
-      return `Placeholder text.`;
-    } else if (name.includes('Pallavi')) {
-      return `Placeholder text.`;
-    }
-    return `Placeholder text.`;
-  };
-
-  const toggleMobileInfo = () => {
-    if (window.innerWidth < 768) {
-      setIsMobileInfoOpen(!isMobileInfoOpen);
-    } else {
-      setIsHovered(!isHovered);
-    }
-  };
-
   return (
     <div 
-      className={`flex flex-col w-full shrink-0 relative max-w-[294px] mx-auto ${className}`}
+      className={`flex flex-col w-full shrink-0 relative ${className}`}
+      style={{ width: 'auto', maxWidth: '100%' }}
     >
-      <div 
-        className="relative group overflow-visible h-full"
-        onMouseEnter={() => window.innerWidth >= 768 && setIsHovered(true)}
-        onMouseLeave={() => window.innerWidth >= 768 && setIsHovered(false)}
-      >
-        <div className="overflow-hidden rounded-3xl w-full h-[360px] bg-gray-800">
+      <div className="relative group overflow-visible w-full max-w-[373px] mx-auto">
+        <div className="overflow-hidden rounded-3xl w-full h-[360px] bg-gray-800 transition-transform duration-300 group-hover:-translate-y-3">
           <div className="relative w-full h-full">
             <div className="absolute inset-0">
               <Image
@@ -191,80 +168,27 @@ const FacultySpeakerCard = ({
                 style={{
                   objectPosition: 'center top'
                 }}
+                priority={true}
               />
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-[rgba(30,17,67,0.4)] to-transparent" />
-          </div>
-          <div className="absolute bottom-6 right-6 flex gap-3">
-            <GlassIcon 
-              href={socialLinks.linkedin} 
-              iconSrc="/img/linkedin (1).png" 
-              alt="LinkedIn" 
-              className="hover:scale-110 transition-transform duration-200"
-            />
+            
+            {/* LinkedIn Icon */}
+            <div className="absolute bottom-4 right-4">
+              <GlassIcon 
+                href={socialLinks.linkedin} 
+                iconSrc="/img/linkedin (1).png" 
+                alt="LinkedIn" 
+                className="hover:scale-110 transition-transform duration-200 w-10 h-10"
+                iconClass="w-5 h-5"
+              />
+            </div>
           </div>
         </div>
 
-        {/* Info Panel - Desktop */}
-        {isHovered && (
-          <div 
-            className={`hidden md:block absolute ${
-              speaker.name.includes('Sangita') 
-                ? 'left-full ml-4 top-0' 
-                : 'right-full mr-4 top-0'
-            } w-80 bg-gradient-to-br from-card to-card/90 backdrop-blur-lg rounded-xl p-6 shadow-2xl z-50`}
-          >
-            <h4 className="text-xl font-bold text-white mb-2">{speaker.name}</h4>
-            <p className="text-sm text-purple-300 mb-4">
-              {speaker.title.includes('\n') ? speaker.title.split('\n').join(' • ') : speaker.title}
-            </p>
-            <div className="h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent my-4" />
-            <div className="mt-2 text-sm text-gray-300 leading-relaxed font-mono max-h-48 overflow-y-auto pr-2">
-              <TypewriterText text={getBio(speaker.name, speaker.title)} />
-            </div>
-            <div className={`absolute top-1/2 -translate-y-1/2 ${
-              speaker.name.includes('Sangita') 
-                ? '-left-2 -translate-x-1/2 border-r-8 border-r-card border-y-8 border-y-transparent'
-                : '-right-2 translate-x-1/2 border-l-8 border-l-card border-y-8 border-y-transparent'
-            }`}></div>
-          </div>
-        )}
+        {/* Info Panel - Hidden for faculty */}
       </div>
       
-      {/* Name and title */}
-      <div className="mt-4 px-2 w-full">
-        <h4 className="text-xl font-semibold text-white text-center">{speaker.name}</h4>
-        <div className="mt-1 text-sm text-center">
-          {speaker.title.includes('\n') ? (
-            <>
-              <p className="text-base text-muted-foreground">{speaker.title.split('\n')[0]}</p>
-              <p className="text-base font-medium text-purple-400 mt-1">{speaker.title.split('\n')[1]}</p>
-            </>
-          ) : (
-            <p className="text-base text-muted-foreground">{speaker.title}</p>
-          )}
-        </div>
-      </div>
-      
-      {/* Mobile info panel */}
-      <div 
-        className={`w-full bg-gradient-to-br from-card to-card/90 rounded-xl p-6 shadow-xl mt-4 transition-all duration-300 overflow-hidden ${
-          isMobileInfoOpen ? 'max-h-96' : 'max-h-0 p-0 opacity-0'
-        } md:max-h-0 md:p-0 md:opacity-0`}
-      >
-        <div className="text-sm text-gray-300 leading-relaxed font-mono">
-          <TypewriterText text={getBio(speaker.name, speaker.title)} />
-        </div>
-      </div>
-      
-      {/* Toggle button for mobile */}
-      <button 
-        onClick={toggleMobileInfo}
-        className="md:hidden mt-4 mx-auto px-4 py-2 text-sm text-purple-400 hover:text-white transition-colors"
-        aria-expanded={isMobileInfoOpen}
-      >
-        {isMobileInfoOpen ? 'Show Less' : 'Read Bio'}
-      </button>
     </div>
   );
 };
@@ -283,7 +207,8 @@ const CoreTeamCard = ({ speaker, index = 0, isCarouselInView = true, isActive = 
 
   return (
     <motion.div 
-      className="relative min-w-[350px] h-[650px] flex-shrink-0 group mt-10"
+      className="relative min-w-[350px] flex-shrink-0 group mt-10"
+      style={{ height: '700px' }}
       initial={{ opacity: 0, y: 50 }}
       animate={isCarouselInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
       transition={{ 
@@ -299,7 +224,8 @@ const CoreTeamCard = ({ speaker, index = 0, isCarouselInView = true, isActive = 
         className="absolute inset-0 rounded-[32px] p-7 flex flex-col transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-2xl"
         style={{ 
           backgroundColor: isActive || isHovered ? cardColor : beigeColor,
-          height: '600px'
+          height: '650px',
+          paddingBottom: '380px' // Make room for the image
         }}
       >
         {/* Top badges and arrow */}
@@ -333,66 +259,74 @@ const CoreTeamCard = ({ speaker, index = 0, isCarouselInView = true, isActive = 
           </a>
         </div>
 
-        {/* Position (small) */}
-        {/* <p className="text-[14px] text-black/70 font-medium mb-2">
-          {speaker.title}
-        </p> */}
-
         {/* Name (large, 2 lines) */}
         <h2 className="text-[38px] font-bold leading-[1.1] text-black mb-3 break-words">
           {speaker.name}
         </h2>
         
+        {/* Position */}
+        <p className="text-[16px] text-black/75 font-medium mb-4">
+          {speaker.title}
+        </p>
+        
         {/* Testimony */}
-        <p className="text-[13px] text-black/75 leading-relaxed line-clamp-3">
+        <p className="text-[15px] text-black/75 leading-relaxed line-clamp-3">
           {speaker.testimony || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}
         </p>
       </div>
 
-      {/* Overlaid image card - NOW WITH NO GAP */}
+      {/* Image container */}
       <div 
-        className="absolute mb-0 bottom-0 w-[350px] h-[350px] rounded-2xl overflow-hidden shadow-2xl transition-transform duration-75 group-hover:-translate-y-3"
+        className="absolute bottom-0 w-full max-w-[350px] h-auto aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl transition-transform duration-300 group-hover:-translate-y-3 mx-auto left-0 right-0"
         style={{
-          boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
-          top: '280px'
+          boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)'
         }}
       >
-        <div className="relative w-full h-full overflow-hidden">
-          {/* Image with zoom effect on hover */}
+        <div className="relative w-full h-full">
           <Image
             src={speaker.image}
             alt={speaker.name}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, 320px"
+            priority={index < 3} // Only load first 3 images eagerly
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
           
           {/* Social icons - Vertical on right side, appear on hover */}
-          <div className="absolute top-1/2 -translate-y-1/2 right-5 flex flex-col gap-3 opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+          <div className="absolute top-1/2 -translate-y-1/2 right-5 flex flex-col gap-4 opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
             {speaker.socials?.instagram && (
-              <GlassIcon 
-                href={speaker.socials.instagram} 
-                iconSrc="/img/instagram.png" 
-                alt="Instagram" 
-                className="hover:scale-110 transition-transform duration-200"
-              />
+              <div className="mb-4">
+                <GlassIcon 
+                  href={speaker.socials.instagram}
+                  iconSrc="/img/instagram.png"
+                  alt="Instagram"
+                  className="hover:scale-110 transition-transform duration-200 w-10 h-10"
+                  iconClass="w-5 h-5"
+                />
+              </div>
             )}
             {speaker.socials?.linkedin && (
-              <GlassIcon 
-                href={speaker.socials.linkedin} 
-                iconSrc="/img/linkedin (1).png" 
-                alt="LinkedIn" 
-                className="hover:scale-110 transition-transform duration-200"
-              />
+              <div className="mb-4">
+                <GlassIcon 
+                  href={speaker.socials.linkedin}
+                  iconSrc="/img/linkedin (1).png"
+                  alt="LinkedIn"
+                  className="hover:scale-110 transition-transform duration-200 w-10 h-10"
+                  iconClass="w-5 h-5"
+                />
+              </div>
             )}
             {speaker.socials?.github && (
-              <GlassIcon 
-                href={speaker.socials.github} 
-                iconSrc="/img/github.png" 
-                alt="GitHub" 
-                className="hover:scale-110 transition-transform duration-200"
-              />
+              <div className="mb-4">
+                <GlassIcon 
+                  href={speaker.socials.github}
+                  iconSrc="/img/github.png"
+                  alt="GitHub"
+                  className="hover:scale-110 transition-transform duration-200 w-10 h-10"
+                  iconClass="w-5 h-5"
+                />
+              </div>
             )}
           </div>
 
@@ -423,9 +357,7 @@ const CoreTeamCard = ({ speaker, index = 0, isCarouselInView = true, isActive = 
 };
 
 const SpeakersSection = () => {
-  const carouselRef = useRef(null);
-  const isCarouselInView = useInView(carouselRef, { once: true, amount: 0.2 });
-  
+  const carouselRef = useRef<HTMLDivElement>(null);
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: true,
     align: 'start',
@@ -433,26 +365,20 @@ const SpeakersSection = () => {
     dragFree: false,
     containScroll: false
   });
-
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const isCarouselInView = useInView(carouselRef, { once: true, amount: 0.2 });
 
   const scrollPrev = useCallback(() => {
-    if (emblaApi) {
-      emblaApi.scrollPrev();
-    }
+    emblaApi?.scrollPrev();
   }, [emblaApi]);
 
   const scrollNext = useCallback(() => {
-    if (emblaApi) {
-      emblaApi.scrollNext();
-    }
+    emblaApi?.scrollNext();
   }, [emblaApi]);
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
-    // Get the actual selected snap index
     const snap = emblaApi.selectedScrollSnap();
-    // Calculate which speaker card this corresponds to (0-4)
     const actualIndex = snap % speakers.length;
     setSelectedIndex(actualIndex);
   }, [emblaApi]);
@@ -475,19 +401,19 @@ const SpeakersSection = () => {
   const facultySponsors = [
     {
       name: 'Dr. Sangita Chaudhari',
-      title: 'HOD of Computer Science & Engineering\nFaculty Sponsor',
+      title: 'HOD of Computer Science & Engineering',
       image: '/img/faculty_img/HODIT.jpg',
     },
     {
       name: 'Dr. Pallavi Chavan',
-      title: 'HOD of Information Technology\nMentor',
+      title: 'HOD of Information Technology',
       image: '/img/faculty_img/pallavimam.jpg',
     }
   ];
 
   return (
     <div className="space-y-24 md:space-y-32 py-12 md:py-24">
-      {/* Faculty Section - UNCHANGED */}
+      {/* Faculty Section */}
       <section id="faculty" className="relative bg-gradient-to-b from-zinc-900/50 to-transparent py-16 md:py-24">
         <div className="container px-4 mx-auto">
           <div className="flex flex-col items-start text-left mb-12">
@@ -503,33 +429,85 @@ const SpeakersSection = () => {
             </p>
           </div>
           
-          {/* Faculty Grid - UNCHANGED */}
-          <div className="relative max-w-5xl mx-auto">
+          {/* Faculty Grid */}
+          <div className="relative w-full max-w-5xl mx-auto">
             <div className="relative w-full">
               <div className="hidden md:block absolute inset-0 flex items-center justify-center">
                 <div className="h-px w-full bg-gradient-to-r from-transparent via-purple-500/20 to-transparent"></div>
               </div>
-              <div className="hidden md:block absolute inset-0 flex items-center justify-center">
+              <div className="hidden md:block absolute inset-0 flex items-start justify-start">
                 <div className="w-px h-full bg-gradient-to-b from-transparent via-purple-500/20 to-transparent"></div>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full px-4 py-8 md:py-0">
-                <div className="flex justify-center md:justify-end md:pr-8">
-                  <FacultySpeakerCard 
-                    speaker={facultySponsors[0]} 
-                    active={true}
-                    className="w-full max-w-sm"
-                    style={{ '--delay': '0ms' } as React.CSSProperties}
-                  />
-                </div>
-                
-                <div className="flex justify-center md:justify-start md:pl-8">
-                  <FacultySpeakerCard 
-                    speaker={facultySponsors[1]} 
-                    active={true}
-                    className="w-full max-w-sm"
-                    style={{ '--delay': '0ms' } as React.CSSProperties}
-                  />
+              <div className="w-full max-w-6xl mx-auto px-4 py-8 md:py-16">
+                <div className="relative w-full min-h-[900px] md:min-h-[600px]">
+                  {/* First Faculty with Info Panel */}
+                  <div className="flex flex-col md:flex-row items-start gap-8 w-full mb-16">
+                    {/* Faculty 1 Card */}
+                    <div className="w-full md:w-1/3 max-w-[373px]">
+                      <FacultySpeakerCard 
+                        speaker={facultySponsors[0]} 
+                        active={true}
+                        className="w-full"
+                      />
+                    </div>
+                    
+                    {/* Faculty 1 Info Panel */}
+                    <div className="w-full md:w-2/3 bg-gradient-to-br from-card to-card/90 backdrop-blur-lg rounded-xl p-8 shadow-2xl relative">
+                      <div className="absolute top-4 right-4">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-900/50 text-purple-300 border border-purple-700/50">
+                          {facultySponsors[0].title.includes('Mentor') ? 'Mentor' : 'Faculty Sponsor'}
+                        </span>
+                      </div>
+                      <h4 className="text-2xl font-bold text-white mb-1 pr-16">{facultySponsors[0].name}</h4>
+                      <p className="text-sm text-purple-300 mb-3">
+                        {facultySponsors[0].title}
+                      </p>
+                      <div className="h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent my-6" />
+                      <div className="text-gray-300 leading-relaxed space-y-4">
+                        {facultySponsors[0].name.includes('Sangita') ? (
+                          <p>Placeholder text</p>
+                        ) : (
+                          <p>Placeholder text</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Second Faculty with Info Panel */}
+                  <div className="flex flex-col md:flex-row-reverse items-start gap-8 w-full">
+                    {/* Faculty 2 Card */}
+                    <div className="w-full md:w-1/3 max-w-[373px] md:ml-auto">
+                      <FacultySpeakerCard 
+                        speaker={facultySponsors[1]} 
+                        active={true}
+                        className="w-full"
+                      />
+                    </div>
+                    
+                    {/* Faculty 2 Info Panel */}
+                    <div className="w-full md:w-2/3 bg-gradient-to-br from-card to-card/90 backdrop-blur-lg rounded-xl p-8 shadow-2xl relative">
+                      <div className="flex justify-between items-start mb-4">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-900/50 text-purple-300 border border-purple-700/50">
+                          Mentor
+                        </span>
+                        <div className="text-right">
+                          <h4 className="text-2xl font-bold text-white mb-1">{facultySponsors[1].name}</h4>
+                          <p className="text-sm text-purple-300">
+                            {facultySponsors[1].title}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent my-6" />
+                      <div className="text-gray-300 leading-relaxed space-y-4">
+                        {facultySponsors[1].name.includes('Sangita') ? (
+                          <p>Placeholder text</p>
+                        ) : (
+                          <p>Placeholder text</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -537,7 +515,7 @@ const SpeakersSection = () => {
         </div>
       </section>
 
-      {/* Core Team Section - NEW CAROUSEL DESIGN */}
+      {/* Core Team Section */}
       <section id="core-team" className="relative py-12 md:py-20 overflow-hidden">
         <div className="container px-4 mx-auto max-w-[1600px]">
           {/* Header */}
@@ -558,25 +536,7 @@ const SpeakersSection = () => {
 
           {/* Navigation - Dots and Arrows on RIGHT side only */}
           <div className="flex justify-end items-center mb-10 px-5">
-            {/* Navigation group */}
             <div className="flex items-center gap-4">
-              {/* Dots - smaller, more like inspiration */}
-              {/* <div className="flex items-center gap-2">
-                {[0, 1].map((index) => (
-                  <button
-                    key={index}
-                    onClick={() => scrollTo(index)}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      Math.floor(selectedIndex / 2) === index
-                        ? 'bg-white scale-125'
-                        : 'bg-gray-600 hover:bg-gray-500'
-                    }`}
-                    aria-label={`Go to slide ${index + 1}`}
-                  />
-                ))}
-              </div> */}
-              
-              {/* Arrow buttons */}
               <div className="flex items-center gap-2">
                 <button
                   onClick={scrollPrev}
@@ -627,20 +587,6 @@ const SpeakersSection = () => {
                 ))}
               </div>
             </div>
-            
-            {/* Scroll indicator */}
-            {/* <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-gray-600 text-xs flex items-center gap-2 mt-8">
-              Scroll for more
-              <svg 
-                viewBox="0 0 24 24" 
-                className="w-5 h-5 animate-pulse"
-                stroke="currentColor"
-                strokeWidth="2"
-                fill="none"
-              >
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </div> */}
           </div>
         </div>
       </section>

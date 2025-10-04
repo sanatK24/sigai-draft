@@ -11,8 +11,7 @@
 
 @font-face {
   font-family: 'PP Editorial New';
-  src: url('/public/pp-editorial-new-regular_freefontdownload_org.woff2') format('woff2'),
-       url('/public/pp-editorial-new-regular_freefontdownload_org.woff') format('woff');
+  src: url('/pp-editorial-new-regular_freefontdownload_org/pp-editorial-new-regular.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;

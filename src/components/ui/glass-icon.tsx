@@ -1,14 +1,16 @@
 "use client";
 
 import React from 'react';
+import Image from 'next/image';
 import { GlassCard } from '@developer-hub/liquid-glass';
 
-interface GlassIconProps {
+interface GlassIconProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   href: string;
   iconSrc: string;
   alt: string;
   size?: 'sm' | 'md' | 'lg';
   className?: string;
+  iconClass?: string;
 }
 
 export const GlassIcon = ({
@@ -17,6 +19,7 @@ export const GlassIcon = ({
   alt,
   size = 'md',
   className = '',
+  iconClass = '',
   ...props
 }: GlassIconProps) => {
   const sizeClasses = {
@@ -36,30 +39,41 @@ export const GlassIcon = ({
       href={href} 
       target="_blank" 
       rel="noopener noreferrer"
-      className={`inline-block ${className}`}
+      className={`inline-flex items-center justify-center ${sizeClasses[size]} ${className}`}
       {...props}
     >
-      <div className={`relative ${sizeClasses[size]} group transform-gpu`}>
-        <div className="absolute inset-0 rounded-full bg-white/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 will-change-transform" />
-        <div className="w-full h-full rounded-full overflow-hidden">
-          <GlassCard
-            displacementScale={30}
-            blurAmount={0.2}
-            cornerRadius={9999}
-            padding="8px"
-            className="w-full h-full flex items-center justify-center relative z-10 transform-gpu will-change-transform"
-          >
-            <img 
-              src={iconSrc} 
-              alt={alt} 
-              className={`${iconSizes[size]} object-contain filter grayscale contrast-200`}
-              loading="lazy"
-              width={size === 'sm' ? 16 : size === 'md' ? 24 : 32}
-              height={size === 'sm' ? 16 : size === 'md' ? 24 : 32}
-            />
-          </GlassCard>
+      <GlassCard
+        displacementScale={30}
+        blurAmount={0.2}
+        cornerRadius={9999}
+        padding="0"
+        className="w-full h-full flex items-center justify-center group transition-all duration-300 hover:scale-110"
+        style={{
+          borderRadius: '50%',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          background: 'rgba(255, 255, 255, 0.1)',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+        }}
+      >
+        <div 
+          className={`relative ${iconClass || iconSizes[size]} flex items-center justify-center`}
+          style={{
+            width: '60%',
+            height: '60%'
+          }}
+        >
+          <Image 
+            src={iconSrc} 
+            alt={alt}
+            width={24}
+            height={24}
+            className="object-contain w-full h-full"
+            style={{
+              filter: 'brightness(0) invert(1)'
+            }}
+          />
         </div>
-      </div>
+      </GlassCard>
     </a>
   );
 };

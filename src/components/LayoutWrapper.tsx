@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import Header from './header';
 import MobileFooter from './mobile-footer';
+import ScrollToTop from './ScrollToTop';
 
 type LayoutWrapperProps = {
   children: ReactNode;
@@ -23,6 +24,7 @@ const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
         {children}
       </main>
       {!hideFooter && <MobileFooter />}
+      <ScrollToTop />
     </div>
   );
 };

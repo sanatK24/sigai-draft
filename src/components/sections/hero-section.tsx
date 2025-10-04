@@ -87,82 +87,83 @@ const HeroSection = () => {
 
       {/* Subtle radial overlays */}
       <div
-        className="absolute inset-0 -z-20 w-full h-full"
         style={{
           backgroundImage:
             'radial-gradient(circle at 10% 20%, rgba(59, 79, 222, 0.2), transparent 50%), radial-gradient(circle at 80% 90%, rgba(139, 92, 246, 0.15), transparent 50%)',
         }}
       />
-      
-      {/* Top-left Content */}
-      <div className="absolute top-6 left-6 z-30 flex flex-col items-start gap-2">
-        {error ? (
-          <div className="text-red-400 text-xs max-w-[180px] bg-red-900/30 px-3 py-1.5 rounded-lg">
-            {error}
+            {/* Commented out as per request
+          <div className="absolute top-6 left-6 z-30 flex flex-col items-start gap-2">
+            {error ? (
+              <div className="text-red-400 text-xs max-w-[180px] bg-red-900/30 px-3 py-1.5 rounded-lg">
+                {error}
+              </div>
+            ) : (
+              <button 
+                onClick={handleEventClick}
+                className="bg-white/5 backdrop-blur-xl text-white/90 text-xs font-medium px-4 py-1.5 rounded-full border border-white/20 shadow-lg shadow-black/20 hover:bg-white/10 transition-all duration-300 flex items-center gap-1.5"
+                disabled={isLoading}
+              >
+                <span>{isLoading ? 'Loading...' : 'Upcoming Event'}</span>
+                <ArrowUpRight size={14} />
+              </button>
+            )}
+            {!isLoading && upcomingEvent && (
+              <h2 
+                className="text-white/90 text-sm font-medium px-1 max-w-[180px] leading-tight cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={handleEventClick}
+              >
+                {upcomingEvent.title}
+              </h2>
+            )}
           </div>
-        ) : (
-          <button 
-            onClick={handleEventClick}
-            className="bg-white/5 backdrop-blur-xl text-white/90 text-xs font-medium px-4 py-1.5 rounded-full border border-white/20 shadow-lg shadow-black/20 hover:bg-white/10 transition-all duration-300 flex items-center gap-1.5"
-            disabled={isLoading}
-          >
-            <span>{isLoading ? 'Loading...' : 'Upcoming Event'}</span>
-            <ArrowUpRight size={14} />
-          </button>
-        )}
-        {!isLoading && upcomingEvent && (
-          <h2 
-            className="text-white/90 text-sm font-medium px-1 max-w-[180px] leading-tight cursor-pointer hover:opacity-80 transition-opacity"
-            onClick={handleEventClick}
-          >
-            {upcomingEvent.title}
-          </h2>
-        )}
-      </div>
-      
-      {/* Top-right Logos with Label */}
-      <div className="absolute top-6 right-6 z-30 flex flex-col items-end gap-2">
-        <div className="bg-white/5 backdrop-blur-xl text-white/90 text-xs font-medium px-4 py-1.5 rounded-full border border-white/20 shadow-lg shadow-black/20 hover:bg-white/10 transition-all duration-300">
-          Our Sister Chapters
-        </div>
-        <div className="flex items-center gap-3">
-          <a 
-            href="https://rait.acm.org/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="block w-12 h-12 hover:opacity-80 transition-opacity"
-            aria-label="RAIT ACM Student Chapter"
-          >
-            <Image
-              src="/img/ACMSCWhite.png"
-              alt="RAIT ACM Student Chapter"
-              width={48}
-              height={48}
-              className="w-full h-full object-contain"
-            />
-          </a>
-          <a 
-            href="https://rait-w.acm.org/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="block w-12 h-12 hover:opacity-80 transition-opacity"
-            aria-label="RAIT ACM-W Student Chapter"
-          >
-            <Image
-              src="/img/ACM-W-SCWhite.png"
-              alt="RAIT ACM-W Student Chapter"
-              width={48}
-              height={48}
-              className="w-full h-full object-contain"
-            />
-          </a>
-        </div>
-      </div>
+          
+          <div className="absolute top-6 right-6 z-30 flex flex-col items-end gap-2">
+            <div className="bg-white/5 backdrop-blur-xl text-white/90 text-xs font-medium px-4 py-1.5 rounded-full border border-white/20 shadow-lg shadow-black/20 hover:bg-white/10 transition-all duration-300">
+              Our Sister Chapters
+            </div>
+            <div className="flex items-center gap-3">
+              <a 
+                href="https://rait.acm.org/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="block w-12 h-12 hover:opacity-80 transition-opacity"
+                aria-label="RAIT ACM Student Chapter"
+              >
+                <Image
+                  src="/img/ACMSCWhite.png"
+                  alt="RAIT ACM Student Chapter"
+                  width={48}
+                  height={48}
+                  className="w-full h-full object-contain"
+                  priority
+                />
+              </a>
+              <a 
+                href="https://rait-w.acm.org/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="block w-12 h-12 hover:opacity-80 transition-opacity"
+                aria-label="RAIT ACM-W Student Chapter"
+              >
+                <Image
+                  src="/img/ACM-W-SCWhite.png"
+                  alt="RAIT ACM-W Student Chapter"
+                  width={48}
+                  height={48}
+                  className="w-full h-full object-contain"
+                  priority
+                />
+              </a>
+            </div>
+          </div>
+          */}
 
       {/* Floating shapes */}
       <motion.div
         className="absolute top-[10%] left-[-5%] md:left-[5%] -z-10"
-        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+        animate={{ rotate: 360 }}
+        transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
       >
         <Image
           src="https://framerusercontent.com/images/wX62SMRMN1v1X6SFoJaoNdwo.webp"
@@ -219,7 +220,7 @@ const HeroSection = () => {
             className="text-center font-hanson text-white"
             style={{
               fontFamily: 'Hanson, sans-serif',
-              fontSize: 'min(12vw, 6rem)',
+              fontSize: 'min(9vw, 4.5rem)',
               lineHeight: '1',
               height: '319px',
               display: 'flex',
@@ -231,7 +232,57 @@ const HeroSection = () => {
               textShadow: '0 0 10px rgba(255, 255, 255, 0.3)'
             }}
           >
-            <span>RAIT ACM SIGAI</span> <span style={{ fontSize: '0.6em', color: 'white' }}>STUDENT CHAPTER</span>
+            <div className="flex flex-col items-center space-y-4">
+              <div className="inline-flex">
+                {'RAIT ACM'.split('').map((letter, i) => (
+                  letter === ' ' ? (
+                    <span key={`first-${i}`} className="w-2" />
+                  ) : (
+                    <motion.span 
+                      key={`first-${i}`}
+                      className="inline-block cursor-default"
+                      whileHover={{
+                        y: -5,
+                        scale: 1.2,
+                        color: '#ffffff',
+                        textShadow: '0 0 10px rgba(255, 255, 255, 0.8)'
+                      }}
+                      transition={{
+                        type: 'spring',
+                        stiffness: 300,
+                        damping: 10
+                      }}
+                    >
+                      {letter}
+                    </motion.span>
+                  )
+                ))}
+              </div>
+              <div className="inline-flex">
+                {'SIGAI'.split('').map((letter, i) => (
+                  <motion.span 
+                    key={`second-${i}`}
+                    className="inline-block cursor-default"
+                    whileHover={{
+                      y: -5,
+                      scale: 1.2,
+                      color: '#ffffff',
+                      textShadow: '0 0 10px rgba(255, 255, 255, 0.8)'
+                    }}
+                    transition={{
+                      type: 'spring',
+                      stiffness: 300,
+                      damping: 10
+                    }}
+                  >
+                    {letter}
+                  </motion.span>
+                ))}
+              </div>
+              <div className="pt-4">
+                <span className="text-white opacity-70 text-[0.5em] tracking-wider">STUDENT CHAPTER</span>
+              </div>
+            </div>
           </h1>
         </div>
         <div className="flex flex-col items-center">
@@ -240,6 +291,16 @@ const HeroSection = () => {
             style={{ letterSpacing: '-0.01em', lineHeight: '1.4' }}
           >
             Building the Future
+            <div className="mt-4">
+              <Image
+                src="/img/sigai-logo-transparent.png"
+                alt="SIGAI Logo"
+                width={200}
+                height={100}
+                className="mx-auto"
+                priority
+              />
+            </div>
           </h3>
         </div>
       </div>

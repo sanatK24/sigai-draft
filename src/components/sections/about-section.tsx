@@ -47,41 +47,36 @@ const AboutSection = () => {
         </div>
 
         {/* Content Section */}
-        <div className="grid w-full grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-20">
-          <div className="flex flex-col gap-6">
-            <p className="text-lg text-text-secondary">
-              The RAIT ACM SIGAI Student Chapter, established in 2024, focuses on preparing students for the future of Artificial Intelligence. We provide access to workshops, seminars, and events on cutting-edge AI technologies to enhance technical skills, support project development, and drive innovation.
-            </p>
-          </div>
-          {/* Images */}
-          <div className="flex items-center justify-center gap-2 md:gap-6">
-            <Image
-              src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/3a38a397-005e-4ec0-ae61-a21e39703477-eventis-framer-website/assets/images/mHIHt1IfNwNdWZEzuLWbbAsYAQ-3.png?"
-              alt="Holographic pyramid shape"
-              width={200}
-              height={200}
-              className="h-auto w-1/3 max-w-[200px] object-contain"
-            />
-            <Image
-              src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/3a38a397-005e-4ec0-ae61-a21e39703477-eventis-framer-website/assets/images/3YKs2hgpQG9dzUtGh08BToe4fvk-4.png?"
-              alt="Holographic cube shape"
-              width={200}
-              height={200}
-              className="h-auto w-1/3 max-w-[200px] object-contain"
-            />
-            <Image
-              src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/3a38a397-005e-4ec0-ae61-a21e39703477-eventis-framer-website/assets/images/pdzJAfqq5Mx9EcBL3K4o0wOVLJA-5.png?"
-              alt="Holographic layered squares shape"
-              width={200}
-              height={200}
-              className="h-auto w-1/3 max-w-[200px] object-contain"
-            />
+        <div className="w-full">
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 w-full">
+            {/* Text Content */}
+            <div className="flex-1 flex flex-col justify-center">
+              <div className="text-lg text-text-secondary h-full">
+                <p className="mb-4">
+                  The RAIT ACM SIGAI Student Chapter, established in 2024, focuses on preparing students for the future of Artificial Intelligence. We provide access to workshops, seminars, and events on cutting-edge AI technologies to enhance technical skills, support project development, and drive innovation.
+                </p>
+              </div>
+            </div>
+            
+            {/* Group Image */}
+            <div className="flex-1 flex items-center justify-center">
+              <div className="relative w-full max-w-[600px] rounded-xl overflow-hidden border border-zinc-800">
+                <Image
+                  src="/img/About-us.webp"
+                  alt="RAIT ACM SIGAI Group"
+                  width={800}
+                  height={600}
+                  className="w-full h-auto object-contain"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+              </div>
+            </div>
           </div>
 
           {/* Text Content */}
           <div className="flex flex-col gap-6">
             <div className="space-y-4">
-              {/* Text content has been removed */}
             </div>
           </div>
         </div>
