@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Calendar, Clock, MapPin } from 'lucide-react';
 
 interface Event {
+  idx: number;
   id: string;
   title: string;
   date: string;
@@ -199,7 +200,7 @@ export default function EventsPage() {
                       </div>
 
                       <Link
-                        href={`/events/${event.id}`}
+                        href={`/events/${event.idx}`}
                         className="inline-block bg-white text-black px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors"
                       >
                         View Details

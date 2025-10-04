@@ -225,7 +225,7 @@ const CoreTeamCard = ({ speaker, index = 0, isCarouselInView = true, isActive = 
         style={{ 
           backgroundColor: isActive || isHovered ? cardColor : beigeColor,
           height: '650px',
-          paddingBottom: '380px' // Make room for the image
+          paddingBottom: '320px' // Make room for the image
         }}
       >
         {/* Top badges and arrow */}
@@ -277,7 +277,7 @@ const CoreTeamCard = ({ speaker, index = 0, isCarouselInView = true, isActive = 
 
       {/* Image container */}
       <div 
-        className="absolute bottom-0 w-full max-w-[350px] h-auto aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl transition-transform duration-300 group-hover:-translate-y-3 mx-auto left-0 right-0"
+        className="absolute bottom-0 w-full max-w-[350px] h-[370px] aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl transition-transform duration-300 group-hover:-translate-y-3 mx-auto left-0 right-0"
         style={{
           boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)'
         }}

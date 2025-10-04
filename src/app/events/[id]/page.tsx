@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { notFound, useParams } from 'next/navigation';
-import { ArrowRight, Calendar, Clock, MapPin, Check, Loader2, Upload, ArrowLeft, Download } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, MapPin, Check, Loader2, Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import Header from '@/components/header';
 
 interface EventType {
+  idx: number;
   id: string;
   title: string;
   date: string;
@@ -69,9 +69,8 @@ export default function EventPage() {
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target as HTMLInputElement;
+    const { name, value } = e.target as HTMLInputElement;
     
-    // If ACM member is set to "no", clear the membership ID
     if (name === 'isAcmMember' && value === 'no') {
       setFormData(prev => ({ ...prev, isAcmMember: 'no', membershipId: '' }));
     } else {
@@ -99,7 +98,6 @@ export default function EventPage() {
   const handleSubmitPayment = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
       setCurrentStep('success');
@@ -114,7 +112,7 @@ export default function EventPage() {
           throw new Error('Failed to fetch events');
         }
         const events: EventType[] = await response.json();
-        const eventData = events.find(event => event.id === id);
+        const eventData = events.find(event => event.idx === parseInt(id as string));
         
         if (!eventData) {
           return notFound();
@@ -133,7 +131,11 @@ export default function EventPage() {
   }, [id]);
 
   if (loading) {
-    return <div className="min-h-screen bg-black flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+      </div>
+    );
   }
 
   if (!event) {
@@ -152,497 +154,108 @@ export default function EventPage() {
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
-      {/* Full-page background image with enhanced styling */}
-      {event.image && (
-        <div className="fixed inset-0 z-0">
-          <div className="absolute top-16 bottom-0 left-0 right-0">
-            <Image
-              src={event.image}
-              alt={event.title}
-              fill
-              className="object-cover object-center"
-              priority
-              quality={90}
-              sizes="100vw"
-              style={{
-                transform: 'scale(1.05)',
-                transition: 'transform 0.5s ease-in-out',
-              }}
-            />
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
-          </div>
+      {/* Animated Background */}
+      <div className="fixed inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black">
+          {/* Animated orbs */}
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }} />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s', animationDelay: '1s' }} />
+          <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '5s', animationDelay: '2s' }} />
         </div>
-      )}
+        {/* Grid pattern overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px]" />
+      </div>
 
-      {/* Enhanced content container with glassmorphism effect */}
-      <div className="relative z-10 min-h-screen flex justify-end overflow-y-auto">
-        <div className="w-full max-w-xl bg-gradient-to-b from-white/5 to-white/[0.03] backdrop-blur-2xl border-l border-white/10 min-h-screen p-8 overflow-y-auto scroll-smooth">
-            {/* Event category and title section */}
-            <div className="mb-8">
-              <div className="flex flex-wrap gap-2 mb-4">
-                <span className="px-4 py-1.5 bg-blue-900/80 text-blue-100 text-xs font-medium rounded-full backdrop-blur-sm border border-blue-400/20">
+      <header className="sticky top-0 z-50 bg-black/40 backdrop-blur-xl border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <Link href="/events" className="inline-flex items-center text-sm text-gray-400 hover:text-white transition-colors">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Events
+          </Link>
+        </div>
+      </header>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="lg:col-span-2 space-y-12">
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-2">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-300 border border-blue-500/30 backdrop-blur-sm">
                   {event.category}
                 </span>
                 {isPastEvent && (
-                  <span className="px-3 py-1 bg-amber-900/60 text-amber-100 text-xs font-medium rounded-full backdrop-blur-sm border border-amber-400/20">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-500/20 text-amber-300 border border-amber-500/30 backdrop-blur-sm">
                     Past Event
                   </span>
                 )}
+                {event.registration_fee > 0 && (
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-300 border border-green-500/30 backdrop-blur-sm">
+                    ₹{event.registration_fee}
+                  </span>
+                )}
               </div>
               
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+              <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
                 {event.title}
               </h1>
               
-              {event.registration_fee > 0 && (
-                <div className="mb-6">
-                  <span className="inline-block px-3 py-1 bg-emerald-900/60 text-emerald-100 text-sm font-medium rounded-full border border-emerald-500/20">
-                    Registration: ₹{event.registration_fee}
-                  </span>
+              <div className="flex flex-wrap gap-6 text-sm text-gray-400">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-blue-400" />
+                  <span>{formattedDate}</span>
                 </div>
-              )}
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-blue-400" />
+                  <span>{event.time}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-blue-400" />
+                  <span>{event.location}</span>
+                </div>
+              </div>
             </div>
-            
-            {/* Event details card with enhanced glass effect */}
-            <div className="space-y-5 mb-10 bg-white/5 p-7 rounded-2xl border border-white/10 backdrop-blur-lg shadow-xl">
-              <div className="flex items-center text-white/90 group">
-                <div className="mr-4 p-2 bg-white/5 rounded-lg group-hover:bg-white/10 transition-colors">
-                  <Calendar className="h-5 w-5 text-white/80" aria-hidden="true" />
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-white/60 mb-0.5">Date</p>
-                  <p className="text-white font-medium">{formattedDate}</p>
-                  {event.end_date && event.end_date !== event.date && (
-                    <p className="text-sm text-white/70 mt-1">
-                      to {new Date(event.end_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                    </p>
-                  )}
-                </div>
-              </div>
-              
-              <div className="h-px bg-white/10 w-full my-2"></div>
-              
-              <div className="flex items-center text-white/90 group">
-                <div className="mr-4 p-2 bg-white/5 rounded-lg group-hover:bg-white/10 transition-colors">
-                  <Clock className="h-5 w-5 text-white/80" aria-hidden="true" />
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-white/60 mb-0.5">Time</p>
-                  <p className="text-white font-medium">{event.time}</p>
-                </div>
-              </div>
-              
-              <div className="h-px bg-white/10 w-full my-2"></div>
-              
-              <div className="flex items-start text-white/90 group">
-                <div className="mr-4 p-2 bg-white/5 rounded-lg group-hover:bg-white/10 transition-colors mt-0.5">
-                  <MapPin className="h-5 w-5 text-white/80" aria-hidden="true" />
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-white/60 mb-0.5">Location</p>
-                  <p className="text-white font-medium">{event.location}</p>
-                </div>
-              </div>
-              
-              {!isPastEvent && (
-              <div className="pt-4 mt-4 border-t border-white/10">
-                {currentStep === 'details' && (
-                  <form onSubmit={handleSubmitDetails} className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-white/80 mb-1">
-                          Email <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="email"
-                          id="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-2.5 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="john@example.com"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="firstName" className="block text-sm font-medium text-white/80 mb-1">
-                          Participant's First Name <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          id="firstName"
-                          name="firstName"
-                          value={formData.firstName}
-                          onChange={handleInputChange}
-                          className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-2.5 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="John"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="lastName" className="block text-sm font-medium text-white/80 mb-1">
-                          Participant's Last Name <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          id="lastName"
-                          name="lastName"
-                          value={formData.lastName}
-                          onChange={handleInputChange}
-                          className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-2.5 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="Doe"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="whatsapp" className="block text-sm font-medium text-white/80 mb-1">
-                          WhatsApp Number <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="tel"
-                          id="whatsapp"
-                          name="whatsapp"
-                          value={formData.whatsapp}
-                          onChange={handleInputChange}
-                          className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-2.5 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="+91 98765 43210"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="branch" className="block text-sm font-medium text-white/80 mb-1">
-                          Branch <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          id="branch"
-                          name="branch"
-                          value={formData.branch}
-                          onChange={handleInputChange}
-                          className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-2.5 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="Computer Science"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="year" className="block text-sm font-medium text-white/80 mb-1">
-                          Year <span className="text-red-500">*</span>
-                        </label>
-                        <select
-                          id="year"
-                          name="year"
-                          value={formData.year}
-                          onChange={handleInputChange}
-                          className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          required
-                        >
-                          <option value="">Select Year</option>
-                          <option value="FE">FE</option>
-                          <option value="SE">SE</option>
-                          <option value="TE">TE</option>
-                          <option value="BE">BE</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label htmlFor="division" className="block text-sm font-medium text-white/80 mb-1">
-                          Division/Batch <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          id="division"
-                          name="division"
-                          value={formData.division}
-                          onChange={handleInputChange}
-                          className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-2.5 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="e.g., A, B, C"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="rollNumber" className="block text-sm font-medium text-white/80 mb-1">
-                          Roll Number <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          id="rollNumber"
-                          name="rollNumber"
-                          value={formData.rollNumber}
-                          onChange={handleInputChange}
-                          className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-2.5 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="Enter your roll number"
-                          required
-                        />
-                      </div>
-                      <div className="md:col-span-2">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-sm font-medium text-white/80 mb-2">
-                              Are you an ACM INTERNATIONAL member? <span className="text-red-500">*</span>
-                            </label>
-                            <div className="flex space-x-4">
-                              <label className="inline-flex items-center">
-                                <input
-                                  type="radio"
-                                  name="isAcmMember"
-                                  value="yes"
-                                  checked={formData.isAcmMember === 'yes'}
-                                  onChange={handleInputChange}
-                                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-white/20"
-                                  required
-                                />
-                                <span className="ml-2 text-white">Yes</span>
-                              </label>
-                              <label className="inline-flex items-center">
-                                <input
-                                  type="radio"
-                                  name="isAcmMember"
-                                  value="no"
-                                  checked={formData.isAcmMember === 'no'}
-                                  onChange={handleInputChange}
-                                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-white/20"
-                                />
-                                <span className="ml-2 text-white">No</span>
-                              </label>
-                            </div>
-                          </div>
-                          {formData.isAcmMember === 'yes' && (
-                            <div>
-                              <label htmlFor="membershipId" className="block text-sm font-medium text-white/80 mb-1">
-                                ACM International Membership ID <span className="text-red-500">*</span>
-                              </label>
-                              <input
-                                type="text"
-                                id="membershipId"
-                                name="membershipId"
-                                value={formData.membershipId}
-                                onChange={handleInputChange}
-                                className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-2.5 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="Enter your ACM ID"
-                                required={formData.isAcmMember === 'yes'}
-                              />
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <button
-                      type="submit"
-                      className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-medium py-3.5 px-6 rounded-xl transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center space-x-2"
-                    >
-                      <span>Proceed to Payment</span>
-                      <ArrowRight className="h-4 w-4" />
-                    </button>
-                  </form>
-                )}
 
-                {currentStep === 'payment' && (
-                  <form onSubmit={handleSubmitPayment} className="space-y-6">
-                    <div className="bg-black/30 p-5 rounded-xl border border-white/10">
-                      <h3 className="text-lg font-semibold text-white mb-4">Payment Details</h3>
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <div>
-                          <div className="bg-white p-4 rounded-lg mb-4">
-                            <div className="text-center mb-3">
-                              <div className="text-xs text-gray-600 mb-1">Scan to pay</div>
-                              <div className="text-sm font-medium text-gray-900">₹{event.registration_fee}</div>
-                            </div>
-                            <div className="flex justify-center mb-3">
-                              <div className="bg-white p-2 rounded">
-                                <div className="w-32 h-32 bg-gray-200 flex items-center justify-center text-xs text-gray-500">
-                                  UPI QR Code
-                                </div>
-                              </div>
-                            </div>
-                            <div className="text-center text-xs text-gray-500 space-y-1">
-                              <div>UPI ID: your-upi@id</div>
-                              <div>Account Name: SIGAI</div>
-                              <div>Bank: Your Bank Name</div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="space-y-4">
-                          <div>
-                            <label htmlFor="transactionId" className="block text-sm font-medium text-white/80 mb-1">
-                              Transaction ID <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                              type="text"
-                              id="transactionId"
-                              name="transactionId"
-                              value={formData.transactionId}
-                              onChange={handleInputChange}
-                              className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-2.5 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              placeholder="Enter UPI Transaction ID"
-                              required
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-white/80 mb-1">
-                              Upload payment screenshot or membership proof <span className="text-red-500">*</span>
-                            </label>
-                            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed border-white/20 rounded-lg">
-                              <div className="space-y-1 text-center">
-                                {screenshotPreview ? (
-                                  <div className="relative">
-                                    <img src={screenshotPreview} alt="Screenshot preview" className="mx-auto h-32 object-contain" />
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        setFormData(prev => ({ ...prev, paymentScreenshot: null }));
-                                        setScreenshotPreview(null);
-                                      }}
-                                      className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1"
-                                    >
-                                      <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                      </svg>
-                                    </button>
-                                  </div>
-                                ) : (
-                                  <>
-                                    <div className="flex justify-center">
-                                      <Upload className="h-12 w-12 text-white/40" />
-                                    </div>
-                                    <div className="flex text-sm text-white/60">
-                                      <label
-                                        htmlFor="paymentScreenshot"
-                                        className="relative cursor-pointer bg-black/50 rounded-md font-medium text-blue-400 hover:text-blue-300 focus-within:outline-none"
-                                      >
-                                        <span>Upload a file</span>
-                                        <input
-                                          id="paymentScreenshot"
-                                          name="paymentScreenshot"
-                                          type="file"
-                                          accept="image/*"
-                                          className="sr-only"
-                                          onChange={handleFileChange}
-                                          required
-                                        />
-                                      </label>
-                                      <p className="pl-1">or drag and drop</p>
-                                    </div>
-                                    <p className="text-xs text-white/40">PNG, JPG, GIF up to 5MB</p>
-                                  </>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex space-x-4">
-                      <button
-                        type="button"
-                        onClick={handlePaymentBack}
-                        className="flex-1 flex items-center justify-center px-4 py-3 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-colors"
-                      >
-                        <ArrowLeft className="h-4 w-4 mr-2" />
-                        Back
-                      </button>
-                      <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center"
-                      >
-                        {isSubmitting ? (
-                          <>
-                            <Loader2 className="animate-spin h-4 w-4 mr-2" />
-                            Processing...
-                          </>
-                        ) : (
-                          <>
-                            <span>Confirm Registration</span>
-                            <Check className="h-4 w-4 ml-2" />
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </form>
-                )}
-
-                {currentStep === 'success' && (
-                  <div className="text-center py-8">
-                    <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-500/20 mb-4">
-                      <Check className="h-8 w-8 text-green-400" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-white mb-2">Registration Successful!</h3>
-                    <p className="text-white/70 mb-6">Your ticket has been generated. A confirmation has been sent to your email.</p>
-                    <button
-                      onClick={() => {
-                        // Generate and download ticket
-                        const ticketData = {
-                          ...formData,
-                          event: {
-                            title: event.title,
-                            date: event.date,
-                            time: event.time,
-                            location: event.location
-                          },
-                          registrationId: `SIGAI-${Math.random().toString(36).substr(2, 8).toUpperCase()}`
-                        };
-                        console.log('Generating ticket with data:', ticketData);
-                        // In a real app, this would generate and download a PDF
-                        alert('Ticket download would start here in a real implementation');
-                      }}
-                      className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-lg hover:from-blue-500 hover:to-blue-600 transition-colors"
-                    >
-                      <Download className="h-5 w-5 mr-2" />
-                      Download Your Ticket
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-            {isPastEvent && (
-              <div className="text-center py-4 text-white/60">
-                Registration for this event has ended.
-              </div>
-            )}
+            <div className="relative aspect-video rounded-2xl overflow-hidden bg-black/40 backdrop-blur-md border border-white/10">
+              <Image
+                src={event.image}
+                alt={event.title}
+                fill
+                className="object-contain"
+                priority
+              />
             </div>
-            
-            <div className="prose max-w-none mb-10">
-              <h2 className="text-2xl font-bold text-white mb-5 pb-2 border-b border-white/10">
-                About This Event
-              </h2>
-              <div className="text-white/80 leading-relaxed space-y-4">
+
+            <div className="prose max-w-none">
+              <h2 className="text-2xl font-semibold text-white mb-4">About this event</h2>
+              <div className="text-gray-300 leading-relaxed space-y-4">
                 {event.description.split('\n\n').map((paragraph, i) => (
-                  <p key={i} className="text-white/90">
-                    {paragraph}
-                  </p>
+                  <p key={i}>{paragraph}</p>
                 ))}
               </div>
             </div>
 
             {event.speakers && event.speakers.length > 0 && (
-              <div className="mt-12">
-                <h3 className="text-2xl font-bold text-white mb-6 pb-2 border-b border-white/10">
-                  Speakers & Organizers
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <h2 className="text-2xl font-semibold text-white mb-6">Speakers & Organizers</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {event.speakers.map((speaker, index) => (
-                    <div key={index} className="group flex items-center space-x-4 p-3 rounded-xl hover:bg-white/5 transition-colors duration-200">
-                      <div className="relative">
-                        {speaker.image_url ? (
-                          <Image
-                            src={speaker.image_url}
-                            alt={speaker.name}
-                            width={56}
-                            height={56}
-                            className="rounded-full h-14 w-14 object-cover border-2 border-white/20 group-hover:border-blue-400/50 transition-colors"
-                          />
-                        ) : (
-                          <div className="h-14 w-14 rounded-full bg-gradient-to-br from-blue-900/80 to-blue-600/80 flex items-center justify-center text-2xl font-bold text-white">
-                            {speaker.name.charAt(0)}
-                          </div>
-                        )}
-                      </div>
+                    <div key={index} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 hover:border-white/20 hover:bg-white/10 transition-all">
+                      {speaker.image_url ? (
+                        <Image
+                          src={speaker.image_url}
+                          alt={speaker.name}
+                          width={48}
+                          height={48}
+                          className="rounded-full border-2 border-white/20"
+                        />
+                      ) : (
+                        <div className="h-12 w-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-lg font-semibold text-white border border-white/20">
+                          {speaker.name.charAt(0)}
+                        </div>
+                      )}
                       <div>
-                        <p className="font-semibold text-white group-hover:text-blue-300 transition-colors">
-                          {speaker.name}
-                        </p>
-                        <p className="text-sm text-gray-300 group-hover:text-white/80 mt-0.5">
-                          {speaker.role}
-                        </p>
+                        <p className="font-semibold text-white">{speaker.name}</p>
+                        <p className="text-sm text-gray-400">{speaker.role}</p>
                       </div>
                     </div>
                   ))}
@@ -650,7 +263,340 @@ export default function EventPage() {
               </div>
             )}
           </div>
+
+          <div className="lg:col-span-1">
+            <div className="sticky top-24 space-y-6">
+              {!isPastEvent ? (
+                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl">
+                  {currentStep === 'details' && (
+                    <>
+                      <div className="mb-6">
+                        <h3 className="text-xl font-semibold text-white mb-2">Register for event</h3>
+                        <p className="text-sm text-gray-400">Fill in your details to secure your spot</p>
+                      </div>
+                      
+                      <form onSubmit={handleSubmitDetails} className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-1">
+                            Email <span className="text-red-400">*</span>
+                          </label>
+                          <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-white placeholder-gray-500 backdrop-blur-sm"
+                            placeholder="you@example.com"
+                            required
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">
+                              First Name <span className="text-red-400">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              name="firstName"
+                              value={formData.firstName}
+                              onChange={handleInputChange}
+                              className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-white placeholder-gray-500 backdrop-blur-sm"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">
+                              Last Name <span className="text-red-400">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              name="lastName"
+                              value={formData.lastName}
+                              onChange={handleInputChange}
+                              className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-white placeholder-gray-500 backdrop-blur-sm"
+                              required
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-1">
+                            WhatsApp Number <span className="text-red-400">*</span>
+                          </label>
+                          <input
+                            type="tel"
+                            name="whatsapp"
+                            value={formData.whatsapp}
+                            onChange={handleInputChange}
+                            className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-white placeholder-gray-500 backdrop-blur-sm"
+                            placeholder="+91 98765 43210"
+                            required
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-1">
+                            Branch <span className="text-red-400">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            name="branch"
+                            value={formData.branch}
+                            onChange={handleInputChange}
+                            className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-white placeholder-gray-500 backdrop-blur-sm"
+                            placeholder="Computer Science"
+                            required
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">
+                              Year <span className="text-red-400">*</span>
+                            </label>
+                            <select
+                              name="year"
+                              value={formData.year}
+                              onChange={handleInputChange}
+                              className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-white backdrop-blur-sm"
+                              required
+                            >
+                              <option value="" className="bg-gray-900">Select</option>
+                              <option value="FE" className="bg-gray-900">FE</option>
+                              <option value="SE" className="bg-gray-900">SE</option>
+                              <option value="TE" className="bg-gray-900">TE</option>
+                              <option value="BE" className="bg-gray-900">BE</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">
+                              Division <span className="text-red-400">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              name="division"
+                              value={formData.division}
+                              onChange={handleInputChange}
+                              className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-white placeholder-gray-500 backdrop-blur-sm"
+                              placeholder="A, B, C"
+                              required
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-1">
+                            Roll Number <span className="text-red-400">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            name="rollNumber"
+                            value={formData.rollNumber}
+                            onChange={handleInputChange}
+                            className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-white placeholder-gray-500 backdrop-blur-sm"
+                            required
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            ACM Member? <span className="text-red-400">*</span>
+                          </label>
+                          <div className="flex gap-4">
+                            <label className="flex items-center cursor-pointer">
+                              <input
+                                type="radio"
+                                name="isAcmMember"
+                                value="yes"
+                                checked={formData.isAcmMember === 'yes'}
+                                onChange={handleInputChange}
+                                className="mr-2 accent-blue-500"
+                                required
+                              />
+                              <span className="text-sm text-gray-300">Yes</span>
+                            </label>
+                            <label className="flex items-center cursor-pointer">
+                              <input
+                                type="radio"
+                                name="isAcmMember"
+                                value="no"
+                                checked={formData.isAcmMember === 'no'}
+                                onChange={handleInputChange}
+                                className="mr-2 accent-blue-500"
+                              />
+                              <span className="text-sm text-gray-300">No</span>
+                            </label>
+                          </div>
+                        </div>
+
+                        {formData.isAcmMember === 'yes' && (
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">
+                              ACM Membership ID <span className="text-red-400">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              name="membershipId"
+                              value={formData.membershipId}
+                              onChange={handleInputChange}
+                              className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-white placeholder-gray-500 backdrop-blur-sm"
+                              required={formData.isAcmMember === 'yes'}
+                            />
+                          </div>
+                        )}
+
+                        <button
+                          type="submit"
+                          className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-[1.02]"
+                        >
+                          Continue to Payment
+                        </button>
+                      </form>
+                    </>
+                  )}
+
+                  {currentStep === 'payment' && (
+                    <>
+                      <div className="mb-6">
+                        <button
+                          onClick={handlePaymentBack}
+                          className="text-sm text-gray-300 hover:text-white flex items-center gap-1 mb-4 transition-colors"
+                        >
+                          <ArrowLeft className="h-4 w-4" />
+                          Back
+                        </button>
+                        <h3 className="text-xl font-semibold text-white mb-2">Payment</h3>
+                        <p className="text-sm text-gray-400">Complete your registration</p>
+                      </div>
+
+                      <form onSubmit={handleSubmitPayment} className="space-y-4">
+                        <div className="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-lg space-y-3">
+                          <div className="text-center">
+                            <div className="inline-block bg-white/10 backdrop-blur-sm p-3 rounded-lg border border-white/20">
+                              <div className="w-32 h-32 bg-white/5 flex items-center justify-center text-xs text-gray-400">
+                                QR Code
+                              </div>
+                            </div>
+                            <p className="text-sm font-semibold text-white mt-3">₹{event.registration_fee}</p>
+                            <p className="text-xs text-gray-400 mt-1">UPI ID: sigai@upi</p>
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-1">
+                            Transaction ID <span className="text-red-400">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            name="transactionId"
+                            value={formData.transactionId}
+                            onChange={handleInputChange}
+                            className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-white placeholder-gray-500 backdrop-blur-sm"
+                            placeholder="Enter transaction ID"
+                            required
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-1">
+                            Payment Screenshot <span className="text-red-400">*</span>
+                          </label>
+                          {screenshotPreview ? (
+                            <div className="relative">
+                              <img src={screenshotPreview} alt="Preview" className="w-full h-32 object-cover rounded-lg" />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setFormData(prev => ({ ...prev, paymentProof: null }));
+                                  setScreenshotPreview(null);
+                                }}
+                                className="absolute top-2 right-2 bg-red-500/80 backdrop-blur-sm text-white p-1 rounded-full hover:bg-red-600 transition-colors"
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
+                            </div>
+                          ) : (
+                            <label className="block border-2 border-dashed border-white/20 rounded-lg p-6 text-center cursor-pointer hover:border-white/30 transition-colors bg-white/5 backdrop-blur-sm">
+                              <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                              <span className="text-sm text-gray-300">Click to upload</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                                className="hidden"
+                                required
+                              />
+                            </label>
+                          )}
+                        </div>
+
+                        <button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            'Complete Registration'
+                          )}
+                        </button>
+                      </form>
+                    </>
+                  )}
+
+                  {currentStep === 'success' && (
+                    <div className="text-center py-8">
+                      <div className="inline-flex items-center justify-center w-16 h-16 bg-green-500/20 backdrop-blur-md border border-green-500/30 rounded-full mb-4">
+                        <Check className="h-8 w-8 text-green-400" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-white mb-2">Registration Complete!</h3>
+                      <p className="text-sm text-gray-300 mb-6">
+                        Check your email for confirmation and event details.
+                      </p>
+                      <button
+                        onClick={() => window.location.reload()}
+                        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-[1.02]"
+                      >
+                        Done
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 text-center">
+                  <p className="text-sm text-gray-400">Registration for this event has ended.</p>
+                </div>
+              )}
+
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-4 space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Date</span>
+                  <span className="font-medium text-white">{formattedDate}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Time</span>
+                  <span className="font-medium text-white">{event.time}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Location</span>
+                  <span className="font-medium text-white">{event.location}</span>
+                </div>
+                {event.registration_fee > 0 && (
+                  <div className="flex justify-between pt-2 border-t border-white/10">
+                    <span className="text-gray-400">Fee</span>
+                    <span className="font-semibold text-white">₹{event.registration_fee}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
   );
 }
