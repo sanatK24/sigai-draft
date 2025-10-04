@@ -9,10 +9,10 @@ import MobileMenu from './MobileMenu';
 
 const navItems = [
   { name: "Home", href: "/" },
-  { name: "About", href: "/#about" },
+  { name: "About", href: "/about" },
   { name: "Gallery", href: "/gallery" },
-  { name: "Team", href: "/#team" },
-  { name: "Contact", href: "/#contact" },
+  { name: "Team", href: "/team" },
+  { name: "Contact", href: "/contact" },
   { 
     name: "Other ACM Chapters", 
     href: "#",

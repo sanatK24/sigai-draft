@@ -464,7 +464,35 @@ const AgendaSection = () => {
                     Our Inaugural Magazine explores the cutting-edge world of Generative AI, featuring groundbreaking research and insights from leading experts in the field.
                   </p>
                   
-                  <div className="mt-auto pt-4">
+                  {/* Publication Details */}
+                  <div className="space-y-3 mb-4">
+                    <div className="flex items-center gap-2 text-sm">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
+                      <span className="text-muted-foreground">Issue #1 • 2025 Edition</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
+                      <span className="text-muted-foreground">50+ Pages of AI Insights</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
+                      <span className="text-muted-foreground">Expert Articles & Research</span>
+                    </div>
+                  </div>
+
+                  {/* Features Grid */}
+                  <div className="grid grid-cols-2 gap-2 mb-4">
+                    <div className="bg-primary/10 rounded-lg p-2.5 text-center">
+                      <div className="text-xs text-muted-foreground mb-0.5">Topics</div>
+                      <div className="text-sm font-semibold text-foreground">Gen AI</div>
+                    </div>
+                    <div className="bg-primary/10 rounded-lg p-2.5 text-center">
+                      <div className="text-xs text-muted-foreground mb-0.5">Format</div>
+                      <div className="text-sm font-semibold text-foreground">Digital</div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-auto pt-4 border-t border-border/20">
                     <Link 
                       href="/latest-issue" 
                       className="w-full py-2.5 px-5 bg-primary hover:bg-primary/90 text-white rounded-full text-sm font-medium transition-colors flex items-center justify-center gap-1.5"
@@ -475,6 +503,47 @@ const AgendaSection = () => {
                         <polyline points="12 5 19 12 12 19"></polyline>
                       </svg>
                     </Link>
+
+                    {/* Sister Editions */}
+                    <div className="mt-4 pt-4 border-t border-border/20">
+                      <p className="text-xs text-muted-foreground mb-3 font-medium">Sister Editions</p>
+                      <div className="flex gap-2">
+                        <a 
+                          href="#" 
+                          className="flex-1 bg-gradient-to-br from-blue-500/10 to-blue-600/10 hover:from-blue-500/20 hover:to-blue-600/20 border border-blue-500/20 rounded-lg p-2.5 transition-all duration-300 group"
+                          title="ACM Magazine"
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 bg-blue-500/20 rounded flex items-center justify-center flex-shrink-0">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400">
+                                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+                              </svg>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-xs font-semibold text-foreground group-hover:text-blue-400 transition-colors truncate">ACM</div>
+                              <div className="text-[10px] text-muted-foreground truncate">Computing</div>
+                            </div>
+                          </div>
+                        </a>
+                        <a 
+                          href="#" 
+                          className="flex-1 bg-gradient-to-br from-pink-500/10 to-purple-600/10 hover:from-pink-500/20 hover:to-purple-600/20 border border-pink-500/20 rounded-lg p-2.5 transition-all duration-300 group"
+                          title="ACM-W Magazine"
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 bg-pink-500/20 rounded flex items-center justify-center flex-shrink-0">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-pink-400">
+                                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+                              </svg>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-xs font-semibold text-foreground group-hover:text-pink-400 transition-colors truncate">ACM-W</div>
+                              <div className="text-[10px] text-muted-foreground truncate">Women in Tech</div>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -595,8 +664,8 @@ const AgendaSection = () => {
                         ))}
                       </CarouselContent>
                       <div className="flex items-center justify-center gap-3 mt-6">
-                        <CarouselPrevious className="static transform-none translate-y-0 translate-x-0 w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-white bg-transparent hover:bg-white hover:text-black text-white transition-all duration-300" />
-                        <CarouselNext className="static transform-none translate-y-0 translate-x-0 w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-white bg-white text-black hover:scale-110 transition-all duration-300" />
+                        <CarouselPrevious className="static transform-none translate-y-0 translate-x-0 w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-primary/50 bg-transparent hover:bg-primary/10 hover:border-primary text-primary transition-all duration-300" />
+                        <CarouselNext className="static transform-none translate-y-0 translate-x-0 w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-primary bg-primary/90 hover:bg-primary text-white hover:scale-110 transition-all duration-300" />
                       </div>
                     </Carousel>
                   </div>
@@ -607,45 +676,50 @@ const AgendaSection = () => {
               <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-3xl p-6 shadow-xl">
                 <h2 className="text-2xl font-bold text-foreground mb-6">YouTube Series</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {[
-                    {
-                      id: 'VlgLfiI7Jig',
-                      title: 'Neural Nexus',
-                      description: 'Highlights from our latest'
-                    },
-                    // {
-                    //   id: 'dQw4w9WgXcQ',
-                    //   title: 'Tech Talks',
-                    //   description: 'Insights from industry experts'
-                    // }
-                  ].map((video) => (
-                    <div key={video.id} className="group">
-                      <a
-                        href={`https://www.youtube.com/watch?v=${video.id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block aspect-video w-full bg-muted rounded-xl overflow-hidden relative group-hover:shadow-lg transition-shadow"
-                      >
-                        <Image
-                          src={`https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`}
-                          alt={video.title}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                          <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center transform transition-transform group-hover:scale-110">
-                            <svg className="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M8 5v14l11-7z" />
-                            </svg>
-                          </div>
+                  {/* Neural Nexus - Clickable Thumbnail */}
+                  <div className="group">
+                    <a
+                      href="https://www.youtube.com/watch?v=VlgLfiI7Jig"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block aspect-video w-full bg-muted rounded-xl overflow-hidden relative group-hover:shadow-lg transition-shadow"
+                    >
+                      <Image
+                        src="https://img.youtube.com/vi/VlgLfiI7Jig/maxresdefault.jpg"
+                        alt="Neural Nexus"
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center transform transition-transform group-hover:scale-110">
+                          <svg className="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
                         </div>
-                      </a>
-                      <div className="mt-3">
-                        <h3 className="font-medium text-foreground">{video.title}</h3>
-                        <p className="text-sm text-muted-foreground">{video.description}</p>
                       </div>
+                    </a>
+                    <div className="mt-3">
+                      <h3 className="font-medium text-foreground">Neural Nexus</h3>
+                      <p className="text-sm text-muted-foreground">Highlights from our latest</p>
                     </div>
-                  ))}
+                  </div>
+
+                  {/* Why Need AI? - Autoplay Video */}
+                  <div className="group">
+                    <div className="aspect-video w-full bg-muted rounded-xl overflow-hidden relative shadow-lg">
+                      <iframe
+                        src="https://www.youtube.com/embed/0-FUhQKe-eU?autoplay=1&mute=1&loop=1&playlist=0-FUhQKe-eU&controls=0&modestbranding=1&rel=0&start=111"
+                        title="Why Need AI?"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="absolute inset-0 w-full h-full"
+                      />
+                    </div>
+                    <div className="mt-3">
+                      <h3 className="font-medium text-foreground">Why Need AI?</h3>
+                      <p className="text-sm text-muted-foreground">Exploring the transformative power of artificial intelligence</p>
+                    </div>
+                  </div>
                 </div>
                 <a 
                   href="https://www.youtube.com" 
