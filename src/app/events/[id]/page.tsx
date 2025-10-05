@@ -20,7 +20,7 @@ interface EventType {
   category: string;
   is_featured?: boolean;
   end_date: string;
-  registration_fee: number; // For backward compatibility (non-member fee)
+  registration_fee: number; // For backward compatibility (non-member fee & common fee)
   registration_fee_member?: number; // ACM Member fee
   registration_fee_non_member?: number; // Non-member fee
   created_at: string;
