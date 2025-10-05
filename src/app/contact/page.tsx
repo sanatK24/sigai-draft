@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Mail, MapPin, Phone, Send, ArrowUpRight, CheckCircle, Sparkles } from 'lucide-react';
+import { SparklesCore } from '@/components/ui/sparkles';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -38,33 +39,48 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-white relative overflow-hidden">
+    <main className="min-h-screen bg-black text-white relative overflow-hidden select-none">
       {/* Animated Grid Background */}
-      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]" />
+      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px] pointer-events-none" />
       
       {/* Spotlight Effect */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-blue-500/20 rounded-full blur-[120px] -z-10" />
-      <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-purple-500/20 rounded-full blur-[120px] -z-10" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-blue-500/20 rounded-full blur-[120px] -z-10 pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-purple-500/20 rounded-full blur-[120px] -z-10 pointer-events-none" />
 
       {/* Hero Section with Spotlight */}
       <section className="relative pt-32 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="mb-6">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm text-xs font-medium text-white/80">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm text-xs font-medium text-white/80 select-none">
               <Sparkles className="w-3 h-3" />
               Get in Touch
             </span>
           </div>
-          <h1 className="text-5xl md:text-8xl font-bold mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-white/50">
+          <h1 className="text-5xl md:text-8xl font-bold mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-white/50 select-none py-4">
+          
             Let's Create
             <br />
             Something Amazing
           </h1>
-          <p className="text-xl text-white/60 max-w-2xl leading-relaxed">
+          <p className="text-xl text-white/60 max-w-2xl leading-relaxed select-none">
             Have an idea? Want to collaborate? Or just want to say hello? 
             <br />
             Drop us a message and we'll get back to you within 24 hours.
           </p>
+ 
+          {/* Sparkles Effect Below Hero Text */}
+          <div className="relative w-full h-40 mt-12 pointer-events-none">
+             <SparklesCore
+          background="transparent"
+          minSize={0.3}
+          maxSize={1.4}
+          particleDensity={1200}
+          className="w-full h-full"
+          particleColor="#FFFFFF"
+        />
+        
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+          </div>
         </div>
       </section>
 
@@ -76,9 +92,9 @@ export default function ContactPage() {
             <div className="lg:col-span-2 space-y-6">
               {/* Email Card with Glow Effect */}
               <div className="group relative">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl opacity-0 group-hover:opacity-100 blur transition-all duration-500" />
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl opacity-0 group-hover:opacity-100 blur transition-all duration-500 pointer-events-none" />
                 <div className="relative bg-black border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300">
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-3 mb-4 select-none">
                     <div className="p-2.5 bg-blue-500/10 rounded-xl border border-blue-500/20">
                       <Mail className="h-5 w-5 text-blue-400" />
                     </div>
@@ -86,7 +102,7 @@ export default function ContactPage() {
                   </div>
                   <a 
                     href="mailto:sigai@siesgst.ac.in"
-                    className="text-xl font-semibold text-white hover:text-blue-400 transition-colors inline-flex items-center gap-2"
+                    className="text-xl font-semibold text-white hover:text-blue-400 transition-colors inline-flex items-center gap-2 select-text"
                   >
                     sigai@siesgst.ac.in
                     <ArrowUpRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-all" />
@@ -96,9 +112,9 @@ export default function ContactPage() {
 
               {/* Phone Card with Glow Effect */}
               <div className="group relative">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl opacity-0 group-hover:opacity-100 blur transition-all duration-500" />
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl opacity-0 group-hover:opacity-100 blur transition-all duration-500 pointer-events-none" />
                 <div className="relative bg-black border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300">
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-3 mb-4 select-none">
                     <div className="p-2.5 bg-purple-500/10 rounded-xl border border-purple-500/20">
                       <Phone className="h-5 w-5 text-purple-400" />
                     </div>
@@ -106,7 +122,7 @@ export default function ContactPage() {
                   </div>
                   <a 
                     href="tel:+912227694000"
-                    className="text-xl font-semibold text-white hover:text-purple-400 transition-colors inline-flex items-center gap-2"
+                    className="text-xl font-semibold text-white hover:text-purple-400 transition-colors inline-flex items-center gap-2 select-text"
                   >
                     +91 22 2769 4000
                     <ArrowUpRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-all" />
@@ -116,15 +132,15 @@ export default function ContactPage() {
 
               {/* Location Card */}
               <div className="group relative">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-500 to-orange-500 rounded-2xl opacity-0 group-hover:opacity-100 blur transition-all duration-500" />
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-500 to-orange-500 rounded-2xl opacity-0 group-hover:opacity-100 blur transition-all duration-500 pointer-events-none" />
                 <div className="relative bg-black border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300">
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-3 mb-4 select-none">
                     <div className="p-2.5 bg-pink-500/10 rounded-xl border border-pink-500/20">
                       <MapPin className="h-5 w-5 text-pink-400" />
                     </div>
                     <span className="text-xs font-semibold text-white/50 uppercase tracking-wider">Location</span>
                   </div>
-                  <p className="text-base text-white/70 leading-relaxed">
+                  <p className="text-base text-white/70 leading-relaxed select-text">
                     SIES Graduate School of Technology<br />
                     Sector 7, Nerul<br />
                     Navi Mumbai, Maharashtra 400706
@@ -134,7 +150,7 @@ export default function ContactPage() {
 
               {/* Social Links Card */}
               <div className="relative bg-black border border-white/10 rounded-2xl p-6">
-                <p className="text-xs font-semibold text-white/50 uppercase tracking-wider mb-6">Connect With Us</p>
+                <p className="text-xs font-semibold text-white/50 uppercase tracking-wider mb-6 select-none">Connect With Us</p>
                 <div className="flex gap-3">
                   <a 
                     href="https://linkedin.com" 
@@ -299,10 +315,10 @@ export default function ContactPage() {
         <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]" />
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="mb-12 text-center">
-            <h2 className="text-3xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/50">
+            <h2 className="text-3xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/50 select-none">
               Office Hours
             </h2>
-            <p className="text-white/60 text-lg">When you can find us</p>
+            <p className="text-white/60 text-lg select-none">When you can find us</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             <div className="relative group">
@@ -337,10 +353,10 @@ export default function ContactPage() {
       <section className="relative py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="mb-12">
-            <h2 className="text-3xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/50">
+            <h2 className="text-3xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/50 select-none">
               Visit Our Campus
             </h2>
-            <p className="text-white/60 text-lg">Come say hello in person</p>
+            <p className="text-white/60 text-lg select-none">Come say hello in person</p>
           </div>
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl opacity-50 group-hover:opacity-75 blur-xl transition-all duration-500" />
