@@ -5,6 +5,7 @@ import { notFound, useParams } from 'next/navigation';
 import { ArrowLeft, Calendar, Clock, MapPin, Check, Loader2, Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { QRCodeSVG } from 'qrcode.react';
 
 interface EventType {
   idx: number;
@@ -19,7 +20,9 @@ interface EventType {
   category: string;
   is_featured?: boolean;
   end_date: string;
-  registration_fee: number;
+  registration_fee: number; // For backward compatibility (non-member fee & common fee)
+  registration_fee_member?: number; // ACM Member fee
+  registration_fee_non_member?: number; // Non-member fee
   created_at: string;
   updated_at: string;
   speakers?: Array<{
@@ -67,12 +70,23 @@ export default function EventPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
+  const [currentFee, setCurrentFee] = useState<number>(0);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target as HTMLInputElement;
     
-    if (name === 'isAcmMember' && value === 'no') {
-      setFormData(prev => ({ ...prev, isAcmMember: 'no', membershipId: '' }));
+    if (name === 'isAcmMember') {
+      if (value === 'no') {
+        setFormData(prev => ({ ...prev, isAcmMember: 'no', membershipId: '' }));
+        // Set non-member fee
+        const fee = event?.registration_fee_non_member ?? event?.registration_fee ?? 0;
+        setCurrentFee(fee);
+      } else {
+        setFormData(prev => ({ ...prev, isAcmMember: value }));
+        // Set member fee
+        const fee = event?.registration_fee_member ?? 0;
+        setCurrentFee(fee);
+      }
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -119,6 +133,9 @@ export default function EventPage() {
         }
 
         setEvent(eventData);
+        // Set initial fee (non-member by default)
+        const initialFee = eventData.registration_fee_non_member ?? eventData.registration_fee ?? 0;
+        setCurrentFee(initialFee);
       } catch (error) {
         console.error('Error fetching event:', error);
         return notFound();
@@ -188,9 +205,11 @@ export default function EventPage() {
                     Past Event
                   </span>
                 )}
-                {event.registration_fee > 0 && (
+                {(event.registration_fee > 0 || event.registration_fee_member || event.registration_fee_non_member) && (
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-300 border border-green-500/30 backdrop-blur-sm">
-                    ₹{event.registration_fee}
+                    {event.registration_fee_member !== undefined && event.registration_fee_non_member !== undefined
+                      ? `₹${event.registration_fee_member} - ₹${event.registration_fee_non_member}`
+                      : `₹${event.registration_fee}`}
                   </span>
                 )}
               </div>
@@ -290,10 +309,27 @@ export default function EventPage() {
                   </span>
                   <span className="font-medium text-white text-right">{event.location}</span>
                 </div>
-                {event.registration_fee > 0 && (
-                  <div className="flex justify-between items-center pt-3 border-t border-white/10">
-                    <span className="text-gray-400 font-medium">Registration Fee</span>
-                    <span className="font-bold text-green-400 text-lg">₹{event.registration_fee}</span>
+                {(event.registration_fee > 0 || event.registration_fee_member || event.registration_fee_non_member) && (
+                  <div className="pt-3 border-t border-white/10 space-y-2">
+                    <span className="text-gray-400 font-medium block mb-2">Registration Fees</span>
+                    {event.registration_fee_member !== undefined && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-300 text-sm">ACM Members</span>
+                        <span className="font-bold text-green-400">₹{event.registration_fee_member}</span>
+                      </div>
+                    )}
+                    {event.registration_fee_non_member !== undefined && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-300 text-sm">Non-Members</span>
+                        <span className="font-bold text-blue-400">₹{event.registration_fee_non_member}</span>
+                      </div>
+                    )}
+                    {(!event.registration_fee_member && !event.registration_fee_non_member && event.registration_fee > 0) && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-300 text-sm">Fee</span>
+                        <span className="font-bold text-green-400">₹{event.registration_fee}</span>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -520,13 +556,22 @@ export default function EventPage() {
                       <form onSubmit={handleSubmitPayment} className="space-y-4">
                         <div className="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-lg space-y-3">
                           <div className="text-center">
-                            <div className="inline-block bg-white/10 backdrop-blur-sm p-3 rounded-lg border border-white/20">
-                              <div className="w-32 h-32 bg-white/5 flex items-center justify-center text-xs text-gray-400">
-                                QR Code
-                              </div>
+                            <div className="inline-block bg-white p-4 rounded-2xl border-4 border-blue-500/30 shadow-xl">
+                              <QRCodeSVG
+                                value={`upi://pay?pa=sanat.karkhanis2@okicici&am=${currentFee}&cu=INR`}
+                                size={180}
+                                level="H"
+                                includeMargin={false}
+                                fgColor="#000000"
+                                bgColor="#ffffff"
+                              />
                             </div>
-                            <p className="text-sm font-semibold text-white mt-3">₹{event.registration_fee}</p>
-                            <p className="text-xs text-gray-400 mt-1">UPI ID: sigai@upi</p>
+                            <p className="text-lg font-bold text-white mt-4">₹{currentFee}</p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              {formData.isAcmMember === 'yes' ? '(ACM Member Rate)' : '(Non-Member Rate)'}
+                            </p>
+                            <p className="text-sm text-gray-300 mt-2 font-medium">Scan QR to Pay</p>
+                            <p className="text-xs text-gray-400 mt-1">UPI ID: sanat.karkhanis2@okicici</p>
                           </div>
                         </div>
 
@@ -545,7 +590,8 @@ export default function EventPage() {
                           />
                         </div>
 
-                        <div>
+                        {/* Payment Screenshot Upload - Temporarily Disabled */}
+                        {/* <div>
                           <label className="block text-sm font-medium text-gray-300 mb-1">
                             Payment Screenshot <span className="text-red-400">*</span>
                           </label>
@@ -576,7 +622,7 @@ export default function EventPage() {
                               />
                             </label>
                           )}
-                        </div>
+                        </div> */}
 
                         <button
                           type="submit"
