@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Calendar, Clock, MapPin } from 'lucide-react';
+import { FocusCards } from '@/components/ui/focus-cards';
 
 interface Event {
   idx: number;
@@ -137,78 +138,74 @@ export default function EventsPage() {
     .sort((a, b) => showUpcoming ? a - b : b - a); // Sort years based on view
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8">Events</h1>
+    <div className="min-h-screen bg-black text-white p-6 relative overflow-hidden">
+      {/* Animated Grid Background */}
+      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px] pointer-events-none" />
+      
+      {/* Subtle Spotlight Effect */}
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[120px] -z-10 pointer-events-none" />
+      
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Hero Section */}
+        <div className="mb-12 pt-8">
+          <div className="mb-6">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm text-xs font-medium text-white/80 select-none">
+              Events & Workshops
+            </span>
+          </div>
+          <h1 className="text-5xl md:text-7xl font-bold mb-4 tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-white/50 select-none">
+            Discover Events
+          </h1>
+          <p className="text-xl text-white/60 max-w-2xl select-none">
+            Join us for exciting workshops, talks, and networking opportunities.
+          </p>
+        </div>
         
-        <div className="flex space-x-4 mb-8">
+        {/* Toggle Buttons */}
+        <div className="flex gap-4 mb-12">
           <button
             onClick={() => setShowUpcoming(true)}
-            className={`px-4 py-2 rounded-lg ${
-              showUpcoming ? 'bg-white text-black' : 'bg-gray-800 text-white'
+            className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
+              showUpcoming 
+                ? 'bg-white text-black shadow-lg shadow-white/20' 
+                : 'bg-white/5 text-white/80 hover:bg-white/10 border border-white/10'
             }`}
           >
             Upcoming Events
           </button>
           <button
             onClick={() => setShowUpcoming(false)}
-            className={`px-4 py-2 rounded-lg ${
-              !showUpcoming ? 'bg-white text-black' : 'bg-gray-800 text-white'
+            className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
+              !showUpcoming 
+                ? 'bg-white text-black shadow-lg shadow-white/20' 
+                : 'bg-white/5 text-white/80 hover:bg-white/10 border border-white/10'
             }`}
           >
             Past Events
           </button>
         </div>
 
-        <div className="space-y-8">
+        <div className="space-y-16">
           {sortedYears.map((year) => (
-            <div key={year} className="space-y-6">
-              <h2 className={`text-2xl font-bold border-b border-gray-700 pb-2 ${showUpcoming ? 'mt-8' : ''}`}>
-                {year}
-                <span className="text-gray-400 text-base font-normal ml-2">
-                  {showUpcoming ? 'Upcoming Events' : 'Past Events'}
+            <div key={year} className="space-y-8">
+              <div className="flex items-center gap-4">
+                <h2 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/50">
+                  {year}
+                </h2>
+                <span className="text-sm text-white/40 uppercase tracking-wider">
+                  {eventsByYear[year].length} {eventsByYear[year].length === 1 ? 'Event' : 'Events'}
                 </span>
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {eventsByYear[year].map((event) => (
-                  <div key={event.id} className="bg-gray-900 rounded-lg overflow-hidden shadow-lg">
-                    <div className="relative h-48">
-                      <Image
-                        src={event.image}
-                        alt={event.title}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="p-6">
-                      <h2 className="text-xl font-bold mb-2">{event.title}</h2>
-                      <p className="text-gray-400 mb-4 line-clamp-2">{event.description}</p>
-                      
-                      <div className="space-y-2 text-sm text-gray-400 mb-4">
-                        <div className="flex items-center">
-                          <Calendar className="w-4 h-4 mr-2" />
-                          <span>{formatEventDate(event.date)}</span>
-                        </div>
-                        <div className="flex items-center">
-                          <Clock className="w-4 h-4 mr-2" />
-                          <span>{event.time}</span>
-                        </div>
-                        <div className="flex items-center">
-                          <MapPin className="w-4 h-4 mr-2" />
-                          <span>{event.location}</span>
-                        </div>
-                      </div>
-
-                      <Link
-                        href={`/events/${event.idx}`}
-                        className="inline-block bg-white text-black px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors"
-                      >
-                        View Details
-                      </Link>
-                    </div>
-                  </div>
-                ))}
               </div>
+              <FocusCards 
+                cards={eventsByYear[year].map(event => ({
+                  title: event.title,
+                  src: event.image,
+                  link: `/events/${event.idx}`,
+                  description: event.description,
+                  date: formatEventDate(event.date),
+                  location: event.location
+                }))}
+              />
             </div>
           ))}
         </div>
