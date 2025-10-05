@@ -14,7 +14,7 @@ const navItems = [
   { name: "Team", href: "/team" },
   { name: "Contact", href: "/contact" },
   { 
-    name: "Other ACM Chapters", 
+    name: "Other ACM Chapters",
     href: "#",
     subItems: [
       { name: "RAIT ACM Student Chapter", href: "https://rait.acm.org/" },
@@ -28,6 +28,29 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ disableCompact = false }) => {
+  // Track if logo text should be hidden due to lack of space
+  const [hideLogoText, setHideLogoText] = useState(false);
+  const logoTextRef = useRef<HTMLSpanElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
+
+  // Responsive spacing check
+  useEffect(() => {
+    function checkSpacing() {
+      if (!logoTextRef.current || !navRef.current) return;
+      const logoTextRect = logoTextRef.current.getBoundingClientRect();
+      const navRect = navRef.current.getBoundingClientRect();
+      // Minimum gap in px (e.g. 32px)
+      const minGap = 32;
+      if (navRect.left - logoTextRect.right < minGap) {
+        setHideLogoText(true);
+      } else {
+        setHideLogoText(false);
+      }
+    }
+    window.addEventListener('resize', checkSpacing);
+    checkSpacing();
+    return () => window.removeEventListener('resize', checkSpacing);
+  }, []);
   const pathname = usePathname();
   const isEventPage = pathname.startsWith('/event');
   const [isScrolledDown, setIsScrolledDown] = useState(false);
@@ -148,11 +171,12 @@ const Header: React.FC<HeaderProps> = ({ disableCompact = false }) => {
         >
           <div className="flex items-center justify-between w-full max-w-[1400px] mx-auto">
           <div className="flex items-center flex-1">
-              {/* Mobile Menu Button - Only visible on mobile */}
-              <div className="md:hidden">
+              {/* Mobile Header: hamburger left, logo right */}
+              <div className="md:hidden w-full flex items-center justify-between">
                 <button
                   type="button"
                   className="p-2 rounded-md text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/50"
+                  onClick={toggleMobileMenu}
                 >
                   {isMobileMenuOpen ? (
                     <X className="h-6 w-6" aria-hidden="true" />
@@ -160,10 +184,23 @@ const Header: React.FC<HeaderProps> = ({ disableCompact = false }) => {
                     <Menu className="h-6 w-6" aria-hidden="true" />
                   )}
                 </button>
+                <Link
+                  href="/"
+                  aria-label="Company Logo"
+                  className="flex-shrink-0"
+                >
+                  <Image
+                    src="/img/sigai-logo.png"
+                    alt="RAIT ACM SIGAI Student Chapter Logo"
+                    width={40}
+                    height={40}
+                    className="w-auto h-12"
+                    priority
+                  />
+                </Link>
               </div>
-              
-              {/* Logo */}
-              <div className="flex items-center gap-3 ml-4 md:ml-6">
+              {/* Desktop Logo (with text) */}
+              <div className="hidden md:flex items-center gap-3 ml-4 md:ml-6">
                 <Link
                   href="/"
                   aria-label="Company Logo"
@@ -182,9 +219,11 @@ const Header: React.FC<HeaderProps> = ({ disableCompact = false }) => {
                       }`}
                       priority
                     />
-                    <span className="hidden md:block text-white font-semibold text-sm md:text-base lg:text-lg transition-all duration-300 whitespace-nowrap">
-                      RAIT ACM SIGAI Student Chapter
-                    </span>
+                    {!hideLogoText && (
+                      <span ref={logoTextRef} className="text-white font-semibold text-sm md:text-base lg:text-lg transition-all duration-300 whitespace-nowrap">
+                        RAIT ACM SIGAI Student Chapter
+                      </span>
+                    )}
                   </div>
                 </Link>
               </div>
@@ -192,6 +231,7 @@ const Header: React.FC<HeaderProps> = ({ disableCompact = false }) => {
           </div>
           {/* Desktop Navigation and CTA - Hidden on mobile */}
           <div 
+            ref={navRef}
             className={`hidden md:flex items-center flex-shrink-0 transition-all duration-300 ml-4 md:ml-6 ${
               !disableCompact && isScrolledDown && !isCapsuleHovered ? 'gap-0' : 'gap-4'
             }`}
@@ -208,10 +248,10 @@ const Header: React.FC<HeaderProps> = ({ disableCompact = false }) => {
               }`}
             >
               {navItems.map((item) => {
-                const isActive = pathname === item.href || 
-                               (pathname === '/' && item.href === '/') ||
-                               (pathname.startsWith('/event') && item.href === '/events') ||
-                               (pathname === '/events' && item.href === '/events');
+                const isActive = pathname === item.href ||
+                                (pathname === '/' && item.href === '/') ||
+                                (pathname.startsWith('/event') && item.href === '/events') ||
+                                (pathname === '/events' && item.href === '/events');
                 
                 if (item.subItems) {
                   return (

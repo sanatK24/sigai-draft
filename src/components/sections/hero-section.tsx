@@ -234,7 +234,7 @@ const HeroSection = () => {
           >
             <div className="flex flex-col items-center space-y-4">
               <div className="inline-flex">
-                {'RAIT ACM'.split('').map((letter, i) => (
+                {'RAIT \t\t\t\t ACM'.split('').map((letter, i) => (
                   letter === ' ' ? (
                     <span key={`first-${i}`} className="w-2" />
                   ) : (
@@ -290,7 +290,7 @@ const HeroSection = () => {
             className="text-2xl md:text-[32px] font-normal text-zinc-400"
             style={{ letterSpacing: '-0.01em', lineHeight: '1.4' }}
           >
-            Building the Future
+            Building the Future with AI at Forefront
             <div className="mt-4">
               <Image
                 src="/img/sigai-logo-transparent.png"

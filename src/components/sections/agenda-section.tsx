@@ -243,6 +243,12 @@ const AgendaSection = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isShowingPastEvents, setIsShowingPastEvents] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
+  // YouTube preview state
+  const [showPreview, setShowPreview] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setShowPreview(false), 8000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -491,6 +497,12 @@ const AgendaSection = () => {
                       <div className="text-sm font-semibold text-foreground">Digital</div>
                     </div>
                   </div>
+                  {/* Disclaimer below topics/format grid */}
+                  <div className="mb-4">
+                    <p className="text-xs text-muted-foreground italic text-center">
+                      <strong>Disclaimer:</strong> The articles published in this magazine represent the personal views and research of student authors. The RAIT ACM SIGAI committee, faculty, and college are not responsible for the opinions expressed therein. Content is intended for educational and informational purposes only.
+                    </p>
+                  </div>
                   
                   <div className="mt-auto pt-4 border-t border-border/20">
                     <Link 
@@ -505,6 +517,7 @@ const AgendaSection = () => {
                     </Link>
 
                     {/* Sister Editions */}
+                    {/*
                     <div className="mt-4 pt-4 border-t border-border/20">
                       <p className="text-xs text-muted-foreground mb-3 font-medium">Sister Editions</p>
                       <div className="flex gap-2">
@@ -544,6 +557,7 @@ const AgendaSection = () => {
                         </a>
                       </div>
                     </div>
+                    */}
                   </div>
                 </div>
               </div>
@@ -676,50 +690,87 @@ const AgendaSection = () => {
               <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-3xl p-6 shadow-xl">
                 <h2 className="text-2xl font-bold text-foreground mb-6">YouTube Series</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Neural Nexus - Clickable Thumbnail */}
-                  <div className="group">
-                    <a
-                      href="https://www.youtube.com/watch?v=VlgLfiI7Jig"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block aspect-video w-full bg-muted rounded-xl overflow-hidden relative group-hover:shadow-lg transition-shadow"
-                    >
-                      <Image
-                        src="https://img.youtube.com/vi/VlgLfiI7Jig/maxresdefault.jpg"
-                        alt="Neural Nexus"
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center transform transition-transform group-hover:scale-110">
-                          <svg className="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z" />
-                          </svg>
+                  {/* YouTube Previews with Timed Thumbnails */}
+                  <>
+                    {/* Neural Nexus */}
+                    <div className="group">
+                      {showPreview ? (
+                        <div className="aspect-video w-full bg-muted rounded-xl overflow-hidden relative shadow-lg">
+                          <iframe
+                            src="https://www.youtube.com/embed/VlgLfiI7Jig?autoplay=1&mute=1&loop=1&playlist=VlgLfiI7Jig&controls=0&modestbranding=1&rel=0"
+                            title="Neural Nexus"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="absolute inset-0 w-full h-full"
+                          />
                         </div>
+                      ) : (
+                        <a
+                          href="https://www.youtube.com/watch?v=VlgLfiI7Jig"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block aspect-video w-full bg-muted rounded-xl overflow-hidden relative group-hover:shadow-lg transition-shadow"
+                        >
+                          <Image
+                            src="https://img.youtube.com/vi/VlgLfiI7Jig/maxresdefault.jpg"
+                            alt="Neural Nexus"
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center transform transition-transform group-hover:scale-110">
+                              <svg className="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z" />
+                              </svg>
+                            </div>
+                          </div>
+                        </a>
+                      )}
+                      <div className="mt-3">
+                        <h3 className="font-medium text-foreground">Neural Nexus</h3>
+                        <p className="text-sm text-muted-foreground">Highlights from our latest</p>
                       </div>
-                    </a>
-                    <div className="mt-3">
-                      <h3 className="font-medium text-foreground">Neural Nexus</h3>
-                      <p className="text-sm text-muted-foreground">Highlights from our latest</p>
                     </div>
-                  </div>
-
-                  {/* Why Need AI? - Autoplay Video */}
-                  <div className="group">
-                    <div className="aspect-video w-full bg-muted rounded-xl overflow-hidden relative shadow-lg">
-                      <iframe
-                        src="https://www.youtube.com/embed/0-FUhQKe-eU?autoplay=1&mute=1&loop=1&playlist=0-FUhQKe-eU&controls=0&modestbranding=1&rel=0&start=111"
-                        title="Why Need AI?"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        className="absolute inset-0 w-full h-full"
-                      />
+                    {/* Why Need AI? */}
+                    <div className="group">
+                      {showPreview ? (
+                        <div className="aspect-video w-full bg-muted rounded-xl overflow-hidden relative shadow-lg">
+                          <iframe
+                            src="https://www.youtube.com/embed/0-FUhQKe-eU?autoplay=1&mute=1&loop=1&playlist=0-FUhQKe-eU&controls=0&modestbranding=1&rel=0&start=111"
+                            title="Why Need AI?"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="absolute inset-0 w-full h-full"
+                          />
+                        </div>
+                      ) : (
+                        <a
+                          href="https://www.youtube.com/watch?v=0-FUhQKe-eU"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block aspect-video w-full bg-muted rounded-xl overflow-hidden relative group-hover:shadow-lg transition-shadow"
+                        >
+                          <Image
+                            src="https://img.youtube.com/vi/0-FUhQKe-eU/maxresdefault.jpg"
+                            alt="Why Need AI?"
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center transform transition-transform group-hover:scale-110">
+                              <svg className="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z" />
+                              </svg>
+                            </div>
+                          </div>
+                        </a>
+                      )}
+                      <div className="mt-3">
+                        <h3 className="font-medium text-foreground">Why Need AI?</h3>
+                        <p className="text-sm text-muted-foreground">Exploring the transformative power of artificial intelligence</p>
+                      </div>
                     </div>
-                    <div className="mt-3">
-                      <h3 className="font-medium text-foreground">Why Need AI?</h3>
-                      <p className="text-sm text-muted-foreground">Exploring the transformative power of artificial intelligence</p>
-                    </div>
-                  </div>
+                  </>
                 </div>
                 <a 
                   href="https://www.youtube.com" 

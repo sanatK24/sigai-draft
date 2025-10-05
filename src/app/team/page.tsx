@@ -1,7 +1,10 @@
+"use client";
 import Image from 'next/image';
+import { useState } from 'react';
 import { Linkedin, Github, Instagram, ArrowUpRight, Sparkles } from 'lucide-react';
 
 export default function TeamPage() {
+  const [showVideoModal, setShowVideoModal] = useState(false);
   // Faculty Data
   const faculty = [
     {
@@ -72,17 +75,82 @@ export default function TeamPage() {
 
   return (
     <main className="min-h-screen bg-white text-black">
-      {/* Hero Section - Bento Grid Style */}
-      <section className="relative pt-24 pb-16 px-4 sm:px-6 lg:px-8 bg-white">
+      {/* Video Hero Section */}
+      <section className="relative h-screen w-full overflow-hidden">
+        {/* Static Background Image (fallback for video modal) */}
+        <img
+          src="/img/Launch.jpg"
+          alt="Hero background"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectFit: 'cover' }}
+        />
+        {/* Overlay for readability */}
+        <div className="absolute inset-0 bg-black/40" />
+        {/* Content - bottom left overlay */}
+        <div className="absolute left-0 bottom-0 z-10 flex flex-col items-start px-8 pb-8 w-full max-w-full">
+          {/* <h1 className="text-white font-black uppercase tracking-tighter text-6xl sm:text-8xl md:text-9xl lg:text-[10rem] xl:text-[12rem] mb-4 leading-none">
+          </h1> */}
+          <p className="text-white text-2xl md:text-4xl font-medium mb-6 max-w-xl">
+            Building the Future with AI at forefront
+          </p>
+          <button
+            className="flex items-center gap-2 bg-white/20 text-white px-6 py-3 rounded-full font-semibold backdrop-blur hover:bg-white/30 transition"
+            onClick={() => setShowVideoModal(true)}
+          >
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="12" fill="white" fillOpacity="0.2" />
+              <polygon points="10,8 16,12 10,16" fill="white" />
+            </svg>
+            RAIT ACM SIGAI LAUNCH
+          </button>
+        </div>
+        {/* Video Modal */}
+        {showVideoModal && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+            onClick={() => {
+              setShowVideoModal(false);
+            }}
+          >
+            <div
+              className="relative w-full max-w-3xl mx-auto bg-black rounded-2xl shadow-2xl overflow-hidden"
+              onClick={e => e.stopPropagation()}
+            >
+              <button
+                className="absolute top-4 right-4 z-50 text-white bg-black/60 rounded-full p-2 hover:bg-black/80 transition"
+                style={{ zIndex: 100 }}
+                onClick={e => {
+                  e.stopPropagation();
+                  setShowVideoModal(false);
+                }}
+                aria-label="Close"
+              >
+                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+              <video
+                id="modal-video"
+                src="/Untitled video - Made with Clipchamp.mp4"
+                controls
+                autoPlay
+                className="w-full h-[60vh] object-cover bg-black"
+              />
+            </div>
+          </div>
+        )}
+      </section>
+
+      {/* Bento Grid Section (moved below hero) */}
+      <section className="relative py-16 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-[1400px] mx-auto">
-          {/* Header */}
-          <div className="mb-12">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 tracking-tight leading-[0.95]">
-              Elevate Your Journey With<br /><span className="italic">Bold Leaders</span>
-            </h1>
+          {/* Section Header */}
+          <div className="mb-12 text-center">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Our Leadership Team</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Meet the dedicated individuals driving innovation and excellence in artificial intelligence
+            </p>
           </div>
 
-          {/* Bento Grid Layout - Exact Recreation */}
+          {/* Bento Grid Layout */}
           <div className="grid grid-cols-8 gap-4 h-[560px]">
             {/* Row 1 */}
             {/* Orange Card - Top Left (Tall) */}

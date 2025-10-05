@@ -39,46 +39,38 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-white relative overflow-hidden">
-      {/* Animated Background */}
+    <main className="min-h-screen bg-black">
+      {/* Map Background */}
       <div className="fixed inset-0 z-0">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute bottom-20 left-1/2 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl animate-pulse delay-2000"></div>
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:30px_30px] opacity-40"></div>
+        {/* Map Pin */}
+        <div className="absolute top-1/3 left-1/3 text-white/20">
+          <MapPin size={32} />
+        </div>
       </div>
 
       {/* Hero Section */}
-      <section className="relative z-10 pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative z-10 pt-20 md:pt-32 pb-8 md:pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="inline-block mb-6">
-            <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-medium">
-              Get In Touch
-            </span>
-          </div>
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Let's Connect
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 md:mb-6 text-white">
+            Contact us
           </h1>
-          <p className="text-xl md:text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
-            Have questions about SIGAI? Want to collaborate? We'd love to hear from you.
-          </p>
         </div>
       </section>
 
       {/* Main Content */}
-      <section className="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative z-10 py-6 md:py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12">
-            {/* Contact Form */}
-            <div className="relative">
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl blur opacity-20"></div>
-              <div className="relative bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-8">
-                <h2 className="text-3xl font-bold mb-6">Send Us A Message</h2>
+          <div className="flex flex-col lg:grid lg:grid-cols-5 gap-6 md:gap-8">
+            {/* Contact Form - Takes full width on mobile, 3 columns on large screens */}
+            <div className="lg:col-span-3">
+              <div className="bg-white rounded-lg shadow-xl p-6 md:p-8 text-black">
+                <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-800">FEEDBACK </h2>
                 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
-                      Your Name
+                    <label htmlFor="name" className="sr-only">
+                      Name
                     </label>
                     <input
                       type="text"
@@ -87,14 +79,14 @@ export default function ContactPage() {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 backdrop-blur-sm transition-all"
-                      placeholder="John Doe"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 focus:border-gray-800 focus:outline-none text-gray-800 placeholder-gray-500 transition-all text-sm sm:text-base"
+                      placeholder="Name"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-                      Email Address
+                    <label htmlFor="email" className="sr-only">
+                      E-mail
                     </label>
                     <input
                       type="email"
@@ -103,14 +95,14 @@ export default function ContactPage() {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 backdrop-blur-sm transition-all"
-                      placeholder="john@example.com"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 focus:border-gray-800 focus:outline-none text-gray-800 placeholder-gray-500 transition-all text-sm sm:text-base"
+                      placeholder="E-mail"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="subject" className="block text-sm font-medium text-gray-300 mb-2">
-                      Subject
+                    <label htmlFor="subject" className="sr-only">
+                      Phone
                     </label>
                     <input
                       type="text"
@@ -119,13 +111,13 @@ export default function ContactPage() {
                       value={formData.subject}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 backdrop-blur-sm transition-all"
-                      placeholder="How can we help?"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 focus:border-gray-800 focus:outline-none text-gray-800 placeholder-gray-500 transition-all text-sm sm:text-base"
+                      placeholder="Phone"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
+                    <label htmlFor="message" className="sr-only">
                       Message
                     </label>
                     <textarea
@@ -134,32 +126,32 @@ export default function ContactPage() {
                       value={formData.message}
                       onChange={handleChange}
                       required
-                      rows={6}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 backdrop-blur-sm transition-all resize-none"
-                      placeholder="Tell us more about your inquiry..."
+                      rows={3}
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 focus:border-gray-800 focus:outline-none text-gray-800 placeholder-gray-500 transition-all resize-none text-sm sm:text-base"
+                      placeholder="Message"
                     />
                   </div>
 
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full px-6 py-4 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 transition-all duration-300 font-semibold shadow-lg hover:shadow-purple-500/50 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                        Sending...
-                      </>
-                    ) : (
-                      <>
-                        <Send className="w-5 h-5" />
-                        Send Message
-                      </>
-                    )}
-                  </button>
-
+                  <div className="flex justify-end">
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="px-4 sm:px-6 py-2 sm:py-3 rounded-md bg-black text-white hover:bg-gray-800 transition-all duration-300 font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          SEND MESSAGE <Send className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2" />
+                        </>
+                      )}
+                    </button>
+                  </div>
                   {submitStatus === 'success' && (
-                    <div className="p-4 rounded-xl bg-green-500/20 border border-green-500/30 text-green-400 text-center">
+                    <div className="p-3 sm:p-4 bg-green-50 border border-green-200 text-green-700 text-center text-sm sm:text-base">
                       Message sent successfully! We'll get back to you soon.
                     </div>
                   )}
@@ -167,107 +159,54 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* Contact Information */}
-            <div className="space-y-6">
+            {/* Contact Information - Takes full width on mobile, 2 columns on large screens */}
+            <div className="lg:col-span-2 text-white mt-8 lg:mt-0">
               {/* Contact Details */}
-              <div className="relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl blur opacity-20"></div>
-                <div className="relative bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-8">
-                  <h2 className="text-3xl font-bold mb-6">Contact Information</h2>
-                  
-                  <div className="space-y-6">
-                    <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
-                        <Mail className="w-6 h-6 text-blue-400" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold mb-1">Email</h3>
-                        <a href="mailto:sigai@rait.ac.in" className="text-gray-400 hover:text-blue-400 transition-colors">
-                          sigai@rait.ac.in
-                        </a>
-                      </div>
-                    </div>
+              <div className="mb-6 md:mb-8">
+                <h2 className="text-lg md:text-xl font-bold mb-4 md:mb-6 text-white">OUR ADDRESS</h2>
+                
+                <div className="space-y-2 md:space-y-4">
+                  <p className="text-white/70 leading-relaxed text-sm md:text-base">
+                  Ramrao Adik Institute Of Technology<br />
+                  Nerul, Navi Mumbai
+                </p>
+                </div>
+              </div>
 
-                    <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center">
-                        <Phone className="w-6 h-6 text-purple-400" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold mb-1">Phone</h3>
-                        <a href="tel:+912227694000" className="text-gray-400 hover:text-purple-400 transition-colors">
-                          +91 22 2769 4000
-                        </a>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-pink-500/20 border border-pink-500/30 flex items-center justify-center">
-                        <MapPin className="w-6 h-6 text-pink-400" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold mb-1">Address</h3>
-                        <p className="text-gray-400 leading-relaxed">
-                          Ramrao Adik Institute of Technology<br />
-                          Sector 7, Nerul, Navi Mumbai<br />
-                          Maharashtra 400706, India
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+              {/* Contact Info */}
+              <div className="mb-6 md:mb-8">
+                <h2 className="text-lg md:text-xl font-bold mb-4 md:mb-6 text-white">OUR CONTACTS</h2>
+                
+                <div className="space-y-1 md:space-y-2">
+                  <p className="text-white/70 text-sm md:text-base">
+                    raitacmsigai@gmail.com
+                  </p>
+                  <p className="text-white/70 text-sm md:text-base">
+                    +91 83698 24033
+                  </p>
+                  <p className="text-white/70 text-sm md:text-base">
+                    +91 85918 06560
+                  </p>
                 </div>
               </div>
 
               {/* Social Media */}
-              <div className="relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-pink-500 to-orange-500 rounded-3xl blur opacity-20"></div>
-                <div className="relative bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-8">
-                  <h2 className="text-3xl font-bold mb-6">Follow Us</h2>
-                  <p className="text-gray-400 mb-6">
-                    Stay connected and updated with our latest activities and events.
-                  </p>
-                  
-                  <div className="flex gap-4">
-                    <GlassIcon
-                      href="https://instagram.com/sigai.rait"
-                      iconSrc="/img/instagram.png"
-                      alt="Instagram"
-                      size="lg"
-                    />
-                    <GlassIcon
-                      href="https://linkedin.com/company/sigai-rait"
-                      iconSrc="/img/linkedin (1).png"
-                      alt="LinkedIn"
-                      size="lg"
-                    />
-                    <GlassIcon
-                      href="https://github.com/sigai-rait"
-                      iconSrc="/img/github.png"
-                      alt="GitHub"
-                      size="lg"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Quick Links */}
-              <div className="relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-green-500 to-teal-500 rounded-3xl blur opacity-20"></div>
-                <div className="relative bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-8">
-                  <h2 className="text-3xl font-bold mb-6">Office Hours</h2>
-                  <div className="space-y-3 text-gray-400">
-                    <div className="flex justify-between">
-                      <span>Monday - Friday</span>
-                      <span className="text-white font-medium">9:00 AM - 5:00 PM</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Saturday</span>
-                      <span className="text-white font-medium">10:00 AM - 2:00 PM</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Sunday</span>
-                      <span className="text-gray-500">Closed</span>
-                    </div>
-                  </div>
+              <div className="mb-6 md:mb-8">
+                <h2 className="text-lg md:text-xl font-bold mb-4 md:mb-6 text-white">— follow us</h2>
+                
+                <div className="flex gap-3 md:gap-4">
+                  <a href="#" className="text-white/50 hover:text-white transition-colors">
+                    <Facebook className="w-4 h-4 md:w-5 md:h-5" />
+                  </a>
+                  <a href="#" className="text-white/50 hover:text-white transition-colors">
+                    <Instagram className="w-4 h-4 md:w-5 md:h-5" />
+                  </a>
+                  <a href="#" className="text-white/50 hover:text-white transition-colors">
+                    <Linkedin className="w-4 h-4 md:w-5 md:h-5" />
+                  </a>
+                  <a href="#" className="text-white/50 hover:text-white transition-colors">
+                    <Mail className="w-4 h-4 md:w-5 md:h-5" />
+                  </a>
                 </div>
               </div>
             </div>
@@ -275,23 +214,65 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Map Section */}
-      <section className="relative z-10 py-20 px-4 sm:px-6 lg:px-8 mb-20">
+      {/* Map Section - Removed the decorative elements */}
+      <section className="relative z-10 py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="relative">
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl blur opacity-20"></div>
-            <div className="relative bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-4 overflow-hidden">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3771.4918743193856!2d73.01969931490085!3d19.036896787113943!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c3d700000001%3A0x9d2c3c3d3c3c3d3d!2sRamrao%20Adik%20Institute%20of%20Technology!5e0!3m2!1sen!2sin!4v1234567890123!5m2!1sen!2sin"
-                width="100%"
-                height="450"
-                style={{ border: 0, borderRadius: '1rem' }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="rounded-2xl"
-              ></iframe>
-            </div>
+          <div className="grid lg:grid-cols-3 gap-6 sm:gap-8">
+              <div className="lg:col-span-1">
+                <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg">
+                  <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-gray-800">Business Hours</h2>
+                  
+                  <div className="space-y-2 sm:space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600 text-xs sm:text-sm">Monday - Friday</span>
+                      <span className="font-medium text-gray-800 text-xs sm:text-sm">9:00 AM - 6:00 PM</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600 text-xs sm:text-sm">Saturday</span>
+                      <span className="font-medium text-gray-800 text-xs sm:text-sm">10:00 AM - 4:00 PM</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600 text-xs sm:text-sm">Sunday</span>
+                      <span className="font-medium text-gray-800 text-xs sm:text-sm">Closed</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="lg:col-span-2">
+                <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-xl p-4 sm:p-6 h-full flex items-center justify-center">
+                  <div className="text-center">
+                    <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-white">Contact Us</h3>
+                    <p className="text-white/70 mb-4 sm:mb-6 text-sm sm:text-base">
+                      Have questions or need assistance? Our team is here to help you with any inquiries you may have.
+                    </p>
+                    <button className="bg-white text-black px-4 sm:px-6 py-2 sm:py-3 rounded-md hover:bg-gray-100 transition-all duration-300 font-medium text-sm sm:text-base">
+                      Get in Touch
+                    </button>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Map Section */}
+      <section className="relative z-10 py-12 sm:py-16 px-4 sm:px-6 lg:px-8 mb-12 sm:mb-20">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 text-white">Find Us</h2>
+          
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden p-2 sm:p-4">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2245.3737851164996!2d37.61763531593084!3d55.75582600000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46b54a5a738fa419%3A0x7c347d506f527155!2sRed%20Square!5e0!3m2!1sen!2sru!4v1641234567890!5m2!1sen!2sru"
+              width="100%"
+              height="300"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="w-full rounded-lg"
+            />
           </div>
         </div>
       </section>

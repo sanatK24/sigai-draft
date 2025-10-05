@@ -62,13 +62,13 @@ export default function MagazinePage() {
 
   // Responsive dimensions: smaller single page for mobile, larger double-page for desktop
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
-  const bookWidth = isMobile ? 350 : 800;
-  const bookHeight = isMobile ? 500 : 1100;
+  const bookWidth = isMobile ? 400 : 1190;
+  const bookHeight = isMobile ? 600 : 1684;
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-b from-gray-900 via-black to-gray-900 text-white overflow-hidden">
+  <div className="min-h-screen bg-gradient-to-b from-gray-900 via-black to-gray-900 text-white overflow-hidden" style={{ paddingTop: 'var(--header-height,80px)' }}>
       {/* Header - Back to Home Button */}
-      <div className="fixed top-6 left-6 z-50">
+  <div className="absolute top-6 left-6 z-50 w-full p-0 m-0">
         <Link
           href="/"
           className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full hover:bg-white/20 hover:border-white/30 transition-all duration-300 group"
@@ -106,53 +106,93 @@ export default function MagazinePage() {
         </div>
       )}
 
-      {/* FlipBook */}
+      {/* 1:3 Panel Layout */}
+      {!loading && !error && pages.length > 0 && (
+  <div className="flex flex-row w-full pt-8 pb-24 gap-0 min-h-screen items-stretch" style={{margin:0,padding:0}}>
+          {/* Left Panel: Magazine Card (smaller, no scroll) */}
+          <div className="w-[320px] min-w-[260px] max-w-[360px] flex items-stretch justify-center">
+            <div className="group relative w-full flex flex-col overflow-auto rounded-3xl bg-card/50 backdrop-blur-sm border border-border/50 shadow-xl transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-1 mt-0">
+              <div className="relative h-40 min-h-[160px]">
+                <img
+                  src="/img/SYNARA_COVER.png"
+                  alt="Synara Magazine - RAIT ACM SIGAI"
+                  className="object-cover w-full h-full rounded-t-3xl"
+                  style={{ objectFit: 'cover' }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                <div className="absolute top-2 right-2 bg-primary text-white text-xs font-semibold px-2 py-1 rounded-full z-10">
+                  New Issue
+                </div>
+              </div>
+              <div className="p-4 flex-1 flex flex-col">
+                <h2 className="text-lg font-bold text-foreground mb-2">Synara Magazine</h2>
+                <p className="text-muted-foreground mb-2 text-xs">
+                  Our Inaugural Magazine explores the cutting-edge world of Generative AI, featuring groundbreaking research and insights from leading experts in the field.
+                </p>
+                <div className="space-y-2 mb-2">
+                  <div className="flex items-center gap-1 text-xs">
+                    <div className="w-1 h-1 rounded-full bg-primary"></div>
+                    <span className="text-muted-foreground">Issue #1 • 2025 Edition</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs">
+                    <div className="w-1 h-1 rounded-full bg-primary"></div>
+                    <span className="text-muted-foreground">50+ Pages of AI Insights</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs">
+                    <div className="w-1 h-1 rounded-full bg-primary"></div>
+                    <span className="text-muted-foreground">Expert Articles & Research</span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-1 mb-2">
+                  <div className="bg-primary/10 rounded-lg p-1 text-center">
+                    <div className="text-[10px] text-muted-foreground mb-0.5">Topics</div>
+                    <div className="text-xs font-semibold text-foreground">Gen AI</div>
+                  </div>
+                  <div className="bg-primary/10 rounded-lg p-1 text-center">
+                    <div className="text-[10px] text-muted-foreground mb-0.5">Format</div>
+                    <div className="text-xs font-semibold text-foreground">Digital</div>
+                  </div>
+                </div>
+                {/* Disclaimer below topics/format grid */}
+                <div className="mb-2">
+                  <p className="text-[10px] text-muted-foreground italic text-center">
+                    <strong>Disclaimer:</strong> The articles published in this magazine represent the personal views and research of student authors. The RAIT ACM SIGAI committee, faculty, and college are not responsible for the opinions expressed therein. Content is intended for educational and informational purposes only.
+                  </p>
+                </div>
+                <Link 
+                  href="/latest-issue" 
+                  className="w-full py-1.5 px-3 bg-primary hover:bg-primary/90 text-white rounded-full text-xs font-medium transition-colors flex items-center justify-center gap-1 mt-auto"
+                >
+                  Read Latest Issue
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </Link>
+              </div>
+            </div>
+          </div>
+          {/* Right Panel: FlipBook Viewer */}
+          <div className="flex-1 flex items-center justify-center bg-transparent p-0 m-0 overflow-hidden">
+            <div className="flex items-center justify-center w-full h-full bg-transparent p-0 m-0" style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',overflow:'hidden'}}>
+              <div style={{position:'relative',width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',overflow:'hidden'}}>
+                <FlipBook 
+                  pages={pages} 
+                  width={bookWidth} 
+                  height={bookHeight}
+                  onPageChange={handlePageChange}
+                  showCover={true}
+                  mobileMode={isMobile}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Page Counter & Keyboard Hint */}
       {!loading && !error && pages.length > 0 && (
         <>
-          <div className="flex items-center justify-center h-full w-full pt-20 pb-24 relative">
-            {/* Left Navigation Button - Desktop Only */}
-            <button
-              onClick={() => {
-                const book = (window as any).flipBookRef;
-                if (book && currentPage > 0) {
-                  book.pageFlip().flipPrev();
-                }
-              }}
-              disabled={currentPage === 0}
-              className="hidden lg:flex absolute left-8 z-50 items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full hover:bg-white/20 hover:border-white/30 hover:scale-110 transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 group shadow-2xl"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 group-hover:-translate-x-1 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="15 18 9 12 15 6"></polyline>
-              </svg>
-            </button>
-
-            <FlipBook 
-              pages={pages} 
-              width={bookWidth} 
-              height={bookHeight}
-              onPageChange={handlePageChange}
-              showCover={true}
-              mobileMode={isMobile}
-            />
-
-            {/* Right Navigation Button - Desktop Only */}
-            <button
-              onClick={() => {
-                const book = (window as any).flipBookRef;
-                if (book && currentPage < pages.length - 1) {
-                  book.pageFlip().flipNext();
-                }
-              }}
-              disabled={currentPage >= pages.length - 1}
-              className="hidden lg:flex absolute right-8 z-50 items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full hover:bg-white/20 hover:border-white/30 hover:scale-110 transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 group shadow-2xl"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 group-hover:translate-x-1 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-            </button>
-          </div>
-
-          {/* Page Counter */}
           <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-6 py-2 flex items-center gap-3">
               <span className="text-sm font-medium">
@@ -166,8 +206,6 @@ export default function MagazinePage() {
               )}
             </div>
           </div>
-
-          {/* Keyboard Hint */}
           <div className="fixed bottom-20 left-1/2 -translate-x-1/2 text-gray-500 text-xs z-40">
             {isLoadingMore ? 'Loading more pages in background...' : 'Click on page corners or drag to flip'}
           </div>

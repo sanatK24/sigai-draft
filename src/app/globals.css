@@ -340,9 +340,52 @@ body {
   }
 
   /* Utility: marquee animation */
-  .animate-marquee {
-    animation: marquee 20s linear infinite;
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}
+
+/* Glassmorphism Text Effect */
+.glass-text {
+  /* Glassmorphism effect properties */
+  background: rgba(255, 255, 255, 0.15); /* Semi-transparent white tint */
+  backdrop-filter: blur(10px); /* Frosted glass blur effect */
+  -webkit-backdrop-filter: blur(10px); /* Safari support */
+  
+  /* Text styling for the glass effect */
+  -webkit-background-clip: text; /* Clip background to text shape */
+  background-clip: text; /* Standard property */
+  color: transparent; /* Make text fill transparent to reveal background */
+  
+  /* White stroke for definition */
+  -webkit-text-stroke: 3px white; /* Thick white outline */
+  text-stroke: 3px white; /* Standard property */
+  
+  /* Fallback for browsers that don't support backdrop-filter */
+  @supports not (backdrop-filter: blur(10px)) {
+    background: rgba(255, 255, 255, 0.9); /* More opaque fallback */
+    color: white; /* Solid white text */
+    -webkit-text-stroke: 0px; /* Remove stroke */
+    text-stroke: 0px;
   }
+}
+
+/* Animated gradient background */
+@keyframes gradient-x {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 15s ease infinite;
+}
 }
 
 /* Hide Next.js error overlay portal */
