@@ -39,7 +39,7 @@ function validatePhone(phone: string): boolean {
 }
 
 function validateTransactionId(txnId: string): boolean {
-  return /^[0-9]+$/.test(txnId);
+  return /^[A-Za-z0-9]+$/.test(txnId);
 }
 
 function validateEmail(email: string): boolean {
@@ -73,6 +73,9 @@ export async function POST(request: NextRequest) {
     const {
       eventId,
       eventTitle,
+      eventDate,
+      eventTime,
+      eventLocation,
       firstName,
       lastName,
       email,
@@ -142,7 +145,7 @@ export async function POST(request: NextRequest) {
 
     if (!validateTransactionId(sanitizedTransactionId)) {
       return NextResponse.json(
-        { success: false, error: 'Transaction ID must be numeric' },
+        { success: false, error: 'Transaction ID must be alphanumeric' },
         { status: 400 }
       );
     }
@@ -217,6 +220,9 @@ export async function POST(request: NextRequest) {
         attendanceHash,
         registrationData: {
           eventTitle,
+          eventDate,
+          eventTime,
+          eventLocation,
           firstName: sanitizedFirstName,
           lastName: sanitizedLastName,
           email: sanitizedEmail,

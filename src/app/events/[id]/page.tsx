@@ -73,6 +73,61 @@ export default function EventPage() {
   const [currentFee, setCurrentFee] = useState<number>(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  // Random fill function for testing
+  const handleRandomFill = () => {
+    const firstNames = ['John', 'Jane', 'Alex', 'Sarah', 'Michael', 'Emma', 'David', 'Olivia', 'James', 'Sophia'];
+    const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'];
+    const branches = ['Computer Science', 'Information Technology', 'Electronics', 'Mechanical', 'Civil'];
+    const years = ['FE', 'SE', 'TE', 'BE'];
+    const divisions = ['A', 'B', 'C', 'D'];
+    const randomAcmStatus = ['yes', 'no'];
+    
+    // Generate alphanumeric transaction ID
+    const generateTransactionId = () => {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let txnId = 'TXN';
+      for (let i = 0; i < 12; i++) {
+        txnId += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return txnId;
+    };
+    
+    const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+    const randomBranch = branches[Math.floor(Math.random() * branches.length)];
+    const randomYear = years[Math.floor(Math.random() * years.length)];
+    const randomDivision = divisions[Math.floor(Math.random() * divisions.length)];
+    const randomPhone = `${Math.floor(7000000000 + Math.random() * 2999999999)}`;
+    const randomRollNumber = `${randomYear}${Math.floor(1000 + Math.random() * 9000)}`;
+    const randomEmail = `${randomFirstName.toLowerCase()}.${randomLastName.toLowerCase()}${Math.floor(100 + Math.random() * 900)}@example.com`;
+    const randomIsAcm = randomAcmStatus[Math.floor(Math.random() * randomAcmStatus.length)];
+    const randomMembershipId = randomIsAcm === 'yes' ? `ACM${Math.floor(10000 + Math.random() * 90000)}` : '';
+    
+    setFormData({
+      ...formData,
+      email: randomEmail,
+      firstName: randomFirstName,
+      lastName: randomLastName,
+      whatsapp: randomPhone,
+      branch: randomBranch,
+      year: randomYear,
+      division: randomDivision,
+      rollNumber: randomRollNumber,
+      isAcmMember: randomIsAcm,
+      membershipId: randomMembershipId,
+      transactionId: generateTransactionId(),
+    });
+
+    // Update fee based on ACM membership
+    if (event) {
+      if (randomIsAcm === 'yes') {
+        setCurrentFee(event.registration_fee_member || event.registration_fee || 0);
+      } else {
+        setCurrentFee(event.registration_fee_non_member || event.registration_fee || 0);
+      }
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target as HTMLInputElement;
     
@@ -120,6 +175,9 @@ export default function EventPage() {
       const registrationPayload = {
         eventId: event?.idx.toString() || '',
         eventTitle: event?.title || '',
+        eventDate: event?.date || '',
+        eventTime: event?.time || '',
+        eventLocation: event?.location || '',
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
@@ -409,7 +467,19 @@ export default function EventPage() {
                   {currentStep === 'details' && (
                     <>
                       <div className="mb-6">
-                        <h3 className="text-xl font-semibold text-white mb-2">Register for event</h3>
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-xl font-semibold text-white">Register for event</h3>
+                          <button
+                            type="button"
+                            onClick={handleRandomFill}
+                            className="px-3 py-1.5 text-xs font-medium bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors duration-200 flex items-center gap-2"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                            </svg>
+                            Random Fill Test
+                          </button>
+                        </div>
                         <p className="text-sm text-gray-400">Fill in your details to secure your spot</p>
                       </div>
                       

@@ -3,6 +3,9 @@ import QRCode from 'qrcode';
 
 export interface RegistrationData {
   eventTitle: string;
+  eventDate?: string;
+  eventTime?: string;
+  eventLocation?: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -24,187 +27,304 @@ export async function generateRegistrationPDF(
   registrationId: string
 ): Promise<Buffer> {
   try {
-    // Create new PDF
+    // Create new PDF - LANDSCAPE orientation with black background
     const doc = new jsPDF({
-      orientation: 'portrait',
+      orientation: 'landscape',
       unit: 'mm',
       format: 'a4'
     });
 
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
-    const margin = 20;
+    
+    // Black background for entire page
+    doc.setFillColor(0, 0, 0);
+    doc.rect(0, 0, pageWidth, pageHeight, 'F');
 
-    // Clean Color Palette
+    // Modern Color Palette
     const colors = {
-      primary: [37, 99, 235] as [number, number, number], // Blue
-      success: [34, 197, 94] as [number, number, number], // Green
-      text: [31, 41, 55] as [number, number, number], // Dark gray
-      textLight: [107, 114, 128] as [number, number, number], // Light gray
-      background: [249, 250, 251] as [number, number, number], // Very light gray
-      white: [255, 255, 255] as [number, number, number]
+      darkBg: [17, 24, 39] as [number, number, number], // Dark gray-900
+      lightBg: [243, 244, 246] as [number, number, number], // Light gray-100
+      accent: [59, 130, 246] as [number, number, number], // Blue-500
+      accentLight: [147, 197, 253] as [number, number, number], // Blue-300
+      white: [255, 255, 255] as [number, number, number],
+      textDark: [31, 41, 55] as [number, number, number],
+      textLight: [156, 163, 175] as [number, number, number],
+      border: [75, 85, 99] as [number, number, number], // Gray-600
     };
 
-    // Simple Header
-    doc.setFillColor(...colors.primary);
-    doc.rect(0, 0, pageWidth, 50, 'F');
+    // Ticket card dimensions (centered on page)
+    const ticketWidth = 240;
+    const ticketHeight = 120;
+    const ticketX = (pageWidth - ticketWidth) / 2;
+    const ticketY = 25;
 
+    // Stub width (right section)
+    const stubWidth = 70;
+    const mainSectionWidth = ticketWidth - stubWidth;
+
+    // ========== MAIN TICKET SECTION (LEFT - DARK THEME) ==========
+    doc.setFillColor(...colors.darkBg);
+    doc.roundedRect(ticketX, ticketY, mainSectionWidth, ticketHeight, 3, 3, 'F');
+
+    let currentY = ticketY + 8;
+
+    // SIGAI Logo in top-left corner (transparent background will blend with dark theme)
+    // Logo placeholder - will need to be loaded as base64 or from URL
+    try {
+      // Add small logo in corner
+      const logoSize = 12;
+      // Note: Logo should be added here via doc.addImage() with base64 or URL
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...colors.accentLight);
+      doc.text('SIGAI', ticketX + 8, currentY + 3);
+      currentY += logoSize + 2;
+    } catch (e) {
+      currentY += 6;
+    }
+
+    // Event Title
     doc.setTextColor(...colors.white);
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'normal');
-    doc.text('RAIT ACM SIGAI Student Chapter', pageWidth / 2, 12, { align: 'center' });
-    
-    doc.setFontSize(24);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Event Registration', pageWidth / 2, 24, { align: 'center' });
-    
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal');
-    doc.text(registrationData.eventTitle, pageWidth / 2, 35, { align: 'center' });
-
-    doc.setFontSize(9);
-    doc.text(`Registration ID: ${registrationId.slice(0, 10).toUpperCase()}`, pageWidth / 2, 44, { align: 'center' });
-
-    let yPos = 65;
-
-    // Success Message
-    doc.setTextColor(...colors.success);
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
-    doc.text('✓ Registration Successful', pageWidth / 2, yPos, { align: 'center' });
+    const eventTitle = registrationData.eventTitle;
+    const titleLines = doc.splitTextToSize(eventTitle, mainSectionWidth - 20);
+    doc.text(titleLines, ticketX + 10, currentY);
+    currentY += titleLines.length * 6 + 2;
 
-    yPos += 15;
-
-    // Student Information - Simple and Clean
-    doc.setTextColor(...colors.text);
-    doc.setFontSize(14);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Student Information', margin, yPos);
-
-    yPos += 10;
-    doc.setFontSize(11);
-
-    const studentInfo = [
-      ['Name', `${registrationData.firstName} ${registrationData.lastName}`],
-      ['Email', registrationData.email],
-      ['Phone', registrationData.phone],
-      ['Roll Number', registrationData.rollNumber],
-      ['Branch', `${registrationData.branch} - ${registrationData.year}`],
-      ['Division', registrationData.division || 'N/A']
-    ];
-
-    studentInfo.forEach(([label, value]) => {
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(...colors.textLight);
-      doc.text(label + ':', margin, yPos);
-      
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(...colors.text);
-      doc.text(value, margin + 45, yPos);
-      yPos += 8;
-    });
-
-    yPos += 10;
-
-    // Divider
-    doc.setDrawColor(200, 200, 200);
-    doc.setLineWidth(0.3);
-    doc.line(margin, yPos, pageWidth - margin, yPos);
-
-    yPos += 15;
-
-    // Payment Information
-    doc.setTextColor(...colors.text);
-    doc.setFontSize(14);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Payment Information', margin, yPos);
-
-    yPos += 10;
-    doc.setFontSize(11);
-
-    const paymentInfo = [
-      ['Transaction ID', registrationData.transactionId],
-      ['Amount Paid', `₹ ${registrationData.feeAmount}`],
-      ['ACM Member', registrationData.isAcmMember ? 'Yes' : 'No'],
-      ...(registrationData.isAcmMember && registrationData.membershipId 
-        ? [['Membership ID', registrationData.membershipId]] 
-        : [])
-    ];
-
-    paymentInfo.forEach(([label, value]) => {
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(...colors.textLight);
-      doc.text(label + ':', margin, yPos);
-      
-      doc.setFont('helvetica', 'normal');
-      const isAmount = label === 'Amount Paid';
-      doc.setTextColor(...(isAmount ? colors.success : colors.text));
-      doc.text(value, margin + 45, yPos);
-      yPos += 8;
-    });
-
-    // Date
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...colors.textLight);
-    doc.text('Date:', margin, yPos);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(...colors.text);
-    const formattedDate = new Date(registrationData.registrationDate).toLocaleString('en-IN', {
-      dateStyle: 'medium',
-      timeStyle: 'short'
-    });
-    doc.text(formattedDate, margin + 45, yPos);
-
-    yPos += 20;
-
-    // Divider
-    doc.setDrawColor(200, 200, 200);
-    doc.setLineWidth(0.3);
-    doc.line(margin, yPos, pageWidth - margin, yPos);
-
-    yPos += 15;
-
-    // QR Code Section - Clean and Simple
-    doc.setTextColor(...colors.text);
-    doc.setFontSize(14);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Attendance QR Code', pageWidth / 2, yPos, { align: 'center' });
-
-    yPos += 7;
-
-    doc.setFontSize(10);
+    // Organizer
+    doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(...colors.textLight);
-    doc.text('Scan this code at the event for attendance', pageWidth / 2, yPos, { align: 'center' });
+    doc.text('Hosted by RAIT ACM SIGAI Student Chapter', ticketX + 10, currentY);
+    currentY += 8;
 
-    yPos += 12;
+    // Event Details (Date, Time, Location)
+    if (registrationData.eventDate || registrationData.eventTime || registrationData.eventLocation) {
+      doc.setFontSize(7);
+      doc.setTextColor(...colors.accentLight);
+      let detailsText = '';
+      if (registrationData.eventDate) detailsText += registrationData.eventDate;
+      if (registrationData.eventTime) detailsText += (detailsText ? ' • ' : '') + registrationData.eventTime;
+      if (registrationData.eventLocation) {
+        doc.text(detailsText, ticketX + 10, currentY);
+        currentY += 4;
+        doc.text(registrationData.eventLocation, ticketX + 10, currentY);
+        currentY += 6;
+      } else {
+        doc.text(detailsText, ticketX + 10, currentY);
+        currentY += 6;
+      }
+    }
 
-    // Generate QR Code
+    // Divider line
+    doc.setDrawColor(...colors.border);
+    doc.setLineWidth(0.2);
+    doc.line(ticketX + 10, currentY, ticketX + mainSectionWidth - 10, currentY);
+    currentY += 5;
+
+    // Attendee Name
+    doc.setFontSize(7);
+    doc.setTextColor(...colors.accentLight);
+    doc.text('ATTENDEE', ticketX + 10, currentY);
+    currentY += 5;
+    
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...colors.white);
+    doc.text(`${registrationData.firstName} ${registrationData.lastName}`, ticketX + 10, currentY);
+    currentY += 5;
+
+    // Branch and Year
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...colors.textLight);
+    doc.text(`${registrationData.branch} • ${registrationData.year} • Roll: ${registrationData.rollNumber}`, ticketX + 10, currentY);
+    currentY += 8;
+
+    // QR Code Section (bottom left)
+    const qrY = ticketY + ticketHeight - 38;
+    doc.setFontSize(7);
+    doc.setTextColor(...colors.accentLight);
+    doc.text('ATTENDANCE QR CODE', ticketX + 10, qrY);
+    
+    doc.setFontSize(6);
+    doc.setTextColor(...colors.textLight);
+    doc.text('Scan at event entrance', ticketX + 10, qrY + 3.5);
+
+    // Generate and add QR Code
     const qrCodeDataURL = await QRCode.toDataURL(attendanceHash, {
-      width: 600,
-      margin: 2,
+      width: 400,
+      margin: 1,
       color: {
-        dark: '#2563eb',
-        light: '#ffffff'
+        dark: '#3B82F6',
+        light: '#111827'
       },
       errorCorrectionLevel: 'H'
     });
 
-    // Add QR Code - larger and centered
-    const qrSize = 70;
-    const qrX = (pageWidth - qrSize) / 2;
-    doc.addImage(qrCodeDataURL, 'PNG', qrX, yPos, qrSize, qrSize);
+    const qrSize = 28;
+    doc.addImage(qrCodeDataURL, 'PNG', ticketX + 10, qrY + 5, qrSize, qrSize);
 
-    yPos += qrSize + 15;
+    // Decorative accent line on left edge
+    doc.setFillColor(...colors.accent);
+    doc.rect(ticketX, ticketY, 3, ticketHeight, 'F');
 
-    // Simple Footer
+    // ========== PERFORATION LINE ==========
+    const perforationX = ticketX + mainSectionWidth;
+    doc.setDrawColor(...colors.border);
+    doc.setLineWidth(0.3);
+    doc.setFillColor(...colors.border);
+    // Create dashed line effect with small circles
+    for (let i = ticketY + 5; i < ticketY + ticketHeight - 5; i += 3) {
+      doc.circle(perforationX, i, 0.5, 'F');
+    }
+
+    // ========== TICKET STUB (RIGHT - LIGHT THEME) ==========
+    doc.setFillColor(...colors.lightBg);
+    doc.roundedRect(perforationX, ticketY, stubWidth, ticketHeight, 3, 3, 'F');
+
+    // SIGAI Logo in stub (top center)
+    const stubCenterX = perforationX + stubWidth / 2;
+    let stubY = ticketY + 12;
     doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...colors.accent);
+    doc.text('SIGAI', stubCenterX, stubY, { align: 'center' });
+    stubY += 8;
+
+    // Registration ID
+    doc.setFontSize(6);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...colors.textLight);
+    doc.text('REGISTRATION ID', stubCenterX, stubY, { align: 'center' });
+    stubY += 4;
+    
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...colors.textDark);
+    const shortRegId = registrationId.slice(0, 10).toUpperCase();
+    doc.text(shortRegId, stubCenterX, stubY, { align: 'center' });
+    stubY += 10;
+
+    // Roll Number
+    doc.setFontSize(6);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...colors.textLight);
+    doc.text('ROLL NUMBER', stubCenterX, stubY, { align: 'center' });
+    stubY += 4;
+    
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...colors.textDark);
+    doc.text(registrationData.rollNumber, stubCenterX, stubY, { align: 'center' });
+    stubY += 10;
+
+    // Attendee Name (abbreviated if too long)
+    doc.setFontSize(6);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...colors.textLight);
+    doc.text('ATTENDEE', stubCenterX, stubY, { align: 'center' });
+    stubY += 4;
+    
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...colors.textDark);
+    const fullName = `${registrationData.firstName} ${registrationData.lastName}`;
+    const abbreviatedName = fullName.length > 20 ? fullName.substring(0, 18) + '...' : fullName;
+    doc.text(abbreviatedName, stubCenterX, stubY, { align: 'center' });
+    stubY += 10;
+
+    // Transaction ID (smaller)
+    doc.setFontSize(5);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(...colors.textLight);
-    doc.text('Please bring this document and a valid ID to the event', pageWidth / 2, yPos, { align: 'center' });
+    doc.text('TXN: ' + registrationData.transactionId.substring(0, 10), stubCenterX, stubY, { align: 'center' });
+    stubY += 6;
+
+    // Amount Paid
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...colors.accent);
+    doc.text(`₹${registrationData.feeAmount}`, stubCenterX, stubY, { align: 'center' });
+
+    // Decorative accent line on right edge
+    doc.setFillColor(...colors.accent);
+    doc.rect(ticketX + ticketWidth - 3, ticketY, 3, ticketHeight, 'F');
+
+    // ========== REGISTERED DETAILS SECTION (BELOW TICKET) ==========
+    let detailsY = ticketY + ticketHeight + 12;
     
-    yPos += 5;
-    doc.text('RAIT ACM SIGAI Student Chapter', pageWidth / 2, yPos, { align: 'center' });
+    // Section Title
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(200, 200, 200);
+    doc.text('REGISTRATION DETAILS', ticketX, detailsY);
+    detailsY += 6;
+
+    // Details in two columns
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(160, 160, 160);
+
+    const col1X = ticketX;
+    const col2X = ticketX + 80;
+    const col3X = ticketX + 160;
+
+    // Column 1
+    doc.text('Email:', col1X, detailsY);
+    doc.setTextColor(200, 200, 200);
+    doc.text(registrationData.email, col1X, detailsY + 3.5);
+    
+    doc.setTextColor(160, 160, 160);
+    doc.text('Phone:', col1X, detailsY + 9);
+    doc.setTextColor(200, 200, 200);
+    doc.text(registrationData.phone, col1X, detailsY + 12.5);
+
+    // Column 2
+    doc.setTextColor(160, 160, 160);
+    doc.text('Branch:', col2X, detailsY);
+    doc.setTextColor(200, 200, 200);
+    doc.text(registrationData.branch, col2X, detailsY + 3.5);
+    
+    doc.setTextColor(160, 160, 160);
+    doc.text('Year & Division:', col2X, detailsY + 9);
+    doc.setTextColor(200, 200, 200);
+    doc.text(`${registrationData.year} - ${registrationData.division || 'N/A'}`, col2X, detailsY + 12.5);
+
+    // Column 3
+    doc.setTextColor(160, 160, 160);
+    doc.text('ACM Member:', col3X, detailsY);
+    doc.setTextColor(200, 200, 200);
+    doc.text(registrationData.isAcmMember ? 'Yes' : 'No', col3X, detailsY + 3.5);
+    
+    if (registrationData.isAcmMember && registrationData.membershipId) {
+      doc.setTextColor(160, 160, 160);
+      doc.text('Membership ID:', col3X, detailsY + 9);
+      doc.setTextColor(200, 200, 200);
+      doc.text(registrationData.membershipId, col3X, detailsY + 12.5);
+    }
+
+    detailsY += 18;
+
+    // Registration Date
+    doc.setTextColor(160, 160, 160);
+    doc.text('Registered on:', col1X, detailsY);
+    doc.setTextColor(200, 200, 200);
+    const formattedDate = new Date(registrationData.registrationDate).toLocaleString('en-IN', {
+      dateStyle: 'medium',
+      timeStyle: 'short'
+    });
+    doc.text(formattedDate, col1X + 20, detailsY);
+
+    // ========== FOOTER NOTE ==========
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'italic');
+    doc.setTextColor(140, 140, 140);
+    const footerY = pageHeight - 15;
+    doc.text('Note: If you have trouble scanning your QR code at the venue, please don\'t worry.', pageWidth / 2, footerY, { align: 'center' });
+    doc.text('Our team will be available to assist you with manual check-in.', pageWidth / 2, footerY + 4, { align: 'center' });
 
     // Return PDF as buffer for server-side generation
     const pdfBuffer = Buffer.from(doc.output('arraybuffer'));
