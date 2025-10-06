@@ -198,7 +198,12 @@ export async function POST(request: NextRequest) {
       feeAmount: Number(feeAmount),
       attendanceHash, // SHA256 hash for QR code
       attendance: false, // Set to false by default, update to true when scanned
-      status: 'registered', // registered, attended
+      attendanceMarkedAt: null, // Timestamp when attendance is marked
+      yellowCard: false, // Flag for problematic participants (cannot get certificate)
+      yellowCardReason: null, // Reason for yellow card
+      yellowCardMarkedBy: null, // Committee head who issued yellow card
+      yellowCardMarkedAt: null, // Timestamp when yellow card was issued
+      status: 'registered', // registered, attended, flagged
       createdAt: new Date(),
       updatedAt: new Date(),
       ipAddress: ip
