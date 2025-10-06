@@ -75,7 +75,7 @@ export async function generateRegistrationPDF(
       // Add small logo in corner
       const logoSize = 12;
       // Note: Logo should be added here via doc.addImage() with base64 or URL
-      doc.setFontSize(8);
+      doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(...colors.accentLight);
       doc.text('SIGAI', ticketX + 8, currentY + 3);
@@ -86,15 +86,15 @@ export async function generateRegistrationPDF(
 
     // Event Title
     doc.setTextColor(...colors.white);
-    doc.setFontSize(16);
+    doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
     const eventTitle = registrationData.eventTitle;
     const titleLines = doc.splitTextToSize(eventTitle, mainSectionWidth - 20);
     doc.text(titleLines, ticketX + 10, currentY);
-    currentY += titleLines.length * 6 + 2;
+    currentY += titleLines.length * 6.5 + 2;
 
     // Organizer
-    doc.setFontSize(8);
+    doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(...colors.textLight);
     doc.text('Hosted by RAIT ACM SIGAI Student Chapter', ticketX + 10, currentY);
@@ -102,7 +102,7 @@ export async function generateRegistrationPDF(
 
     // Event Details (Date, Time, Location)
     if (registrationData.eventDate || registrationData.eventTime || registrationData.eventLocation) {
-      doc.setFontSize(7);
+      doc.setFontSize(8);
       doc.setTextColor(...colors.accentLight);
       let detailsText = '';
       if (registrationData.eventDate) detailsText += registrationData.eventDate;
@@ -125,31 +125,31 @@ export async function generateRegistrationPDF(
     currentY += 5;
 
     // Attendee Name
-    doc.setFontSize(7);
+    doc.setFontSize(8);
     doc.setTextColor(...colors.accentLight);
     doc.text('ATTENDEE', ticketX + 10, currentY);
     currentY += 5;
     
-    doc.setFontSize(12);
+    doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...colors.white);
     doc.text(`${registrationData.firstName} ${registrationData.lastName}`, ticketX + 10, currentY);
     currentY += 5;
 
     // Branch and Year
-    doc.setFontSize(8);
+    doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(...colors.textLight);
     doc.text(`${registrationData.branch} • ${registrationData.year} • Roll: ${registrationData.rollNumber}`, ticketX + 10, currentY);
     currentY += 8;
 
     // QR Code Section (bottom left)
-    const qrY = ticketY + ticketHeight - 38;
-    doc.setFontSize(7);
+    const qrY = ticketY + ticketHeight - 42;
+    doc.setFontSize(8);
     doc.setTextColor(...colors.accentLight);
     doc.text('ATTENDANCE QR CODE', ticketX + 10, qrY);
     
-    doc.setFontSize(6);
+    doc.setFontSize(7);
     doc.setTextColor(...colors.textLight);
     doc.text('Scan at event entrance', ticketX + 10, qrY + 3.5);
 
@@ -164,7 +164,7 @@ export async function generateRegistrationPDF(
       errorCorrectionLevel: 'H'
     });
 
-    const qrSize = 28;
+    const qrSize = 32;
     doc.addImage(qrCodeDataURL, 'PNG', ticketX + 10, qrY + 5, qrSize, qrSize);
 
     // Decorative accent line on left edge
@@ -188,20 +188,20 @@ export async function generateRegistrationPDF(
     // SIGAI Logo in stub (top center)
     const stubCenterX = perforationX + stubWidth / 2;
     let stubY = ticketY + 12;
-    doc.setFontSize(9);
+    doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...colors.accent);
     doc.text('SIGAI', stubCenterX, stubY, { align: 'center' });
     stubY += 8;
 
     // Registration ID
-    doc.setFontSize(6);
+    doc.setFontSize(7);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...colors.textLight);
     doc.text('REGISTRATION ID', stubCenterX, stubY, { align: 'center' });
     stubY += 4;
     
-    doc.setFontSize(9);
+    doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...colors.textDark);
     const shortRegId = registrationId.slice(0, 10).toUpperCase();
@@ -209,26 +209,26 @@ export async function generateRegistrationPDF(
     stubY += 10;
 
     // Roll Number
-    doc.setFontSize(6);
+    doc.setFontSize(7);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...colors.textLight);
     doc.text('ROLL NUMBER', stubCenterX, stubY, { align: 'center' });
     stubY += 4;
     
-    doc.setFontSize(11);
+    doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...colors.textDark);
     doc.text(registrationData.rollNumber, stubCenterX, stubY, { align: 'center' });
     stubY += 10;
 
     // Attendee Name (abbreviated if too long)
-    doc.setFontSize(6);
+    doc.setFontSize(7);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...colors.textLight);
     doc.text('ATTENDEE', stubCenterX, stubY, { align: 'center' });
     stubY += 4;
     
-    doc.setFontSize(9);
+    doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...colors.textDark);
     const fullName = `${registrationData.firstName} ${registrationData.lastName}`;
@@ -237,14 +237,14 @@ export async function generateRegistrationPDF(
     stubY += 10;
 
     // Transaction ID (smaller)
-    doc.setFontSize(5);
+    doc.setFontSize(6);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(...colors.textLight);
     doc.text('TXN: ' + registrationData.transactionId.substring(0, 10), stubCenterX, stubY, { align: 'center' });
     stubY += 6;
 
     // Amount Paid
-    doc.setFontSize(10);
+    doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...colors.accent);
     doc.text(`₹${registrationData.feeAmount}`, stubCenterX, stubY, { align: 'center' });
@@ -257,14 +257,14 @@ export async function generateRegistrationPDF(
     let detailsY = ticketY + ticketHeight + 12;
     
     // Section Title
-    doc.setFontSize(9);
+    doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(200, 200, 200);
     doc.text('REGISTRATION DETAILS', ticketX, detailsY);
     detailsY += 6;
 
     // Details in two columns
-    doc.setFontSize(7);
+    doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(160, 160, 160);
 
@@ -319,7 +319,7 @@ export async function generateRegistrationPDF(
     doc.text(formattedDate, col1X + 20, detailsY);
 
     // ========== FOOTER NOTE ==========
-    doc.setFontSize(7);
+    doc.setFontSize(8);
     doc.setFont('helvetica', 'italic');
     doc.setTextColor(140, 140, 140);
     const footerY = pageHeight - 15;
