@@ -7,8 +7,8 @@
 The MongoDB connection string has been added to `.env.local`:
 
 ```env
-# Password @First12 is URL-encoded as %40First12 (@ symbol must be encoded in MongoDB URIs)
-MONGODB_URI=mongodb+srv://kokam2life:%40First12@events.6em67mb.mongodb.net/?retryWrites=true&w=majority&appName=events
+# Password @ is URL-encoded as %40 (@ symbol must be encoded in MongoDB URIs)
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster_name>.6em67mb.mongodb.net/?retryWrites=true&w=majority&appName=events
 MONGODB_DB=registeration
 ```
 
