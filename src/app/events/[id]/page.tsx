@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { notFound, useParams } from 'next/navigation';
-import { ArrowLeft, Calendar, Clock, MapPin, Check, Loader2, Upload, X } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, MapPin, Check, Loader2, Upload, X, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { QRCodeSVG } from 'qrcode.react';
@@ -71,6 +71,7 @@ export default function EventPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [currentFee, setCurrentFee] = useState<number>(0);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target as HTMLInputElement;
@@ -109,13 +110,81 @@ export default function EventPage() {
     setCurrentStep('details');
   };
 
-  const handleSubmitPayment = (e: React.FormEvent) => {
+  const handleSubmitPayment = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    setErrorMessage(null);
+
+    try {
+      // Prepare registration data
+      const registrationPayload = {
+        eventId: event?.idx.toString() || '',
+        eventTitle: event?.title || '',
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.whatsapp,
+        rollNumber: formData.rollNumber,
+        branch: formData.branch,
+        year: formData.year,
+        division: formData.division,
+        isAcmMember: formData.isAcmMember === 'yes',
+        membershipId: formData.isAcmMember === 'yes' ? formData.membershipId : null,
+        transactionId: formData.transactionId,
+        feeAmount: currentFee,
+      };
+
+      // Call registration API
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(registrationPayload),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Registration failed. Please try again.');
+      }
+
+      // Download PDF by calling the API
+      const pdfResponse = await fetch('/api/generate-pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          registrationData: data.data.registrationData,
+          attendanceHash: data.data.attendanceHash,
+          registrationId: data.data.registrationId,
+        }),
+      });
+
+      if (pdfResponse.ok) {
+        // Download the PDF
+        const blob = await pdfResponse.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${event?.title.replace(/[^a-zA-Z0-9]/g, '_')}_${formData.rollNumber}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } else {
+        console.warn('PDF generation failed, but registration was successful');
+      }
+
+      // Move to success step
       setCurrentStep('success');
-    }, 1500);
+    } catch (error) {
+      console.error('Registration error:', error);
+      setErrorMessage(error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -554,6 +623,16 @@ export default function EventPage() {
                       </div>
 
                       <form onSubmit={handleSubmitPayment} className="space-y-4">
+                        {errorMessage && (
+                          <div className="flex items-start gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-lg backdrop-blur-sm">
+                            <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-red-300">Registration Failed</p>
+                              <p className="text-sm text-red-200 mt-1">{errorMessage}</p>
+                            </div>
+                          </div>
+                        )}
+                        
                         <div className="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-lg space-y-3">
                           <div className="text-center">
                             <div className="inline-block bg-white p-4 rounded-2xl border-4 border-blue-500/30 shadow-xl">
@@ -648,8 +727,11 @@ export default function EventPage() {
                         <Check className="h-8 w-8 text-green-400" />
                       </div>
                       <h3 className="text-xl font-semibold text-white mb-2">Registration Complete!</h3>
-                      <p className="text-sm text-gray-300 mb-6">
-                        Check your email for confirmation and event details.
+                      <p className="text-sm text-gray-300 mb-2">
+                        Your registration has been confirmed.
+                      </p>
+                      <p className="text-sm text-gray-400 mb-6">
+                        Your registration PDF with QR code has been downloaded. Please keep it safe for event attendance.
                       </p>
                       <button
                         onClick={() => window.location.reload()}
