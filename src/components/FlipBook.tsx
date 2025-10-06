@@ -53,8 +53,8 @@ Page.displayName = 'Page';
 
 export default function FlipBook({ 
   pages, 
-  width = 800, 
-  height = 1100, 
+  width = 1200, 
+  height = 1600, 
   onPageChange,
   showCover = true,
   mobileMode = false 
@@ -85,10 +85,10 @@ export default function FlipBook({
         width={width}
         height={height}
         size="stretch"
-        minWidth={300}
-        maxWidth={1000}
-        minHeight={400}
-        maxHeight={1400}
+        minWidth={400}
+        maxWidth={1800}
+        minHeight={500}
+        maxHeight={2400}
         maxShadowOpacity={0.8}
         showCover={showCover}
         mobileScrollSupport={true}

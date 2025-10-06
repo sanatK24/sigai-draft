@@ -35,7 +35,7 @@ export async function loadPDFPages(
       chunkPromises.push(
         (async () => {
           const page = await pdf.getPage(j);
-          const viewport = page.getViewport({ scale: 2.0 });
+          const viewport = page.getViewport({ scale: 2.5 });
           
           const canvas = document.createElement('canvas');
           const context = canvas.getContext('2d');

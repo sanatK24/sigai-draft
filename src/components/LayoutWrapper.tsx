@@ -14,13 +14,14 @@ const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
   
-  // Hide footer on specific routes if needed
-  const hideFooter = false; // Set to true for routes where you want to hide the footer
+  // Hide header and footer on latest-issue page for full-screen magazine view
+  const isLatestIssuePage = pathname === "/latest-issue";
+  const hideFooter = isLatestIssuePage;
 
   return (
     <div className={`min-h-screen flex flex-col ${isHomePage ? 'relative' : 'relative'}`}>
-      <Header />
-      <main className="flex-1 pb-16 md:pb-0">
+      {!isLatestIssuePage && <Header />}
+      <main className={`flex-1 ${isLatestIssuePage ? 'p-0' : 'pb-16 md:pb-0'}`}>
         {children}
       </main>
       {!hideFooter && <MobileFooter />}
