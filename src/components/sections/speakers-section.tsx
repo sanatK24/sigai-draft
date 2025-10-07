@@ -152,43 +152,53 @@ const FacultySpeakerCard = ({
 
   return (
     <div 
-      className={`flex flex-col w-full shrink-0 relative ${className}`}
-      style={{ width: 'auto', maxWidth: '100%' }}
+      className={`relative w-full max-w-[450px] ${className}`}
+      style={style}
     >
-      <div className="relative group overflow-visible w-full max-w-[373px] mx-auto">
-        <div className="overflow-hidden rounded-3xl w-full h-[360px] bg-gray-800 transition-transform duration-300 group-hover:-translate-y-3">
-          <div className="relative w-full h-full">
-            <div className="absolute inset-0">
-              <Image
-                src={speaker.image}
-                alt={`Headshot of ${speaker.name}`}
-                fill
-                sizes="(max-width: 768px) 100vw, 373px"
-                className={`object-cover w-full h-full transition-all duration-300 ${active ? 'grayscale-0' : 'grayscale'} group-hover:grayscale-0`}
-                style={{
-                  objectPosition: 'center top'
-                }}
-                priority={true}
-              />
-            </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-[rgba(30,17,67,0.4)] to-transparent" />
-            
-            {/* LinkedIn Icon */}
-            <div className="absolute bottom-4 right-4">
-              <GlassIcon 
-                href={socialLinks.linkedin} 
-                iconSrc="/img/linkedin (1).png" 
-                alt="LinkedIn" 
-                className="hover:scale-110 transition-transform duration-200 w-10 h-10"
-                iconClass="w-5 h-5"
-              />
-            </div>
-          </div>
+      {/* Main Card Container */}
+      <div className="relative bg-zinc-900/50 backdrop-blur-sm overflow-hidden">
+        {/* Image Container with Clip Path - Fixed height to ensure equal card sizes */}
+        <div className="relative w-full h-[380px] overflow-hidden bg-black" 
+          style={{
+            clipPath: 'polygon(0 0, 100% 0, 85% 100%, 0% 100%)'
+          }}
+        >
+          <Image
+            src={speaker.image}
+            alt={`Headshot of ${speaker.name}`}
+            fill
+            sizes="(max-width: 768px) 100vw, 450px"
+            className="object-contain"
+            style={{
+              objectPosition: 'center center'
+            }}
+            priority={true}
+          />
         </div>
-
-        {/* Info Panel - Hidden for faculty */}
       </div>
-      
+
+      {/* Text Content Below Image */}
+      <div className="mt-6 text-right pr-6">
+        <h3 className="text-3xl md:text-4xl font-bold leading-tight mb-2 whitespace-nowrap">
+          <span className="text-primary block" style={{ fontFamily: 'Arial, sans-serif' }}>
+            {speaker.name.split(' ')[0]}
+          </span>
+          <span className="text-primary block" style={{ fontFamily: 'Arial, sans-serif' }}>
+            {speaker.name.split(' ').slice(1).join(' ')}
+          </span>
+        </h3>
+        <p className="text-white text-xs uppercase tracking-wider mt-2 whitespace-nowrap">
+          {speaker.title}
+        </p>
+        
+        {/* View Bio Link */}
+        <button className="text-white text-sm mt-4 hover:text-primary transition-colors flex items-center gap-1 ml-auto whitespace-nowrap">
+          View Bio
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
     </div>
   );
 };
@@ -235,7 +245,7 @@ const CoreTeamCard = ({ speaker, index = 0, isCarouselInView = true, isActive = 
               Core Team
             </div>
             <div className="bg-white text-black text-[13px] font-semibold px-4 py-2.5 rounded-full">
-              2024-25
+              2025-26
             </div>
           </div>
 
@@ -358,15 +368,157 @@ const CoreTeamCard = ({ speaker, index = 0, isCarouselInView = true, isActive = 
 
 const SpeakersSection = () => {
   const carouselRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
-    loop: true,
+    loop: false, // Disable loop for ping-pong effect
     align: 'start',
     skipSnaps: false,
-    dragFree: false,
-    containScroll: false
+    dragFree: false, // Changed to false for snappier transitions
+    containScroll: false,
+    duration: 20 // Faster transitions for smoother reverse
   });
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isSectionInView, setIsSectionInView] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const [scrollDirection, setScrollDirection] = useState<'forward' | 'backward'>('forward');
   const isCarouselInView = useInView(carouselRef, { once: true, amount: 0.2 });
+  const autoScrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Detect when section is fully visible
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Section is visible when at least 30% is in viewport
+        const isVisible = entry.isIntersecting && entry.intersectionRatio >= 0.3;
+        console.log('Core Team Section Visibility:', {
+          isIntersecting: entry.isIntersecting,
+          ratio: entry.intersectionRatio,
+          isVisible
+        });
+        setIsSectionInView(isVisible);
+      },
+      {
+        threshold: [0, 0.3, 0.5, 0.8, 1.0], // Multiple thresholds for smooth detection
+        rootMargin: '0px' // No margin to make it easier to trigger
+      }
+    );
+
+    observer.observe(sectionRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  // Auto-scroll functionality - only when section is in view AND hovering
+  useEffect(() => {
+    if (!emblaApi || !isSectionInView || !isHovering) {
+      console.log('Auto-scroll NOT active:', { emblaApi: !!emblaApi, isSectionInView, isHovering });
+      return;
+    }
+
+    console.log('Auto-scroll ACTIVE - starting interval');
+
+    const autoScroll = () => {
+      const currentScrollIndex = emblaApi.selectedScrollSnap();
+      console.log('Current scroll index:', currentScrollIndex, 'Selected index:', selectedIndex, 'Direction:', scrollDirection);
+
+      if (scrollDirection === 'forward') {
+        // For forward: scroll until index 2, then just change visual selection for 3 and 4
+        if (currentScrollIndex < 2 && emblaApi.canScrollNext()) {
+          console.log('Auto-scrolling forward (with scroll)...');
+          emblaApi.scrollNext();
+        } else if (selectedIndex < speakers.length - 1) {
+          console.log('Moving to next card (selection only, no scroll)...');
+          setSelectedIndex(selectedIndex + 1);
+        } else {
+          console.log('Reached end, reversing direction');
+          setScrollDirection('backward');
+        }
+      } else {
+        // For backward: just change visual selection from 4 to 3, then scroll from 2 to 0
+        if (selectedIndex > 2) {
+          console.log('Moving to previous card (selection only, no scroll)...');
+          setSelectedIndex(selectedIndex - 1);
+        } else if (currentScrollIndex > 0 && emblaApi.canScrollPrev()) {
+          console.log('Auto-scrolling backward (with scroll)...');
+          emblaApi.scrollPrev();
+        } else {
+          console.log('Reached start, reversing direction');
+          setScrollDirection('forward');
+        }
+      }
+    };
+
+    // Start auto-scrolling
+    const intervalId = setInterval(autoScroll, 3000); // Move every 3 seconds
+
+    return () => {
+      console.log('Auto-scroll cleanup');
+      clearInterval(intervalId);
+    };
+  }, [emblaApi, isSectionInView, isHovering, scrollDirection, selectedIndex]);
+
+  // Scroll-triggered navigation - disabled during auto-scroll to avoid conflicts
+  useEffect(() => {
+    if (!carouselRef.current || !emblaApi || !isSectionInView) return;
+
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+    let lastInteractionTime = 0;
+
+    const handleScroll = () => {
+      const now = Date.now();
+      // Only allow manual scroll control if no recent auto-scroll (within 500ms)
+      if (now - lastInteractionTime < 500) {
+        ticking = false;
+        return;
+      }
+
+      const scrollY = window.scrollY;
+      const carouselTop = carouselRef.current?.offsetTop || 0;
+      const carouselHeight = carouselRef.current?.offsetHeight || 0;
+      const viewportHeight = window.innerHeight;
+
+      // Check if carousel is in viewport
+      const isInView = scrollY + viewportHeight > carouselTop && 
+                       scrollY < carouselTop + carouselHeight;
+
+      if (isInView) {
+        const scrollDelta = scrollY - lastScrollY;
+        
+        if (Math.abs(scrollDelta) > 50) { // Threshold to trigger card change
+          if (scrollDelta > 0 && emblaApi.canScrollNext()) {
+            // Scrolling down - next card
+            emblaApi.scrollNext();
+            lastInteractionTime = now;
+          } else if (scrollDelta < 0 && emblaApi.canScrollPrev()) {
+            // Scrolling up - previous card
+            emblaApi.scrollPrev();
+            lastInteractionTime = now;
+          }
+          lastScrollY = scrollY;
+        }
+      }
+
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(handleScroll);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, [emblaApi, isSectionInView]);
 
   const scrollPrev = useCallback(() => {
     emblaApi?.scrollPrev();
@@ -380,7 +532,10 @@ const SpeakersSection = () => {
     if (!emblaApi) return;
     const snap = emblaApi.selectedScrollSnap();
     const actualIndex = snap % speakers.length;
-    setSelectedIndex(actualIndex);
+    // Only update selectedIndex if it's different and we're at scroll positions 0, 1, or 2
+    if (actualIndex <= 2) {
+      setSelectedIndex(actualIndex);
+    }
   }, [emblaApi]);
 
   useEffect(() => {
@@ -414,109 +569,46 @@ const SpeakersSection = () => {
   return (
     <div className="space-y-24 md:space-y-32 py-12 md:py-24">
       {/* Faculty Section */}
-      <section id="faculty" className="relative bg-gradient-to-b from-zinc-900/50 to-transparent py-16 md:py-24">
-        <div className="container px-4 mx-auto">
-          <div className="flex flex-col items-start text-left mb-12">
+      <section id="faculty" className="relative py-16 md:py-24">
+        <div className="container px-4 mx-auto max-w-[1600px]">
+          <div className="flex flex-col items-start text-left mb-16 px-5">
             <div className="flex items-center gap-2 mb-4">
-              <span className="h-px w-6 bg-text-secondary" />
-              <h4 className="text-sm font-medium uppercase tracking-[0.1em] text-text-secondary">Faculty</h4>
+              <span className="h-px w-6 bg-gray-600" />
+              <h4 className="text-sm font-medium uppercase tracking-[0.2em] text-gray-400">
+                FACULTY MENTORS
+              </h4>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight leading-tight text-white mb-8">
-              Our <span className="text-purple-400 font-editorial">Distinguished</span> <span className="text-white">Faculty</span>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight text-white mb-4">
+              Meet Our <span className="text-primary">Faculty</span>
             </h2>
-            <p className="text-zinc-400 max-w-2xl mb-8">
-              Meet the esteemed faculty members who guide and support us.
+            <p className="text-gray-400 text-base md:text-lg max-w-2xl">
+              The esteemed faculty members who guide and support RAIT ACM SIGAI.
             </p>
           </div>
           
-          {/* Faculty Grid */}
-          <div className="relative w-full max-w-5xl mx-auto">
-            <div className="relative w-full">
-              <div className="hidden md:block absolute inset-0 flex items-center justify-center">
-                <div className="h-px w-full bg-gradient-to-r from-transparent via-purple-500/20 to-transparent"></div>
+          {/* Faculty Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 max-w-5xl mx-auto px-5">
+            {facultySponsors.map((faculty, index) => (
+              <div key={faculty.name} className="flex justify-center">
+                <FacultySpeakerCard 
+                  speaker={faculty} 
+                  active={true}
+                  className="w-full"
+                />
               </div>
-              <div className="hidden md:block absolute inset-0 flex items-start justify-start">
-                <div className="w-px h-full bg-gradient-to-b from-transparent via-purple-500/20 to-transparent"></div>
-              </div>
-              
-              <div className="w-full max-w-6xl mx-auto px-4 py-8 md:py-16">
-                <div className="relative w-full min-h-[900px] md:min-h-[600px]">
-                  {/* First Faculty with Info Panel */}
-                  <div className="flex flex-col md:flex-row items-start gap-8 w-full mb-16">
-                    {/* Faculty 1 Card */}
-                    <div className="w-full md:w-1/3 max-w-[373px]">
-                      <FacultySpeakerCard 
-                        speaker={facultySponsors[0]} 
-                        active={true}
-                        className="w-full"
-                      />
-                    </div>
-                    
-                    {/* Faculty 1 Info Panel */}
-                    <div className="w-full md:w-2/3 bg-gradient-to-br from-card to-card/90 backdrop-blur-lg rounded-xl p-8 shadow-2xl relative">
-                      <div className="absolute top-4 right-4">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-900/50 text-purple-300 border border-purple-700/50">
-                          {facultySponsors[0].title.includes('Mentor') ? 'Mentor' : 'Faculty Sponsor'}
-                        </span>
-                      </div>
-                      <h4 className="text-2xl font-bold text-white mb-1 pr-16">{facultySponsors[0].name}</h4>
-                      <p className="text-sm text-purple-300 mb-3">
-                        {facultySponsors[0].title}
-                      </p>
-                      <div className="h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent my-6" />
-                      <div className="text-gray-300 leading-relaxed space-y-4">
-                        {facultySponsors[0].name.includes('Sangita') ? (
-                          <p>Placeholder text</p>
-                        ) : (
-                          <p>Placeholder text</p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Second Faculty with Info Panel */}
-                  <div className="flex flex-col md:flex-row-reverse items-start gap-8 w-full">
-                    {/* Faculty 2 Card */}
-                    <div className="w-full md:w-1/3 max-w-[373px] md:ml-auto">
-                      <FacultySpeakerCard 
-                        speaker={facultySponsors[1]} 
-                        active={true}
-                        className="w-full"
-                      />
-                    </div>
-                    
-                    {/* Faculty 2 Info Panel */}
-                    <div className="w-full md:w-2/3 bg-gradient-to-br from-card to-card/90 backdrop-blur-lg rounded-xl p-8 shadow-2xl relative">
-                      <div className="flex justify-between items-start mb-4">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-900/50 text-purple-300 border border-purple-700/50">
-                          Mentor
-                        </span>
-                        <div className="text-right">
-                          <h4 className="text-2xl font-bold text-white mb-1">{facultySponsors[1].name}</h4>
-                          <p className="text-sm text-purple-300">
-                            {facultySponsors[1].title}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent my-6" />
-                      <div className="text-gray-300 leading-relaxed space-y-4">
-                        {facultySponsors[1].name.includes('Sangita') ? (
-                          <p>Placeholder text</p>
-                        ) : (
-                          <p>Placeholder text</p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Core Team Section */}
-      <section id="core-team" className="relative py-12 md:py-20 overflow-hidden">
+      <section 
+        id="core-team" 
+        ref={sectionRef} 
+        className="relative py-12 md:py-20 overflow-hidden"
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+      >
         <div className="container px-4 mx-auto max-w-[1600px]">
           {/* Header */}
           <div className="flex flex-col items-start text-left mb-12 px-5">
@@ -527,7 +619,7 @@ const SpeakersSection = () => {
               </h4>
             </div>
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight text-white mb-4">
-              Meet the <span className="text-purple-400">Core</span> Team
+              Meet the <span className="text-primary">Core</span> Team
             </h2>
             <p className="text-gray-400 text-base md:text-lg max-w-2xl">
               The passionate students driving the RAIT ACM SIGAI Student Chapter forward with innovation and dedication.

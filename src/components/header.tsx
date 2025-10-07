@@ -152,8 +152,8 @@ const Header: React.FC<HeaderProps> = ({ disableCompact = false }) => {
             isScrolledDown 
               ? `mx-auto rounded-full bg-black border border-white/10 shadow-lg ${
                   isCapsuleHovered 
-                    ? "max-w-5xl justify-between py-2 px-6" 
-                    : "max-w-fit gap-4 py-2 px-4"
+                    ? "max-w-6xl gap-6 py-2 px-6" 
+                    : "max-w-fit gap-3 py-2 px-4"
                 }`
               : "w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-24"
           }`}
@@ -232,8 +232,12 @@ const Header: React.FC<HeaderProps> = ({ disableCompact = false }) => {
           {/* Desktop Navigation and CTA - Hidden on mobile */}
           <div 
             ref={navRef}
-            className={`hidden md:flex items-center flex-shrink-0 transition-all duration-300 ml-4 md:ml-6 ${
-              !disableCompact && isScrolledDown && !isCapsuleHovered ? 'gap-0' : 'gap-4'
+            className={`hidden md:flex items-center flex-shrink-0 transition-all duration-300 ${
+              !disableCompact && isScrolledDown 
+                ? 'ml-3' 
+                : 'ml-4 md:ml-6'
+            } ${
+              !disableCompact && isScrolledDown && !isCapsuleHovered ? 'gap-0' : 'gap-3'
             }`}
             onMouseEnter={() => isScrolledDown && setIsCapsuleHovered(true)}
           >
@@ -242,9 +246,9 @@ const Header: React.FC<HeaderProps> = ({ disableCompact = false }) => {
               className={`flex items-center transition-all duration-300 ${
                 !disableCompact && isScrolledDown
                   ? isCapsuleHovered
-                    ? "opacity-100 max-w-2xl gap-2"
+                    ? "opacity-100 max-w-2xl gap-3"
                     : "opacity-0 max-w-0 w-0 pointer-events-none overflow-hidden"
-                  : "opacity-100 gap-4"
+                  : "opacity-100 gap-3"
               }`}
             >
               {navItems.map((item) => {

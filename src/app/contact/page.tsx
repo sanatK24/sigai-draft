@@ -63,9 +63,9 @@ export default function ContactPage() {
             Something Amazing
           </h1>
           <p className="text-xl text-white/60 max-w-2xl leading-relaxed select-none">
-            Have an idea? Want to collaborate? Or just want to say hello? 
+            Have questions or want to collaborate? We'd love to hear from you.
             <br />
-            Drop us a message and we'll get back to you within 24 hours.
+            Reach out and we'll respond as soon as possible.
           </p>
  
           {/* Sparkles Effect Below Hero Text */}
@@ -101,11 +101,11 @@ export default function ContactPage() {
                     <span className="text-xs font-semibold text-white/50 uppercase tracking-wider">Email</span>
                   </div>
                   <a 
-                    href="mailto:sigai@siesgst.ac.in"
-                    className="text-xl font-semibold text-white hover:text-blue-400 transition-colors inline-flex items-center gap-2 select-text"
+                    href="mailto:raitacmsigai@gmail.com"
+                    className="text-xl font-semibold text-white hover:text-blue-400 transition-colors inline-flex items-center gap-2 select-text break-all"
                   >
-                    sigai@siesgst.ac.in
-                    <ArrowUpRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-all" />
+                    raitacmsigai@gmail.com
+                    <ArrowUpRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-all flex-shrink-0" />
                   </a>
                 </div>
               </div>
@@ -120,13 +120,23 @@ export default function ContactPage() {
                     </div>
                     <span className="text-xs font-semibold text-white/50 uppercase tracking-wider">Phone</span>
                   </div>
-                  <a 
-                    href="tel:+912227694000"
-                    className="text-xl font-semibold text-white hover:text-purple-400 transition-colors inline-flex items-center gap-2 select-text"
-                  >
-                    +91 22 2769 4000
-                    <ArrowUpRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-all" />
-                  </a>
+                  <div className="space-y-2">
+                    <a 
+                      href="tel:+918369824033"
+                      className="text-xl font-semibold text-white hover:text-purple-400 transition-colors inline-flex items-center gap-2 select-text"
+                    >
+                      +91 83698 24033
+                      <ArrowUpRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-all" />
+                    </a>
+                    <br />
+                    <a 
+                      href="tel:+918591806560"
+                      className="text-xl font-semibold text-white hover:text-purple-400 transition-colors inline-flex items-center gap-2 select-text"
+                    >
+                      +91 85918 06560
+                      <ArrowUpRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-all" />
+                    </a>
+                  </div>
                 </div>
               </div>
 
@@ -141,9 +151,8 @@ export default function ContactPage() {
                     <span className="text-xs font-semibold text-white/50 uppercase tracking-wider">Location</span>
                   </div>
                   <p className="text-base text-white/70 leading-relaxed select-text">
-                    SIES Graduate School of Technology<br />
-                    Sector 7, Nerul<br />
-                    Navi Mumbai, Maharashtra 400706
+                    Ramrao Adik Institute Of Technology<br />
+                    Nerul, Navi Mumbai
                   </p>
                 </div>
               </div>
@@ -362,7 +371,7 @@ export default function ContactPage() {
             <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl opacity-50 group-hover:opacity-75 blur-xl transition-all duration-500" />
             <div className="relative bg-black border border-white/10 rounded-3xl p-4 overflow-hidden">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3771.4918743193856!2d73.01969931490085!3d19.036896787113943!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c3d700000001%3A0x9d2c3c3d3c3c3d3d!2sRamrao%20Adik%20Institute%20of%20Technology!5e0!3m2!1sen!2sin!4v1234567890123!5m2!1sen!2sin"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3771.4399542017673!2d73.02312567520453!3d19.04438468215365!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c3db00160053%3A0x95e9ca007676b993!2sRamrao%20Adik%20Institute%20of%20Technology!5e0!3m2!1sen!2sin!4v1759851389836!5m2!1sen!2sin"
                 width="100%"
                 height="500"
                 style={{ border: 0, borderRadius: '1.5rem' }}
@@ -370,6 +379,7 @@ export default function ContactPage() {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 className="rounded-2xl"
+                title="RAIT Location Map"
               ></iframe>
             </div>
           </div>

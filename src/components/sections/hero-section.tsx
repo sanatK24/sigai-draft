@@ -162,8 +162,14 @@ const HeroSection = () => {
       {/* Floating shapes */}
       <motion.div
         className="absolute top-[10%] left-[-5%] md:left-[5%] -z-10"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
+        animate={{ 
+          rotate: 360,
+          scale: [1, 1.1, 1]
+        }}
+        transition={{ 
+          rotate: { duration: 20, repeat: Infinity, ease: 'linear' },
+          scale: { duration: 4, repeat: Infinity, ease: 'easeInOut' }
+        }}
       >
         <Image
           src="https://framerusercontent.com/images/wX62SMRMN1v1X6SFoJaoNdwo.webp"
@@ -174,10 +180,19 @@ const HeroSection = () => {
         />
       </motion.div>
 
+      {/* Right Triangle - Commented out
       <motion.div
         className="absolute top-[40%] right-[5%] md:right-[15%] -z-10"
-        animate={{ y: [0, 12, 0], rotate: [0, -3, 3, 0] }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+        animate={{ 
+          y: [0, -20, 0],
+          rotate: [0, -10, 10, 0],
+          scale: [1, 1.15, 1]
+        }}
+        transition={{ 
+          duration: 8, 
+          repeat: Infinity, 
+          ease: 'easeInOut' 
+        }}
       >
         <Image
           src="https://framerusercontent.com/images/93NVWJJQujdEcPewVpg3Xp7ip4.webp"
@@ -187,11 +202,20 @@ const HeroSection = () => {
           className="w-[100px] h-[100px] md:w-[150px] md:h-[150px] object-contain opacity-20"
         />
       </motion.div>
+      */}
 
       <motion.div
         className="absolute bottom-[20%] right-[-5%] md:right-[5%] -z-10"
-        animate={{ y: [0, -10, 0], rotate: [0, 1, -1, 0] }}
-        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+        animate={{ 
+          y: [0, -15, 0],
+          rotate: [0, 180, 360],
+          scale: [1, 0.9, 1]
+        }}
+        transition={{ 
+          y: { duration: 6, repeat: Infinity, ease: 'easeInOut' },
+          rotate: { duration: 15, repeat: Infinity, ease: 'linear' },
+          scale: { duration: 5, repeat: Infinity, ease: 'easeInOut' }
+        }}
       >
         <Image
           src="https://framerusercontent.com/images/wX62SMRMN1v1X6SFoJaoNdwo.webp"

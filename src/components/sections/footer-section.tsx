@@ -119,24 +119,24 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Our Sister Chapters Section */}
+        {/* Other ACM Chapters Section */}
         <div className="flex flex-col items-center mt-12 mb-12">
           <div className="bg-white/10 backdrop-blur-sm text-white text-xs font-medium px-4 py-1.5 rounded-full border border-white/20 mb-3">
-            Our Sister Chapters
+            Other ACM Chapters
           </div>
           <div className="flex items-center justify-center gap-6">
             <a 
               href="https://rait.acm.org/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="block w-10 h-10 hover:opacity-80 transition-opacity"
+              className="block w-16 h-16 hover:opacity-80 transition-opacity"
               aria-label="RAIT ACM Student Chapter"
             >
               <Image
                 src="/img/ACMSCWhite.png"
                 alt="RAIT ACM Student Chapter"
-                width={40}
-                height={40}
+                width={64}
+                height={64}
                 className="w-full h-full object-contain"
               />
             </a>
@@ -144,14 +144,14 @@ const Footer = () => {
               href="https://rait-w.acm.org/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="block w-10 h-10 hover:opacity-80 transition-opacity"
+              className="block w-16 h-16 hover:opacity-80 transition-opacity"
               aria-label="RAIT ACM-W Student Chapter"
             >
               <Image
                 src="/img/ACM-W-SCWhite.png"
                 alt="RAIT ACM-W Student Chapter"
-                width={40}
-                height={40}
+                width={64}
+                height={64}
                 className="w-full h-full object-contain"
               />
             </a>

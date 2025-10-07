@@ -103,22 +103,19 @@ const TargetAudienceSection = () => {
       
       <div className="container mx-auto px-6 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 mb-6">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm text-xs font-medium text-white/80">
-              <Sparkles className="w-3 h-3" />
+        <div className="flex flex-col items-start text-left mb-16">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="h-px w-6 bg-gray-600" />
+            <h4 className="text-sm font-medium uppercase tracking-[0.2em] text-gray-400">
               Our Expertise
-            </span>
+            </h4>
           </div>
           
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight">
-            Explore Key{' '}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
-              Domains
-            </span>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight text-white mb-4">
+            Explore Key <span className="text-primary">Domains</span>
           </h2>
           
-          <p className="text-lg md:text-xl text-white/60 max-w-3xl mx-auto">
+          <p className="text-gray-400 text-base md:text-lg max-w-2xl">
             at the RAIT ACM SIGAI Student Chapter
           </p>
         </div>
