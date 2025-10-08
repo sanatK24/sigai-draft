@@ -168,7 +168,7 @@ const HorizontalEventCarousel: React.FC<HorizontalEventCarouselProps> = ({ event
               }`}
               onClick={() => setActiveIndex(index)}
             >
-              <Link href={`/events/${event.slug || '#'}`} className="block h-full">
+              <Link href={`/events/${event.idx}`} className="block h-full">
                 <div className={`bg-card/50 backdrop-blur-sm border ${
                   isActive ? 'border-primary/50' : 'border-border/50'
                 } rounded-2xl overflow-hidden shadow-lg h-full flex flex-col transition-all duration-300`}>
@@ -663,7 +663,7 @@ const AgendaSection = () => {
                                     {event.description}
                                   </p>
                                   <Link 
-                                    href={`/events/${event.slug || '#'}`}
+                                    href={`/events/${event.idx}`}
                                     className="mt-auto text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center"
                                   >
                                     Learn more

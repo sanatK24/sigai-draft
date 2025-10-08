@@ -9,6 +9,7 @@ import Header from '../header';
 
 interface Event {
   id: string;
+  idx?: number;
   title: string;
   date: string;
   time: string;
@@ -66,7 +67,7 @@ const HeroSection = () => {
 
   const handleEventClick = () => {
     if (upcomingEvent) {
-      router.push(`/events/${upcomingEvent.slug}`);
+      router.push(`/events/${upcomingEvent.idx}`);
     } else {
       router.push('/events');
     }
