@@ -59,7 +59,7 @@ export default function AboutPage() {
             <div className="flex justify-center mb-12">
               <div className="relative w-48 h-48">
                 <Image
-                  src="/img/sigai-logo-transparent.png"
+                  src="/img/sigai-logo-transparent.webp"
                   alt="SIGAI Logo"
                   fill
                   className="object-contain"
@@ -152,7 +152,7 @@ export default function AboutPage() {
             <div className="lg:col-span-2 lg:row-span-2 relative group overflow-hidden rounded-3xl border border-white/10 hover:border-white/20 transition-all">
               <div className="absolute inset-0">
                 <Image
-                  src="/img/kainos_event_img.png"
+                  src="/img/kainos_event_img.webp"
                   alt="Workshops"
                   fill
                   className="object-cover opacity-40 group-hover:scale-105 transition-transform duration-700"
@@ -172,7 +172,7 @@ export default function AboutPage() {
             <div className="relative group overflow-hidden rounded-3xl border border-white/10 hover:border-white/20 transition-all">
               <div className="absolute inset-0">
                 <Image
-                  src="/img/SYNARA_COVER.png"
+                  src="/img/SYNARA_COVER.webp"
                   alt="Hackathons"
                   fill
                   className="object-cover opacity-30 group-hover:scale-105 transition-transform duration-700"

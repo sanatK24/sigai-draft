@@ -190,7 +190,7 @@ const Header: React.FC<HeaderProps> = ({ disableCompact = false }) => {
                   className="flex-shrink-0"
                 >
                   <Image
-                    src="/img/sigai-logo.png"
+                    src="/img/sigai-logo.webp"
                     alt="RAIT ACM SIGAI Student Chapter Logo"
                     width={40}
                     height={40}
@@ -210,7 +210,7 @@ const Header: React.FC<HeaderProps> = ({ disableCompact = false }) => {
                     isScrolledDown ? "h-12" : "h-16"
                   } transition-all duration-300`}>
                     <Image
-                      src="/img/sigai-logo.png"
+                      src="/img/sigai-logo.webp"
                       alt="RAIT ACM SIGAI Student Chapter Logo"
                       width={40}
                       height={40}
@@ -365,7 +365,7 @@ const Header: React.FC<HeaderProps> = ({ disableCompact = false }) => {
               <div className="flex items-center justify-between p-6 border-b border-white/10">
                 <div className="flex items-center">
                   <Image
-                    src="/img/sigai-logo.png"
+                    src="/img/sigai-logo.webp"
                     alt="RAIT ACM SIGAI Student Chapter Logo"
                     width={40}
                     height={40}

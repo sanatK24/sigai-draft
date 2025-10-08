@@ -91,7 +91,7 @@ const RegistrationSection = () => {
                     <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent opacity-80"></div>
                      <div 
                       className="absolute inset-0 bg-repeat opacity-[0.02]"
-                      style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/stardust.png')" }}
+                      style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/stardust.webp')" }}
                     ></div>
                     <div className="relative z-10 flex flex-col grow">
                       <div className="inline-flex items-center gap-2 self-start rounded-full bg-white/10 backdrop-blur-sm px-3 py-1">

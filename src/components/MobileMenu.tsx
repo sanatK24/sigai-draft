@@ -61,7 +61,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose, navItems }) =>
         <div className="flex items-center justify-between p-6 border-b border-white/10">
           <div className="flex items-center">
             <Image
-              src="/img/sigai-logo.png"
+              src="/img/sigai-logo.webp"
               alt="RAIT ACM SIGAI Student Chapter Logo"
               width={40}
               height={40}

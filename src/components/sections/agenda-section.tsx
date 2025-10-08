@@ -64,7 +64,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => (
             {event.speakers.slice(0, 3).map((speaker, index) => (
               <div key={index} className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-card">
                 <Image
-                  src={speaker.image || '/img/team/placeholder.jpg'}
+                  src={speaker.image || '/img/team/placeholder.webp'}
                   alt={speaker.name}
                   fill
                   className="object-cover"
@@ -451,7 +451,7 @@ const AgendaSection = () => {
               <div className="group relative h-full flex flex-col overflow-hidden rounded-3xl bg-card/50 backdrop-blur-sm border border-border/50 shadow-xl transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-1">
                 <div className="relative h-64 lg:h-1/2">
                   <Image
-                    src="/img/SYNARA_COVER.png"
+                    src="/img/SYNARA_COVER.webp"
                     alt="Synara Magazine - RAIT ACM SIGAI"
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -631,7 +631,7 @@ const AgendaSection = () => {
                               <div className={`bg-card border ${index === activeIndex ? 'border-primary/50' : 'border-border/50'} rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow h-full flex flex-col`}>
                                 <div className="relative h-40">
                                   <Image
-                                    src={event.image || '/img/event-placeholder.jpg'}
+                                    src={event.image || '/img/event-placeholder.webp'}
                                     alt={event.title}
                                     fill
                                     className="object-cover"
@@ -712,7 +712,7 @@ const AgendaSection = () => {
                           className="block aspect-video w-full bg-muted rounded-xl overflow-hidden relative group-hover:shadow-lg transition-shadow"
                         >
                           <Image
-                            src="https://img.youtube.com/vi/VlgLfiI7Jig/maxresdefault.jpg"
+                            src="https://img.youtube.com/vi/VlgLfiI7Jig/maxresdefault.webp"
                             alt="Neural Nexus"
                             fill
                             className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -751,7 +751,7 @@ const AgendaSection = () => {
                           className="block aspect-video w-full bg-muted rounded-xl overflow-hidden relative group-hover:shadow-lg transition-shadow"
                         >
                           <Image
-                            src="https://img.youtube.com/vi/0-FUhQKe-eU/maxresdefault.jpg"
+                            src="https://img.youtube.com/vi/0-FUhQKe-eU/maxresdefault.webp"
                             alt="Why Need AI?"
                             fill
                             className="object-cover transition-transform duration-500 group-hover:scale-105"

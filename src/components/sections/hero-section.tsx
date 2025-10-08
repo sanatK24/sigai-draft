@@ -132,7 +132,7 @@ const HeroSection = () => {
                 aria-label="RAIT ACM Student Chapter"
               >
                 <Image
-                  src="/img/ACMSCWhite.png"
+                  src="/img/ACMSCWhite.webp"
                   alt="RAIT ACM Student Chapter"
                   width={48}
                   height={48}
@@ -148,7 +148,7 @@ const HeroSection = () => {
                 aria-label="RAIT ACM-W Student Chapter"
               >
                 <Image
-                  src="/img/ACM-W-SCWhite.png"
+                  src="/img/ACM-W-SCWhite.webp"
                   alt="RAIT ACM-W Student Chapter"
                   width={48}
                   height={48}
@@ -318,7 +318,7 @@ const HeroSection = () => {
             Building the Future with AI at Forefront
             <div className="mt-4">
               <Image
-                src="/img/sigai-logo-transparent.png"
+                src="/img/sigai-logo-transparent.webp"
                 alt="SIGAI Logo"
                 width={200}
                 height={100}

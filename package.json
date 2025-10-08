@@ -133,6 +133,7 @@
         "eslint": "^9.35.0",
         "eslint-config-next": "^15.5.3",
         "magic-string": "^0.30.19",
+        "sharp": "^0.34.4",
         "tailwindcss": "^4",
         "tw-animate-css": "^1.3.8",
         "typescript": "^5"

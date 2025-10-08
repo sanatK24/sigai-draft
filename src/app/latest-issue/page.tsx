@@ -201,7 +201,7 @@ export default function MagazinePage() {
               {/* Cover Image with Overlay */}
               <div className="relative h-56 flex-shrink-0 overflow-hidden">
                 <img
-                  src="/img/SYNARA_COVER.png"
+                  src="/img/SYNARA_COVER.webp"
                   alt="Synara Magazine - RAIT ACM SIGAI"
                   className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
                 />

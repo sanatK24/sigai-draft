@@ -217,7 +217,7 @@ export default function TeamPage() {
     {
       name: "Dr. Sangita Chaudhari",
       role: "HOD of Computer Science & Engineering • Faculty Sponsor",
-      image: "/img/faculty_img/HODIT.jpg",
+      image: "/img/faculty_img/HODIT.webp",
       aspectRatio: "1/1", // 1600x1600
       socialLinks: {
         linkedin: "https://www.linkedin.com/in/sandhya-arora-4b6b1b1b/",
@@ -226,7 +226,7 @@ export default function TeamPage() {
     {
       name: "Dr. Pallavi Chavan",
       role: "HOD of Information Technology • Core Team Mentor",
-      image: "/img/faculty_img/pallavimam.jpg",
+      image: "/img/faculty_img/pallavimam.webp",
       aspectRatio: "805/852", // 805x852
       socialLinks: {
         linkedin: "https://www.linkedin.com/in/pallavi-chavan/",
@@ -239,7 +239,7 @@ export default function TeamPage() {
     {
       name: "Hiresh Nandodkar",
       role: "Chairperson",
-      image: "/img/faculty_img/Unknown_person.jpg",
+      image: "/img/faculty_img/Unknown_person.webp",
       socials: {
         instagram: "https://instagram.com/hiresh",
         linkedin: "https://linkedin.com/in/hiresh",
@@ -249,7 +249,7 @@ export default function TeamPage() {
     {
       name: "Aastha Shetty",
       role: "Vice Chairperson",
-      image: "/img/faculty_img/Unknown_person.jpg",
+      image: "/img/faculty_img/Unknown_person.webp",
       socials: {
         instagram: "https://instagram.com/aastha",
         linkedin: "https://linkedin.com/in/aastha",
@@ -258,7 +258,7 @@ export default function TeamPage() {
     {
       name: "Rian Pardal",
       role: "General Secretary",
-      image: "/img/faculty_img/Unknown_person.jpg",
+      image: "/img/faculty_img/Unknown_person.webp",
       socials: {
         instagram: "https://instagram.com/rian",
         linkedin: "https://linkedin.com/in/rian",
@@ -272,7 +272,7 @@ export default function TeamPage() {
     {
       name: "Riddhi Patil",
       role: "Treasurer",
-      image: "/img/faculty_img/Unknown_person.jpg",
+      image: "/img/faculty_img/Unknown_person.webp",
       socials: {
         instagram: "https://instagram.com/riddhi",
         linkedin: "https://linkedin.com/in/riddhi",
@@ -281,7 +281,7 @@ export default function TeamPage() {
     {
       name: "Sanat Karkhanis",
       role: "Webmaster",
-      image: "/img/faculty_img/Unknown_person.jpg",
+      image: "/img/faculty_img/Unknown_person.webp",
       socials: {
         instagram: "https://instagram.com/sanat",
         linkedin: "https://linkedin.com/in/sanat",
@@ -295,7 +295,7 @@ export default function TeamPage() {
     {
       name: "Soham Wankhede",
       role: "Chairperson",
-      image: "/img/core_img/Soham_chair.jpg",
+      image: "/img/core_img/Soham_chair.webp",
       aspectRatio: "1/1", // 4000x4000
       socials: {
         instagram: "https://instagram.com/soham",
@@ -306,7 +306,7 @@ export default function TeamPage() {
     {
       name: "Prapti Sinha",
       role: "Vice Chairperson",
-      image: "/img/core_img/Prapti_vicechair.jpg",
+      image: "/img/core_img/Prapti_vicechair.webp",
       aspectRatio: "1/1", // 2347x2347
       socials: {
         instagram: "https://instagram.com/prapti",
@@ -316,7 +316,7 @@ export default function TeamPage() {
     {
       name: "Amey Shete",
       role: "General Secretary",
-      image: "/img/core_img/Amey_GS.JPEG",
+      image: "/img/core_img/Amey_GS.webp",
       aspectRatio: "1/1", // 3093x3093
       socials: {
         instagram: "https://instagram.com/amey",
@@ -331,7 +331,7 @@ export default function TeamPage() {
     {
       name: "Sakshi Dhamane",
       role: "Treasurer",
-      image: "/img/core_img/Sakshi2_treasurer.JPG",
+      image: "/img/core_img/Sakshi2_treasurer.webp",
       aspectRatio: "3684/3854", // 3684x3854
       socials: {
         instagram: "https://instagram.com/sakshi",
@@ -341,7 +341,7 @@ export default function TeamPage() {
     {
       name: "Utsab Nandi",
       role: "Webmaster",
-      image: "/img/core_img/Utsab_webm.JPG",
+      image: "/img/core_img/Utsab_webm.webp",
       aspectRatio: "3477/3591", // 3477x3591
       socials: {
         instagram: "https://instagram.com/utsab",
@@ -357,7 +357,7 @@ export default function TeamPage() {
       <section className="relative h-screen w-full overflow-hidden">
         {/* Static Background Image (fallback for video modal) */}
         <img
-          src="/img/Launch.jpg"
+          src="/img/Launch.webp"
           alt="Hero background"
           className="absolute inset-0 w-full h-full object-cover"
           style={{ objectFit: 'cover' }}

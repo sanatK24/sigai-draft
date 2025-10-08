@@ -9,9 +9,9 @@ export const metadata: Metadata = {
   title: "RAIT ACM SIGAI",
   description: "RAIT ACM Special Interest Group on Artificial Intelligence",
   icons: {
-    icon: "/img/sigai-logo.png",
-    apple: "/img/sigai-logo.png",
-    shortcut: "/img/sigai-logo.png"
+    icon: "/img/sigai-logo.webp",
+    apple: "/img/sigai-logo.webp",
+    shortcut: "/img/sigai-logo.webp"
   },
 };
 

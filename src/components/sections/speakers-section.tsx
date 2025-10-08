@@ -26,7 +26,7 @@ const speakers: Speaker[] = [
   {
     name: 'Hiresh Nandodkar',
     title: 'Chairperson',
-    image: '/img/faculty_img/Unknown_person.jpg',
+    image: '/img/faculty_img/Unknown_person.webp',
     color: '#d4ff00', // Keep the punchy green/lime
     testimony: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.',
     spotifyUrl: 'https://open.spotify.com/playlist/YOUR_PLAYLIST_ID_1',
@@ -39,7 +39,7 @@ const speakers: Speaker[] = [
   {
     name: 'Aastha Shetty',
     title: 'Vice Chairperson',
-    image: '/img/faculty_img/Unknown_person.jpg',
+    image: '/img/faculty_img/Unknown_person.webp',
     color: '#ff4d94', // Vibrant hot pink
     testimony: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.',
     spotifyUrl: 'https://open.spotify.com/playlist/YOUR_PLAYLIST_ID_2',
@@ -52,7 +52,7 @@ const speakers: Speaker[] = [
   {
     name: 'Rian Pardal',
     title: 'General Secretary',
-    image: '/img/faculty_img/Unknown_person.jpg',
+    image: '/img/faculty_img/Unknown_person.webp',
     color: '#a78bfa', // Vibrant purple
     testimony: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla.',
     spotifyUrl: 'https://open.spotify.com/playlist/YOUR_PLAYLIST_ID_3',
@@ -65,7 +65,7 @@ const speakers: Speaker[] = [
   {
     name: 'Riddhi Patil',
     title: 'Treasurer',
-    image: '/img/faculty_img/Unknown_person.jpg',
+    image: '/img/faculty_img/Unknown_person.webp',
     color: '#22d3ee', // Vibrant cyan/turquoise
     testimony: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim.',
     spotifyUrl: 'https://open.spotify.com/playlist/YOUR_PLAYLIST_ID_4',
@@ -78,7 +78,7 @@ const speakers: Speaker[] = [
   {
     name: 'Sanat Karkhanis',
     title: 'Webmaster',
-    image: '/img/faculty_img/Unknown_person.jpg',
+    image: '/img/faculty_img/Unknown_person.webp',
     color: '#fb7185', // Vibrant coral/rose
     testimony: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.',
     spotifyUrl: 'https://open.spotify.com/playlist/YOUR_PLAYLIST_ID_5',
@@ -309,7 +309,7 @@ const CoreTeamCard = ({ speaker, index = 0, isCarouselInView = true, isActive = 
               <div className="mb-4">
                 <GlassIcon 
                   href={speaker.socials.instagram}
-                  iconSrc="/img/instagram.png"
+                  iconSrc="/img/instagram.webp"
                   alt="Instagram"
                   className="hover:scale-110 transition-transform duration-200 w-10 h-10"
                   iconClass="w-5 h-5"
@@ -320,7 +320,7 @@ const CoreTeamCard = ({ speaker, index = 0, isCarouselInView = true, isActive = 
               <div className="mb-4">
                 <GlassIcon 
                   href={speaker.socials.linkedin}
-                  iconSrc="/img/linkedin (1).png"
+                  iconSrc="/img/linkedin (1).webp"
                   alt="LinkedIn"
                   className="hover:scale-110 transition-transform duration-200 w-10 h-10"
                   iconClass="w-5 h-5"
@@ -331,7 +331,7 @@ const CoreTeamCard = ({ speaker, index = 0, isCarouselInView = true, isActive = 
               <div className="mb-4">
                 <GlassIcon 
                   href={speaker.socials.github}
-                  iconSrc="/img/github.png"
+                  iconSrc="/img/github.webp"
                   alt="GitHub"
                   className="hover:scale-110 transition-transform duration-200 w-10 h-10"
                   iconClass="w-5 h-5"
@@ -557,12 +557,12 @@ const SpeakersSection = () => {
     {
       name: 'Dr. Sangita Chaudhari',
       title: 'HOD of Computer Science & Engineering',
-      image: '/img/faculty_img/HODIT.jpg',
+      image: '/img/faculty_img/HODIT.webp',
     },
     {
       name: 'Dr. Pallavi Chavan',
       title: 'HOD of Information Technology',
-      image: '/img/faculty_img/pallavimam.jpg',
+      image: '/img/faculty_img/pallavimam.webp',
     }
   ];
 

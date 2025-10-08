@@ -1,6 +1,7 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export', // Static export for cPanel
   webpack: (config, { isServer }) => {
     // This fixes npm packages that depend on `fs` module
     if (!isServer) {
@@ -15,6 +16,7 @@ const nextConfig = {
     return config;
   },
   images: {
+    unoptimized: true, // Required for static export
     domains: [
       'framerusercontent.com',
       'img.youtube.com',
